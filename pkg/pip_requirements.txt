@@ -1,0 +1,6 @@
+spaceone-core
+spaceone-api
+mongoengine
+docker_registry_client
+python-consul
+schematics
