@@ -25,11 +25,13 @@ jobs:
         echo "::set-env name=LOCATION_SETUP_PY::$LOCATION_SETUP_PY"
         echo "::set-env name=LOCATION_VERSION::$LOCATION_VERSION"
         echo "::set-env name=IS_SUDO::$IS_SUDO"
+
     - name: Clone master branch
       uses: actions/checkout@v2
       with:
         ref: master
         path: master_branch
+
     - name: Compare version
       run: |
         echo "MASTER BRANCH VERSION"
@@ -50,6 +52,7 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
+
     - name: Install dependencies
       run: |
         if [ $IS_SUDO = true ]
@@ -60,6 +63,7 @@ jobs:
             python -m pip install --upgrade pip
             pip install setuptools wheel twine
         fi
+
     - name: Build
       run: |
         if test -f "Makefile"; then
@@ -72,11 +76,13 @@ jobs:
           else
             python setup.py sdist bdist_wheel
         fi
+
     - name: Test
       id: test
       run: |
         echo "Running test ... None"
         # fail test or pass test
+        
     - name: Upload Pypi
       id: upload
       if: env.PYPI_UPLOAD == 'true'
