@@ -179,7 +179,8 @@ class PluginService(BaseService):
                 version_list = None
 
             if version_list:
-                return version_list
+                # User wants reverse list
+                return version_list.reverse()
 
         raise ERROR_NO_PLUGIN(plugin_id=plugin_id)
 
