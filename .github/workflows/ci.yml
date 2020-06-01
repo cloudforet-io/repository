@@ -12,52 +12,91 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Set environment virables
+      env:
+        SERVICE: repository
+        PYPI_UPLOAD: true # upload pypi if this is true
+        # LOCATION points the parent directory
+        LOCATION_SETUP_PY: src # optional. for pypi upload
+        LOCATION_VERSION: src # the location for VERSION file (ex- . means the location of VERSION is ./VERSION)
+        IS_SUDO: false
       run: |
-        echo "::set-env name=IMAGE_PREFIX::spaceone"
-        echo "::set-env name=SERVICE::repository"
-        echo "::set-env name=LOCATION_SETUP_PY::src"
-        echo "::set-env name=LOCATION_DOCKERFILE::."
+        echo "::set-env name=SERVICE::$SERVICE"
+        echo "::set-env name=PYPI_UPLOAD::$PYPI_UPLOAD"
+        echo "::set-env name=LOCATION_SETUP_PY::$LOCATION_SETUP_PY"
+        echo "::set-env name=LOCATION_VERSION::$LOCATION_VERSION"
+        echo "::set-env name=IS_SUDO::$IS_SUDO"
+    - name: Clone master branch
+      uses: actions/checkout@v2
+      with:
+        ref: master
+        path: master_branch
+    - name: Compare version
+      run: |
+        echo "MASTER BRANCH VERSION"
+        cat master_branch/$LOCATION_VERSION/VERSION
+        echo -e "\n\n"
 
-        version=$(cat src/VERSION)-${{ github.run_id }}
-        echo "::set-env name=VERSION::$version"
+        echo "PR VERSION"
+        cat $LOCATION_VERSION/VERSION
+        echo -e "\n\n"
+
+        echo "::set-env name=IS_NEW_VERSION::false"
+        cmp --silent master_branch/$LOCATION_VERSION/VERSION $LOCATION_VERSION/VERSION || \
+        echo "::set-env name=IS_NEW_VERSION::true"
+
+        echo "$(cat $LOCATION_VERSION/VERSION)-${{ github.run_id }}">$LOCATION_VERSION/VERSION
 
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
-
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install setuptools wheel twine
-
+        if [ $IS_SUDO = true ]
+          then
+            sudo python -m pip install --upgrade pip
+            sudo pip install setuptools wheel twine
+          else
+            python -m pip install --upgrade pip
+            pip install setuptools wheel twine
+        fi
     - name: Build
       run: |
-        echo "Building pypi ..."
+        if test -f "Makefile"; then
+          make all
+        fi
         cd $LOCATION_SETUP_PY
-        python3 setup.py bdist_wheel
-
+        if [ $IS_SUDO = true ]
+          then
+            sudo python setup.py sdist bdist_wheel
+          else
+            python setup.py sdist bdist_wheel
+        fi
     - name: Test
       id: test
       run: |
         echo "Running test ... None"
         # fail test or pass test
-
     - name: Upload Pypi
       id: upload
+      if: env.PYPI_UPLOAD == 'true'
       run: |
-        cd $LOCATION_SETUUP_PY
-        twine upload dist/*.whl --username ${{ secrets.PYPI_USERNAME }} --password ${{ secrets.PYPI_PASSWORD }} --verbose
-      # continue next jobs though this job fails
+        cd $LOCATION_SETUP_PY
+        if [ $IS_SUDO = true ]
+          then
+            sudo twine upload dist/*.whl --username ${{ secrets.PYPI_USERNAME }} --password ${{ secrets.PYPI_PASSWORD }} --verbose
+          else
+            twine upload dist/*.whl --username ${{ secrets.PYPI_USERNAME }} --password ${{ secrets.PYPI_PASSWORD }} --verbose
+        fi
       continue-on-error: true
 
     - name: Merge branch automatically
       if: steps.test.outcome == 'success'
       uses: pascalgn/automerge-action@v0.8.3
       env:
-        # can not run workflow with new repository token.
-        GITHUB_TOKEN: ${{secrets.REPOSITORY_CONTROL_ACCESS_KEY}}
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
+        # repository token으로는 새로운 workflow run시킬 수 없음.
+        GITHUB_TOKEN: ${{secrets.REPOSITORY_ACCESS_KEY}}
+        #        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
         MERGE_LABELS: ""
 
     - name: Notify to slack
