@@ -21,7 +21,7 @@ jobs:
           LOCATION_SETUP_PY: src # optional. for pypi upload
           LOCATION_VERSION: src # the location for VERSION file (ex- . means the location of VERSION is ./VERSION)
           LOCATION_DOCKERFILE: .
-          IMAGE_PREFIX: spaceone
+          IMAGE_PREFIX: spaceone 
           IS_SUDO: false
         run: |
           cat <<EOF>set_env.sh
@@ -51,7 +51,6 @@ jobs:
         with:
           ref: master
           path: master_branch
-          
       - name: Compare version
         run: |
           echo "MASTER BRANCH VERSION"
@@ -95,7 +94,7 @@ jobs:
               python -m pip install --upgrade pip
               pip install setuptools wheel twine
           fi
-
+              
       - name: Build
         if: env.PYPI_UPLOAD == 'true'
         run: |
