@@ -370,6 +370,31 @@ class TestSchemaService(unittest.TestCase):
 
         print_data(values, 'test_stat_schema')
 
+    @patch.object(MongoModel, 'connect', return_value=None)
+    def test_stat_schema_distinct(self, *args):
+        schema_vos = SchemaFactory.build_batch(10, repository=self.repository_vo,
+                                               domain_id=self.domain_id)
+        list(map(lambda vo: vo.save(), schema_vos))
+
+        params = {
+            'domain_id': self.domain_id,
+            'repository_id': self.repository_vo.repository_id,
+            'query': {
+                'distinct': 'name',
+                'page': {
+                    'start': 3,
+                    'limit': 4
+                }
+            }
+        }
+
+        self.transaction.method = 'stat'
+        schema_svc = SchemaService(transaction=self.transaction)
+        values = schema_svc.stat(params)
+        StatisticsInfo(values)
+
+        print_data(values, 'test_stat_schema_distinct')
+
 
 if __name__ == "__main__":
     unittest.main(testRunner=RichTestRunner)
