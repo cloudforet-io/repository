@@ -1,5 +1,7 @@
 import logging
 
+from google.protobuf.json_format import MessageToDict
+
 from spaceone.core.connector import BaseConnector
 from spaceone.core import pygrpc
 from spaceone.core.utils import *
@@ -130,9 +132,19 @@ class RepositoryConnector(BaseConnector):
         _LOGGER.debug("[RepositoryConnector] call get_plugin_versions")
         res = self.client.Plugin.get_versions(param, metadata=self.meta)
         # Convert to list
-        _LOGGER.debug(res)
-        result = res.version
-        _LOGGER.debug("[RepositoryConnector] versions: %s" % result)
+        _LOGGER.debug(f'[get_plugin_version] {res}')
+        result_dict = MessageToDict(res)
+        if 'results' in result_dict:
+            result = result_dict['results']
+        elif 'version' in result_dict:
+            result = result_dict['version']
+        else:
+            _LOGGER.error(f'[get_plugin_version] version: {result_dict}')
+            result = None
+
+        if len(result) == 0:
+            result = None
+        _LOGGER.debug(f'[get_plugin_version] result: {result}')
         return result
 
     ############
