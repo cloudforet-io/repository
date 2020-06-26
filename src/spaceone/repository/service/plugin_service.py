@@ -179,9 +179,13 @@ class PluginService(BaseService):
                 version_list = None
 
             if version_list:
+                _LOGGER.debug(f'[get_versions] version_list: {version_list}')
                 # User wants reverse list
+                version_list.sort(reverse=True)
+                _LOGGER.debug(f'[get_versions] sorted version_list: {version_list}')
                 return version_list
 
+        _LOGGER.error(f'[get_versions] no version: {plugin_id}')
         raise ERROR_NO_PLUGIN(plugin_id=plugin_id)
 
     @transaction

@@ -82,11 +82,12 @@ class RemotePluginManager(PluginManager):
         Returns:
             A list of docker tag
         """
-        plugin = self.get_plugin(plugin_id, domain_id)
+        conn = self._get_conn_from_repository(self.repository, domain_id)
+        connector = self.locator.get_connector('RepositoryConnector', conn=conn)
 
-        connector = self.locator.get_connector("RegistryConnector")
-        tags = connector.get_tags(plugin.image)
-        return tags
+        response = connector.get_plugin_version(plugin_id)
+        _LOGGER.debug(f'[get_plugin_version] response: {response}')
+        return response
 
     def _get_conn_from_repository(self, repo, domain_id):
         """
