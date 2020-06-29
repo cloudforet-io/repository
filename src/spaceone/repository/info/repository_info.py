@@ -12,7 +12,7 @@ def RepositoryInfo(repository_vo: Repository, minimal=False):
         'name': repository_vo.name,
         'repository_type': repository_vo.repository_type
     }
-    if minimal is False:
+    if not minimal:
         info.update({
                 'endpoint': repository_vo.endpoint,
                 'version': repository_vo.version,

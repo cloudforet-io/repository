@@ -35,7 +35,7 @@ class Repository(BaseAPI, repository_pb2_grpc.RepositoryServicer):
         params, metadata = self.parse_request(request, context)
         with self.locator.get_service('RepositoryService', metadata) as repo_svc:
             repo_vos, total_count = repo_svc.list(params)
-            return self.locator.get_info('RepositoriesInfo', repo_vos, total_count)
+            return self.locator.get_info('RepositoriesInfo', repo_vos, total_count, minimal=self.get_minimal(params))
 
     def stat(self, request, context):
         params, metadata = self.parse_request(request, context)
