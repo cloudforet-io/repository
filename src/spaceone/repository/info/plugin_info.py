@@ -40,9 +40,9 @@ def PluginInfo(plugin_vo: Plugin, minimal=False):
     return plugin_pb2.PluginInfo(**info)
 
 
-def PluginsInfo(plugin_vos, total_count):
-    results = list(map(functools.partial(PluginInfo), plugin_vos))
-    return plugin_pb2.PluginsInfo(results=results, total_count=total_count)
+def PluginsInfo(plugin_vos, total_count, **kwargs):
+    return plugin_pb2.PluginsInfo(results=list(
+        map(functools.partial(PluginInfo, **kwargs), plugin_vos)), total_count=total_count)
 
 
 def VersionsInfo(version_list):
