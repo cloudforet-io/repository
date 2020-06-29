@@ -190,6 +190,7 @@ class PluginService(BaseService):
 
     @transaction
     @check_required(['plugin_id', 'domain_id'])
+    @change_only_key({'repository_info': 'repository'})
     def get(self, params):
         """ Get Plugin (local & remote)
 
@@ -226,6 +227,7 @@ class PluginService(BaseService):
 
     @transaction
     @check_required(['repository_id', 'domain_id'])
+    @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'plugin_id', 'name', 'state', 'service_type',
                           'provider', 'project_id', 'domain_id'])
     @append_keyword_filter(['plugin_id', 'name', 'provider', 'labels'])
