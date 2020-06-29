@@ -97,6 +97,7 @@ class SchemaService(BaseService):
 
     @transaction
     @check_required(['name', 'domain_id'])
+    @change_only_key({'repository_info': 'repository'})
     def get(self, params):
         """ Get Schema (local & remote)
 
@@ -133,6 +134,7 @@ class SchemaService(BaseService):
 
     @transaction
     @check_required(['repository_id', 'domain_id'])
+    @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'name', 'service_type', 'project_id', 'domain_id'])
     @append_keyword_filter(['name', 'labels'])
     def list(self, params):
