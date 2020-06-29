@@ -23,6 +23,6 @@ def RepositoryInfo(repository_vo: Repository, minimal=False):
     return repository_pb2.RepositoryInfo(**info)
 
 
-def RepositoriesInfo(repo_vos, total_count):
-    results = list(map(functools.partial(RepositoryInfo), repo_vos))
-    return repository_pb2.RepositoriesInfo(results=results, total_count=total_count)
+def RepositoriesInfo(repo_vos, total_count, **kwargs):
+    return repository_pb2.RepositoriesInfo(results=list(
+        map(functools.partial(RepositoryInfo, **kwargs), repo_vos)), total_count=total_count)

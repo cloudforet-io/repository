@@ -35,6 +35,6 @@ def SchemaInfo(schema_vo: Schema, minimal=False):
     return schema_pb2.SchemaInfo(**info)
 
 
-def SchemasInfo(schema_vos, total_count):
-    results = list(map(functools.partial(SchemaInfo), schema_vos))
-    return schema_pb2.SchemasInfo(results=results, total_count=total_count)
+def SchemasInfo(schema_vos, total_count, **kwargs):
+    return schema_pb2.SchemasInfo(results=list(
+        map(functools.partial(SchemaInfo, **kwargs), schema_vos)), total_count=total_count)
