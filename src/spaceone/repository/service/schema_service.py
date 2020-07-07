@@ -69,7 +69,6 @@ class SchemaService(BaseService):
         """
         # Pre-condition Check
         self._check_schema(params.get('schema'))
-        self._check_project(params.get('project_id'), params['domain_id'])
         self._check_service_type(params.get('service_type'))
 
         schema_mgr: LocalSchemaManager = self.locator.get_manager('LocalSchemaManager')
