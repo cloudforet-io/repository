@@ -22,14 +22,13 @@ def _validate_token(token):
             while value is False:
                 uri = token['uri']
                 value = consul_instance.patch_token(uri)
-                _LOGGER.warn(f'[_validate_token] token: {value[:30]} uri: {uri}')
                 if value:
+                    _LOGGER.warn(f'[_validate_token] token: {value[:30]} uri: {uri}')
                     break
                 time.sleep(_INTERVAL)
 
             token = value
 
-    _LOGGER.debug(f'[_validate_token] token: {list(token)}')
     return token
 
 
@@ -44,6 +43,7 @@ class RemoteRepositoryManager(RepositoryManager):
                 - endpoint
                 - version
                 - secret_id
+                - domain_id
 
         Connect to Remote Repository via secret_id
         Get repository_id of remote.
@@ -52,6 +52,7 @@ class RemoteRepositoryManager(RepositoryManager):
         domain_id = self._get_domain_id_from_token(self.transaction.get_meta('token'))
         remote_token = self._get_secret(params.get('secret_id', None), domain_id)
 
+        remote_domain_id = self._get_domain_id_from_token(remote_token)
         conn = {
             'endpoint': params.get('endpoint', None),
             'version': params.get('version', None),
@@ -59,7 +60,7 @@ class RemoteRepositoryManager(RepositoryManager):
         }
 
         connector: RepositoryConnector = self.locator.get_connector('RepositoryConnector', conn=conn)
-        repo_info = connector.get_local_repository()
+        repo_info = connector.get_local_repository(remote_domain_id)
         # Overwrite repository_id to Remote one
         params['repository_id'] = repo_info.repository_id
 
