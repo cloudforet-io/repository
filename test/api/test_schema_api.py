@@ -38,7 +38,7 @@ class TestSchemaAPI(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        config.init_conf(service='repository')
+        config.init_conf(package='spaceone.repository')
         connect('test', host='mongomock://localhost')
         super().setUpClass()
 

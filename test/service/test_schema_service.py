@@ -22,7 +22,7 @@ class TestSchemaService(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        config.init_conf(service='repository')
+        config.init_conf(package='spaceone.repository')
         connect('test', host='mongomock://localhost')
 
         cls.repository_vo = RepositoryFactory(repository_type='local')
