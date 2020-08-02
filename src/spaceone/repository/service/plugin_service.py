@@ -77,7 +77,6 @@ class PluginService(BaseService):
         # Pre-condition Check
         self._check_template(params.get('template'))
         # self._check_capability(params.get('capability'))
-        self._check_project(params.get('project_id'), params['domain_id'])
         self._check_service_type(params.get('service_type'))
 
         plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager')
