@@ -66,12 +66,12 @@ class RepositoryConnector(BaseConnector):
         decoded_token = JWTUtil.unverified_decode(self._token)
         self.domain_id = decoded_token['did']
 
-    def get_local_repository(self):
+    def get_local_repository(self, domain_id):
         """ Repository.list
         Get Repository Information of Remote
         Return only 1 Repository
         """
-        param = {'repository_type': 'local'}
+        param = {'repository_type': 'local', 'domain_id': domain_id}
         response = self.client.Repository.list(param, metadata=self.meta)
         # _LOGGER.debug(f'[get_local_repository] Repositories: {repositories}')
         # _LOGGER.debug(f'[get_local_repository] count: {count}')

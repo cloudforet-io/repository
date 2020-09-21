@@ -2,6 +2,9 @@ import consul
 import logging
 import time
 
+
+from google.protobuf.json_format import MessageToDict
+
 from spaceone.core import config
 from spaceone.core.auth.jwt.jwt_util import JWTUtil
 
@@ -52,7 +55,7 @@ class RemoteRepositoryManager(RepositoryManager):
         domain_id = self._get_domain_id_from_token(self.transaction.get_meta('token'))
         remote_token = self._get_secret(params.get('secret_id', None), domain_id)
 
-        remote_domain_id = self._get_domain_id_from_token(remote_token)
+        remote_domain_id = self._get_domain_id_from_token(remote_token['token'])
         conn = {
             'endpoint': params.get('endpoint', None),
             'version': params.get('version', None),
@@ -96,7 +99,9 @@ class RemoteRepositoryManager(RepositoryManager):
 
         connector = self.locator.get_connector('SecretConnector', token=root_token, domain_id=root_domain_id)
         secret_data = connector.get_secret_data(secret_id, domain_id)
-        return secret_data.data
+        secret_data_json = MessageToDict(secret_data)
+        return secret_data_json['data']
+        #return MessageToDict(secret_data.data)
 
     def _get_domain_id_from_token(self, token):
         decoded_token = JWTUtil.unverified_decode(token)
