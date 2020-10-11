@@ -36,7 +36,8 @@ setup(
         'mongoengine',
         'docker_registry_client',
         'python-consul',
-        'schematics'
+        'schematics',
+        'boto3'
     ],
     zip_safe=False,
 )

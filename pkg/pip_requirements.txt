@@ -4,3 +4,4 @@ mongoengine
 docker_registry_client
 python-consul
 schematics
+boto3

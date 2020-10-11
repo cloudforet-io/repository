@@ -50,11 +50,14 @@ class LocalPluginManager(PluginManager):
         plugin_vo.delete()
 
     def get_plugin(self, plugin_id, domain_id, only=None):
-        plugin_vo = self.plugin_model.get(domain_id=domain_id, plugin_id=plugin_id, only=only)
+        #plugin_vo = self.plugin_model.get(domain_id=domain_id, plugin_id=plugin_id, only=only)
+        plugin_vo = self.plugin_model.get(plugin_id=plugin_id, only=only)
         return plugin_vo
 
     def list_plugins(self, query, domain_id):
-        return self.plugin_model.query(**query)
+        # remove domain_id (for other domains)
+        new_query = self._remove_domain_id_from_query(query)
+        return self.plugin_model.query(**new_query)
 
     def stat_plugins(self, query, domain_id):
         return self.plugin_model.stat(**query)
@@ -74,6 +77,36 @@ class LocalPluginManager(PluginManager):
         connector = self.locator.get_connector("RegistryConnector")
         tags = connector.get_tags(plugin_vo.image)
         return tags
+
+    def _remove_domain_id_from_query(self, query):
+        """
+        query = {'page': {'start': 1.0, 'limit': 2.0}}
+
+        Remove domain_id at filter
+        Update page to int value (may be float)
+        """
+
+        new_query = query.copy()
+
+        # Warning: wrong transfer of query
+        # page
+        page = new_query.get('page', {})
+        page_dic = {}
+        for k, v in page.items():
+            page_dic[k] = int(v)
+        if page_dic != {}:
+            new_query['page'] = page_dic
+
+        v = new_query['filter']
+        for index in range(len(v)):
+            item = v[index]
+            if 'k' in item and item['k'] == 'domain_id':
+                del new_query['filter'][index]
+                break
+            elif 'key' in item and item['key'] == 'domain_id':
+                del new_query['filter'][index]
+                break
+        return new_query
 
     @staticmethod
     def _get_registry_url():
