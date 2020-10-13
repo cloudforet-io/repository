@@ -49,7 +49,7 @@ class Policy(MongoModel):
         ],
         'aggregate': {
             'lookup': {
-                'repository': {
+                'ref_repository': {
                     'from': 'repository'
                 }
             }

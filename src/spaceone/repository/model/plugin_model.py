@@ -73,7 +73,7 @@ class Plugin(MongoModel):
         ],
         'aggregate': {
             'lookup': {
-                'repository': {
+                'ref_repository': {
                     'from': 'repository'
                 }
             }
