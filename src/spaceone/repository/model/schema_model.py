@@ -50,7 +50,7 @@ class Schema(MongoModel):
         ],
         'aggregate': {
             'lookup': {
-                'ref_repository': {
+                'repository': {
                     'from': 'repository'
                 }
             }
