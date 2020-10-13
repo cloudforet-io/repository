@@ -46,12 +46,5 @@ class Policy(MongoModel):
             'repository',
             'project_id',
             'domain_id'
-        ],
-        'aggregate': {
-            'lookup': {
-                'repository': {
-                    'from': 'repository'
-                }
-            }
-        }
+        ]
     }
