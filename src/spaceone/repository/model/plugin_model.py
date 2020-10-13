@@ -70,14 +70,7 @@ class Plugin(MongoModel):
             'repository',
             'project_id',
             'domain_id'
-        ],
-        'aggregate': {
-            'lookup': {
-                'repository': {
-                    'from': 'repository'
-                }
-            }
-        }
+        ]
     }
 
     @queryset_manager
