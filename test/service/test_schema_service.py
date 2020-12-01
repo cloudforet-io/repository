@@ -74,9 +74,12 @@ class TestSchemaService(unittest.TestCase):
                 'required': ['aws_access_key_id', 'aws_secret_access_key']
             },
             'labels': ['cc', 'dd'],
-            'tags': {
-                'tag_key': 'tag_value'
-            },
+            'tags': [
+                {
+                    'key': 'tag_key',
+                    'value': 'tag_value'
+                }
+            ],
             'domain_id': self.domain_id
         }
 
@@ -92,7 +95,7 @@ class TestSchemaService(unittest.TestCase):
         self.assertEqual(params['service_type'], schema_vo.service_type)
         self.assertEqual(params.get('schema', {}), schema_vo.schema)
         self.assertEqual(params.get('labels', []), schema_vo.labels)
-        self.assertEqual(params.get('tags', {}), schema_vo.tags)
+        self.assertEqual(params.get('tags', {}), schema_vo.to_dict()['tags'])
         self.assertEqual(params['domain_id'], schema_vo.domain_id)
 
     @patch.object(MongoModel, 'connect', return_value=None)
@@ -193,9 +196,12 @@ class TestSchemaService(unittest.TestCase):
                 'required': ['domain']
             },
             'labels': ['ee', 'ff'],
-            'tags': {
-                'update_key': 'update_value'
-            },
+            'tags': [
+                {
+                    'key': 'update_key',
+                    'value': 'update_value'
+                }
+            ],
             'domain_id': self.domain_id
         }
 
@@ -210,7 +216,7 @@ class TestSchemaService(unittest.TestCase):
         self.assertEqual(params['name'], schema_vo.name)
         self.assertEqual(params.get('schema', {}), schema_vo.schema)
         self.assertEqual(params.get('labels', []), schema_vo.labels)
-        self.assertEqual(params.get('tags', {}), schema_vo.tags)
+        self.assertEqual(params.get('tags', {}), schema_vo.to_dict()['tags'])
 
     @patch.object(MongoModel, 'connect', return_value=None)
     def test_delete_schema(self, *args):
@@ -308,7 +314,7 @@ class TestSchemaService(unittest.TestCase):
 
     @patch.object(MongoModel, 'connect', return_value=None)
     def test_list_schemas_by_tag(self, *args):
-        SchemaFactory(tags={'tag_key': 'tag_value'}, repository=self.repository_vo,
+        SchemaFactory(tags=[{'key': 'tag_key_1', 'value': 'tag_value_1'}], repository=self.repository_vo,
                       domain_id=self.domain_id)
         schema_vos = SchemaFactory.build_batch(9, repository=self.repository_vo,
                                                domain_id=self.domain_id)
@@ -317,8 +323,8 @@ class TestSchemaService(unittest.TestCase):
         params = {
             'query': {
                 'filter': [{
-                    'k': 'tags.tag_key',
-                    'v': 'tag_value',
+                    'k': 'tags.tag_key_1',
+                    'v': 'tag_value_1',
                     'o': 'eq'
                 }]
             },

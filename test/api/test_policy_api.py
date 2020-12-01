@@ -62,9 +62,12 @@ class TestPolicyAPI(unittest.TestCase):
                 'inventory.Collector.list',
             ],
             'labels': ['cc', 'dd'],
-            'tags': {
-                'tag_key': 'tag_value'
-            },
+            'tags': [
+                {
+                    'key': 'tag_key',
+                    'value': 'tag_value'
+                }
+            ],
             'domain_id': utils.generate_id('domain')
         }
         mock_parse_request.return_value = (params, {})
@@ -73,12 +76,13 @@ class TestPolicyAPI(unittest.TestCase):
         policy_info = policy_servicer.create({}, {})
 
         print_message(policy_info, 'test_create_policy')
+        policy_data = MessageToDict(policy_info, preserving_proto_field_name=True)
 
         self.assertIsInstance(policy_info, policy_pb2.PolicyInfo)
         self.assertEqual(policy_info.name, params['name'])
         self.assertEqual(list(policy_info.permissions), params['permissions'])
         self.assertListEqual(list(policy_info.labels), params['labels'])
-        self.assertDictEqual(MessageToDict(policy_info.tags), params['tags'])
+        self.assertListEqual(policy_data['tags'], params['tags'])
         self.assertEqual(policy_info.domain_id, params['domain_id'])
         self.assertIsNotNone(getattr(policy_info, 'created_at', None))
 
@@ -92,9 +96,12 @@ class TestPolicyAPI(unittest.TestCase):
                 'inventory.Region.*',
                 'inventory.Server.*'
             ],
-            'tags': {
-                'update_key': 'update_value'
-            },
+            'tags': [
+                {
+                    'key': 'update_key',
+                    'value': 'update_value'
+                }
+            ],
             'domain_id': utils.generate_id('domain')
         }
         mock_parse_request.return_value = (params, {})
@@ -103,11 +110,12 @@ class TestPolicyAPI(unittest.TestCase):
         policy_info = policy_servicer.update({}, {})
 
         print_message(policy_info, 'test_update_policy')
+        policy_data = MessageToDict(policy_info, preserving_proto_field_name=True)
 
         self.assertIsInstance(policy_info, policy_pb2.PolicyInfo)
         self.assertEqual(policy_info.name, params['name'])
         self.assertEqual(list(policy_info.permissions), params['permissions'])
-        self.assertDictEqual(MessageToDict(policy_info.tags), params['tags'])
+        self.assertListEqual(policy_data['tags'], params['tags'])
 
     @patch.object(BaseAPI, '__init__', return_value=None)
     @patch.object(Locator, 'get_service', return_value=_MockPolicyService())

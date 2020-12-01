@@ -20,9 +20,12 @@ class PolicyFactory(factory.mongoengine.MongoEngineFactory):
         'identity.User.*',
     ]
     labels = ['aa', 'bb']
-    tags = {
-        'key': 'value'
-    }
+    tags = [
+        {
+            'key': 'tag_key',
+            'value': 'tag_value'
+        }
+    ]
 
     repository = factory.SubFactory(RepositoryFactory)
     project_id = None

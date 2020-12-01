@@ -7,12 +7,17 @@ from spaceone.repository.model.repository_model import Repository
 __all__ = ['Schema']
 
 
+class SchemaTag(EmbeddedDocument):
+    key = StringField(max_length=255)
+    value = StringField(max_length=255)
+
+
 class Schema(MongoModel):
     name = StringField(max_length=255, unique_with='domain_id')
     service_type = StringField(max_length=255)
     schema = DictField()
     labels = ListField(StringField(max_length=255))
-    tags = DictField()
+    tags = ListField(EmbeddedDocumentField(SchemaTag))
     repository = ReferenceField('Repository', reverse_delete_rule=DENY)
     project_id = StringField(max_length=255, default=None, null=True)
     domain_id = StringField(max_length=255)
@@ -46,6 +51,7 @@ class Schema(MongoModel):
             'service_type',
             'repository',
             'project_id',
-            'domain_id'
+            'domain_id',
+            ('tags.key', 'tags.value')
         ]
     }
