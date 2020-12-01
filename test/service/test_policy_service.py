@@ -58,9 +58,12 @@ class TestPolicyService(unittest.TestCase):
                 'monitoring.*'
             ],
             'labels': ['cc', 'dd'],
-            'tags': {
-                'tag_key': 'tag_value'
-            },
+            'tags': [
+                {
+                    'key': 'tag_key',
+                    'value': 'tag_value'
+                }
+            ],
             'domain_id': self.domain_id
         }
 
@@ -75,7 +78,7 @@ class TestPolicyService(unittest.TestCase):
         self.assertEqual(params['name'], policy_vo.name)
         self.assertEqual(params.get('permissions', []), policy_vo.permissions)
         self.assertEqual(params.get('labels', []), policy_vo.labels)
-        self.assertEqual(params.get('tags', {}), policy_vo.tags)
+        self.assertEqual(params.get('tags', {}), policy_vo.to_dict()['tags'])
         self.assertEqual(params['domain_id'], policy_vo.domain_id)
 
     @patch.object(MongoModel, 'connect', return_value=None)
@@ -124,9 +127,12 @@ class TestPolicyService(unittest.TestCase):
                 '*'
             ],
             'labels': ['ee', 'ff'],
-            'tags': {
-                'update_key': 'update_value'
-            },
+            'tags': [
+                {
+                    'key': 'update_key',
+                    'value': 'update_value'
+                }
+            ],
             'domain_id': self.domain_id
         }
 
@@ -141,7 +147,7 @@ class TestPolicyService(unittest.TestCase):
         self.assertEqual(params['name'], policy_vo.name)
         self.assertEqual(params.get('permissions', []), policy_vo.permissions)
         self.assertEqual(params.get('labels', []), policy_vo.labels)
-        self.assertEqual(params.get('tags', {}), policy_vo.tags)
+        self.assertEqual(params.get('tags', {}), policy_vo.to_dict()['tags'])
 
     @patch.object(MongoModel, 'connect', return_value=None)
     def test_delete_policy(self, *args):
@@ -239,7 +245,7 @@ class TestPolicyService(unittest.TestCase):
 
     @patch.object(MongoModel, 'connect', return_value=None)
     def test_list_policies_by_tag(self, *args):
-        PolicyFactory(tags={'tag_key': 'tag_value'}, repository=self.repository_vo,
+        PolicyFactory(tags=[{'key': 'tag_key_1', 'value': 'tag_value_1'}], repository=self.repository_vo,
                       domain_id=self.domain_id)
         policy_vos = PolicyFactory.build_batch(9, repository=self.repository_vo,
                                                domain_id=self.domain_id)
@@ -248,8 +254,8 @@ class TestPolicyService(unittest.TestCase):
         params = {
             'query': {
                 'filter': [{
-                    'k': 'tags.tag_key',
-                    'v': 'tag_value',
+                    'k': 'tags.tag_key_1',
+                    'v': 'tag_value_1',
                     'o': 'eq'
                 }]
             },

@@ -31,9 +31,12 @@ class SchemaFactory(factory.mongoengine.MongoEngineFactory):
         'required': ['domain', 'client_id']
     }
     labels = ['aa', 'bb']
-    tags = {
-        'key': 'value'
-    }
+    tags = [
+        {
+            'key': 'tag_key',
+            'value': 'tag_value'
+        }
+    ]
 
     repository = factory.SubFactory(RepositoryFactory)
     project_id = None

@@ -1,4 +1,5 @@
 import functools
+from spaceone.api.core.v1 import tag_pb2
 from spaceone.api.repository.v1 import plugin_pb2
 from spaceone.core.pygrpc.message_type import *
 from spaceone.repository.model.plugin_model import Plugin
@@ -22,7 +23,7 @@ def PluginInfo(plugin_vo: Plugin, minimal=False):
             'capability': change_struct_type(plugin_vo.capability),
             'template': change_struct_type(plugin_vo.template),
             'labels': change_list_value_type(plugin_vo.labels),
-            'tags': change_struct_type(plugin_vo.tags),
+            'tags': [tag_pb2.Tag(key=tag.key, value=tag.value) for tag in plugin_vo.tags],
             'project_id': plugin_vo.project_id,
             'domain_id': plugin_vo.domain_id,
             'created_at': change_timestamp_type(plugin_vo.created_at)

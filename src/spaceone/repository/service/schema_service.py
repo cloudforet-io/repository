@@ -28,7 +28,7 @@ class SchemaService(BaseService):
                 'service_type': 'str',
                 'schema': 'dict',
                 'labels': 'list',
-                'tags': 'dict',
+                'tags': 'list',
                 'project_id': 'str',
                 'domain_id': 'str'
             }
@@ -60,7 +60,7 @@ class SchemaService(BaseService):
                 'name': 'str',
                 'schema': 'dict',
                 'labels': 'list',
-                'tags': 'dict'
+                'tags': 'list'
                 'domain_id': 'str'
             }
 
@@ -135,6 +135,7 @@ class SchemaService(BaseService):
     @check_required(['repository_id', 'domain_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'name', 'service_type', 'project_id', 'domain_id'])
+    @change_tag_filter('tags')
     @append_keyword_filter(['name', 'labels'])
     def list(self, params):
         """ List schemas (local or repo)
@@ -165,6 +166,7 @@ class SchemaService(BaseService):
     @transaction
     @check_required(['query', 'repository_id', 'domain_id'])
     @append_query_filter(['repository_id', 'domain_id'])
+    @append_keyword_filter(['name', 'labels'])
     def stat(self, params):
         """
         Args:

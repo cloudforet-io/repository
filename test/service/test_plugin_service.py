@@ -82,9 +82,12 @@ class TestPluginService(unittest.TestCase):
                 }
             },
             'labels': ['cc', 'dd'],
-            'tags': {
-                'tag_key': 'tag_value'
-            },
+            'tags': [
+                {
+                    'key': 'tag_key',
+                    'value': 'tag_value'
+                }
+            ],
             'domain_id': self.domain_id
         }
 
@@ -104,7 +107,7 @@ class TestPluginService(unittest.TestCase):
         self.assertEqual(params.get('capability', {}), plugin_vo.capability)
         self.assertEqual(params.get('template', {}), plugin_vo.template)
         self.assertEqual(params.get('labels', []), plugin_vo.labels)
-        self.assertEqual(params.get('tags', {}), plugin_vo.tags)
+        self.assertEqual(params.get('tags', {}), plugin_vo.to_dict()['tags'])
         self.assertEqual(params['domain_id'], plugin_vo.domain_id)
 
     @patch.object(MongoModel, 'connect', return_value=None)
@@ -212,9 +215,12 @@ class TestPluginService(unittest.TestCase):
                 }
             },
             'labels': ['ee', 'ff'],
-            'tags': {
-                'update_key': 'update_value'
-            },
+            'tags': [
+                {
+                    'key': 'update_key',
+                    'value': 'update_value'
+                }
+            ],
             'domain_id': self.domain_id
         }
 
@@ -232,7 +238,7 @@ class TestPluginService(unittest.TestCase):
         self.assertEqual(params.get('capability', {}), plugin_vo.capability)
         self.assertEqual(params.get('template', {}), plugin_vo.template)
         self.assertEqual(params.get('labels', []), plugin_vo.labels)
-        self.assertEqual(params.get('tags', {}), plugin_vo.tags)
+        self.assertEqual(params.get('tags', {}), plugin_vo.to_dict()['tags'])
 
     @patch.object(MongoModel, 'connect', return_value=None)
     def test_delete_plugin(self, *args):
@@ -425,7 +431,7 @@ class TestPluginService(unittest.TestCase):
 
     @patch.object(MongoModel, 'connect', return_value=None)
     def test_list_plugins_by_tag(self, *args):
-        PluginFactory(tags={'tag_key': 'tag_value'}, repository=self.repository_vo,
+        PluginFactory(tags=[{'key': 'tag_key_1', 'value': 'tag_value_1'}], repository=self.repository_vo,
                       domain_id=self.domain_id)
         plugin_vos = PluginFactory.build_batch(9, repository=self.repository_vo,
                                                domain_id=self.domain_id)
@@ -434,8 +440,8 @@ class TestPluginService(unittest.TestCase):
         params = {
             'query': {
                 'filter': [{
-                    'k': 'tags.tag_key',
-                    'v': 'tag_value',
+                    'k': 'tags.tag_key_1',
+                    'v': 'tag_value_1',
                     'o': 'eq'
                 }]
             },

@@ -32,7 +32,7 @@ class PluginService(BaseService):
                 'capability': 'dict',
                 'template': 'dict',
                 'labels': 'list',
-                'tags': 'dict',
+                'tags': 'list',
                 'project_id': 'str',
                 'domain_id': 'str'
             }
@@ -67,7 +67,7 @@ class PluginService(BaseService):
                 'capability': 'dict',
                 'template': 'dict',
                 'labels': 'list',
-                'tags': 'dict'
+                'tags': 'list'
                 'domain_id': 'str'
             }
 
@@ -229,6 +229,7 @@ class PluginService(BaseService):
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'plugin_id', 'name', 'state', 'service_type',
                           'provider', 'project_id', 'domain_id'])
+    @change_tag_filter('tags')
     @append_keyword_filter(['plugin_id', 'name', 'provider', 'labels'])
     def list(self, params):
         """ List plugins (local or repo)
@@ -262,6 +263,7 @@ class PluginService(BaseService):
     @transaction
     @check_required(['query', 'repository_id', 'domain_id'])
     @append_query_filter(['repository_id', 'domain_id'])
+    @append_keyword_filter(['plugin_id', 'name', 'provider', 'labels'])
     def stat(self, params):
         """
         Args:

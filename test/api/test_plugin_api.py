@@ -91,9 +91,12 @@ class TestPluginAPI(unittest.TestCase):
                 }
             },
             'labels': ['cc', 'dd'],
-            'tags': {
-                'tag_key': 'tag_value'
-            },
+            'tags': [
+                {
+                    'key': 'tag_key',
+                    'value': 'tag_value'
+                }
+            ],
             'domain_id': utils.generate_id('domain')
         }
         mock_parse_request.return_value = (params, {})
@@ -102,6 +105,7 @@ class TestPluginAPI(unittest.TestCase):
         plugin_info = plugin_servicer.register({}, {})
 
         print_message(plugin_info, 'test_register_plugin')
+        plugin_data = MessageToDict(plugin_info, preserving_proto_field_name=True)
 
         self.assertIsInstance(plugin_info, plugin_pb2.PluginInfo)
         self.assertEqual(plugin_info.name, params['name'])
@@ -112,7 +116,7 @@ class TestPluginAPI(unittest.TestCase):
         self.assertDictEqual(MessageToDict(plugin_info.capability), params['capability'])
         self.assertDictEqual(MessageToDict(plugin_info.template), params['template'])
         self.assertListEqual(list(plugin_info.labels), params['labels'])
-        self.assertDictEqual(MessageToDict(plugin_info.tags), params['tags'])
+        self.assertListEqual(plugin_data['tags'], params['tags'])
         self.assertEqual(plugin_info.domain_id, params['domain_id'])
         self.assertIsNotNone(getattr(plugin_info, 'created_at', None))
 
@@ -122,9 +126,12 @@ class TestPluginAPI(unittest.TestCase):
     def test_update_plugin(self, mock_parse_request, *args):
         params = {
             'name': utils.random_string(),
-            'tags': {
-                'update_key': 'update_value'
-            },
+            'tags': [
+                {
+                    'key': 'update_key',
+                    'value': 'update_value'
+                }
+            ],
             'domain_id': utils.generate_id('domain')
         }
         mock_parse_request.return_value = (params, {})
@@ -133,10 +140,11 @@ class TestPluginAPI(unittest.TestCase):
         plugin_info = plugin_servicer.update({}, {})
 
         print_message(plugin_info, 'test_update_plugin')
+        plugin_data = MessageToDict(plugin_info, preserving_proto_field_name=True)
 
         self.assertIsInstance(plugin_info, plugin_pb2.PluginInfo)
         self.assertEqual(plugin_info.name, params['name'])
-        self.assertDictEqual(MessageToDict(plugin_info.tags), params['tags'])
+        self.assertListEqual(plugin_data['tags'], params['tags'])
 
     @patch.object(BaseAPI, '__init__', return_value=None)
     @patch.object(Locator, 'get_service', return_value=_MockPluginService())

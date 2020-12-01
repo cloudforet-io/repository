@@ -27,7 +27,7 @@ class PolicyService(BaseService):
                 'name': 'str',
                 'permissions': 'list',
                 'labels': 'list',
-                'tags': 'dict',
+                'tags': 'list',
                 'project_id': 'str',
                 'domain_id': 'str'
             }
@@ -57,7 +57,7 @@ class PolicyService(BaseService):
                 'name': 'str',
                 'permissions': 'list',
                 'labels': 'list',
-                'tags': 'dict'
+                'tags': 'list'
                 'domain_id': 'str'
             }
 
@@ -129,6 +129,7 @@ class PolicyService(BaseService):
     @check_required(['repository_id', 'domain_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'policy_id', 'name', 'project_id', 'domain_id'])
+    @change_tag_filter('tags')
     @append_keyword_filter(['policy_id', 'name', 'labels'])
     def list(self, params):
         """ List policies (local or repo)
@@ -159,6 +160,7 @@ class PolicyService(BaseService):
     @transaction
     @check_required(['query', 'repository_id', 'domain_id'])
     @append_query_filter(['repository_id', 'domain_id'])
+    @append_keyword_filter(['policy_id', 'name', 'labels'])
     def stat(self, params):
         """
         Args:

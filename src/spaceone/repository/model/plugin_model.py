@@ -9,6 +9,11 @@ from spaceone.repository.model.repository_model import Repository
 __all__ = ['Plugin']
 
 
+class PluginTag(EmbeddedDocument):
+    key = StringField(max_length=255)
+    value = StringField(max_length=255)
+
+
 class Plugin(MongoModel):
     """
     name is unique per domain
@@ -23,7 +28,7 @@ class Plugin(MongoModel):
     capability = DictField()
     template = DictField()
     labels = ListField(StringField(max_length=255))
-    tags = DictField()
+    tags = ListField(EmbeddedDocumentField(PluginTag))
     repository = ReferenceField('Repository', reverse_delete_rule=DENY)
     project_id = StringField(max_length=255, default=None, null=True)
     domain_id = StringField(max_length=255)
@@ -69,7 +74,8 @@ class Plugin(MongoModel):
             'provider',
             'repository',
             'project_id',
-            'domain_id'
+            'domain_id',
+            ('tags.key', 'tags.value')
         ]
     }
 
