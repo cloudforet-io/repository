@@ -78,7 +78,6 @@ class RepositoryConnector(BaseConnector):
         # if count > 1:
         #    for repo in repositories:
         #        _LOGGER.debug(f'[get_repository] name: {repo.name}')
-        print(response)
         return response.results[0]
 
     def get_policy(self, name, only=None):
@@ -87,7 +86,7 @@ class RepositoryConnector(BaseConnector):
         """
         param = {'name': name, 'domain_id': self.domain_id, 'only': only}
         _LOGGER.debug("param: %s" % param)
-        return self.client.Schema.get(param, metadata=self.meta)
+        return self.client.Policy.get(param, metadata=self.meta)
 
     def list_policies(self, query):
         _LOGGER.debug(f'[list_schemas] query: {query}')
@@ -102,7 +101,7 @@ class RepositoryConnector(BaseConnector):
             'query': updated_query
         }
         _LOGGER.debug("params: %s" % params)
-        return self.client.Schema.list(params, metadata=self.meta)
+        return self.client.Policy.list(params, metadata=self.meta)
 
     def get_schema(self, name, only=None):
         """ get schema from repository
