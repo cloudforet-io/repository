@@ -26,7 +26,8 @@ def PluginInfo(plugin_vo: Plugin, minimal=False):
             'tags': [tag_pb2.Tag(key=tag.key, value=tag.value) for tag in plugin_vo.tags],
             'project_id': plugin_vo.project_id,
             'domain_id': plugin_vo.domain_id,
-            'created_at': change_timestamp_type(plugin_vo.created_at)
+            'created_at': change_timestamp_type(plugin_vo.created_at),
+            'updated_at': change_timestamp_type(plugin_vo.updated_at)
             })
         # WARNING
         # Based on local_plugin or remote_plugin

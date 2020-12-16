@@ -25,24 +25,6 @@ class Policy(BaseAPI, policy_pb2_grpc.PolicyServicer):
             policy_svc.delete(params)
             return self.locator.get_info('EmptyInfo')
 
-    def enable(self, request, context):
-        params, metadata = self.parse_request(request, context)
-        with self.locator.get_service('PolicyService', metadata) as policy_svc:
-            policy_data = policy_svc.enable(params)
-            return self.locator.get_info('PolicyInfo', policy_data)
-
-    def disable(self, request, context):
-        params, metadata = self.parse_request(request, context)
-        with self.locator.get_service('PolicyService', metadata) as policy_svc:
-            policy_data = policy_svc.disable(params)
-            return self.locator.get_info('PolicyInfo', policy_data)
-
-    def get_versions(self, request, context):
-        params, metadata = self.parse_request(request, context)
-        with self.locator.get_service('PolicyService', metadata) as policy_svc:
-            version_list = policy_svc.get_versions(params)
-            return self.locator.get_info('VersionsInfo', version_list)
-
     def get(self, request, context):
         params, metadata = self.parse_request(request, context)
         with self.locator.get_service('PolicyService', metadata) as policy_svc:

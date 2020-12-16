@@ -54,4 +54,5 @@ class PluginFactory(factory.mongoengine.MongoEngineFactory):
     project_id = None
     domain_id = utils.generate_id('domain')
     created_at = factory.Faker('date_time')
+    updated_at = factory.Faker('date_time')
     deleted_at = None

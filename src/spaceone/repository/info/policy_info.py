@@ -21,7 +21,8 @@ def PolicyInfo(policy_vo: Policy, minimal=False):
             'tags': [tag_pb2.Tag(key=tag.key, value=tag.value) for tag in policy_vo.tags],
             'project_id': policy_vo.project_id,
             'domain_id': policy_vo.domain_id,
-            'created_at': change_timestamp_type(policy_vo.created_at)
+            'created_at': change_timestamp_type(policy_vo.created_at),
+            'updated_at': change_timestamp_type(policy_vo.updated_at)
             })
         # WARNING
         # Based on local_policy or remote_policy

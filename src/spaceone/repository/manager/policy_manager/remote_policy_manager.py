@@ -60,13 +60,14 @@ class RemotePolicyManager(PolicyManager):
         # query should be JSON style query, not gRPC
         #
 
-        response = connector.list_policys(query)
+        response = connector.list_policies(query)
         _LOGGER.debug(f'[remote list_policy] count: {response.total_count}')
 
         for policy_info in response.results:
             # Warning:
             # This is side effect coding, since policy_vo is protobuf message
             self._get_updated_policy_info(policy_info)
+
         return response.results, response.total_count
 
     def stat_policies(self, query, domain_id):

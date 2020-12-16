@@ -21,7 +21,8 @@ def SchemaInfo(schema_vo: Schema, minimal=False):
             'tags': [tag_pb2.Tag(key=tag.key, value=tag.value) for tag in schema_vo.tags],
             'project_id': schema_vo.project_id,
             'domain_id': schema_vo.domain_id,
-            'created_at': change_timestamp_type(schema_vo.created_at)
+            'created_at': change_timestamp_type(schema_vo.created_at),
+            'updated_at': change_timestamp_type(schema_vo.updated_at)
             })
         # WARNING
         # Based on local_schema or remote_schema

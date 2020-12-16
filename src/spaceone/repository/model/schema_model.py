@@ -22,6 +22,7 @@ class Schema(MongoModel):
     project_id = StringField(max_length=255, default=None, null=True)
     domain_id = StringField(max_length=255)
     created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
 
     meta = {
         'updatable_fields': [
