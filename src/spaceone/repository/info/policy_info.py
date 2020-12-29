@@ -17,7 +17,7 @@ def PolicyInfo(policy_vo: Policy, minimal=False):
     if not minimal:
         info.update({
             'permissions': change_list_value_type(policy_vo.permissions),
-            'labels': change_list_value_type(policy_vo.labels),
+            'labels': policy_vo.labels,
             'tags': [tag_pb2.Tag(key=tag.key, value=tag.value) for tag in policy_vo.tags],
             'project_id': policy_vo.project_id,
             'domain_id': policy_vo.domain_id,

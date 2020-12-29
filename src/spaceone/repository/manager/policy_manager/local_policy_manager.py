@@ -40,7 +40,8 @@ class LocalPolicyManager(PolicyManager):
         policy_vo.delete()
 
     def get_policy(self, policy_id, domain_id, only=None):
-        policy_vo = self.policy_model.get(domain_id=domain_id, policy_id=policy_id, only=only)
+        # policy_vo = self.policy_model.get(domain_id=domain_id, policy_id=policy_id, only=only)
+        policy_vo = self.policy_model.get(policy_id=policy_id, only=only)
         return policy_vo
 
     def list_policies(self, query, domain_id):

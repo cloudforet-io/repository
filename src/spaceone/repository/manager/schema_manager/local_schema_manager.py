@@ -41,7 +41,8 @@ class LocalSchemaManager(SchemaManager):
         schema_vo.delete()
 
     def get_schema(self, schema_name, domain_id, only=None):
-        schema_vo = self.schema_model.get(domain_id=domain_id, name=schema_name, only=only)
+        # schema_vo = self.schema_model.get(domain_id=domain_id, name=schema_name, only=only)
+        schema_vo = self.schema_model.get(name=schema_name, only=only)
         return schema_vo
 
     def list_schemas(self, query, domain_id):
