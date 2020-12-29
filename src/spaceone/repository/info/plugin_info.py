@@ -22,7 +22,7 @@ def PluginInfo(plugin_vo: Plugin, minimal=False):
             'registry_url': plugin_vo.registry_url,
             'capability': change_struct_type(plugin_vo.capability),
             'template': change_struct_type(plugin_vo.template),
-            'labels': change_list_value_type(plugin_vo.labels),
+            'labels': plugin_vo.labels,
             'tags': [tag_pb2.Tag(key=tag.key, value=tag.value) for tag in plugin_vo.tags],
             'project_id': plugin_vo.project_id,
             'domain_id': plugin_vo.domain_id,
