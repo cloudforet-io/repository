@@ -17,7 +17,7 @@ def SchemaInfo(schema_vo: Schema, minimal=False):
     if not minimal:
         info.update({
             'schema': change_struct_type(schema_vo.schema),
-            'labels': change_list_value_type(schema_vo.labels),
+            'labels': schema_vo.labels,
             'tags': [tag_pb2.Tag(key=tag.key, value=tag.value) for tag in schema_vo.tags],
             'project_id': schema_vo.project_id,
             'domain_id': schema_vo.domain_id,
