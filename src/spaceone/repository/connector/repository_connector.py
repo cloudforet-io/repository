@@ -80,16 +80,16 @@ class RepositoryConnector(BaseConnector):
         #        _LOGGER.debug(f'[get_repository] name: {repo.name}')
         return response.results[0]
 
-    def get_policy(self, name, only=None):
+    def get_policy(self, policy_id, only=None):
         """ get policy from repository
         API: repository.Policy.get
         """
-        param = {'name': name, 'domain_id': self.domain_id, 'only': only}
+        param = {'policy_id': policy_id, 'domain_id': self.domain_id, 'only': only}
         _LOGGER.debug("param: %s" % param)
         return self.client.Policy.get(param, metadata=self.meta)
 
     def list_policies(self, query):
-        _LOGGER.debug(f'[list_schemas] query: {query}')
+        _LOGGER.debug(f'[list_policies] query: {query}')
         repo_id = self._get_repo_id_from_query(query)
         # query contains domain_id (my domain_id),
         # but we needs remote_repository's domain_id
