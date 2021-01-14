@@ -47,12 +47,6 @@ class Plugin(MongoModel):
             'tags',
             'deleted_at'
         ],
-        'exact_fields': [
-            'plugin_id',
-            'state',
-            'project_id',
-            'domain_id',
-        ],
         'minimal_fields': [
             'plugin_id',
             'name',
@@ -77,7 +71,8 @@ class Plugin(MongoModel):
             'project_id',
             'domain_id',
             ('tags.key', 'tags.value')
-        ]
+        ],
+        'auto_create_index': False
     }
 
     @queryset_manager

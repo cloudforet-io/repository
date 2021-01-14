@@ -25,12 +25,6 @@ class Repository(MongoModel):
             'state',
             'deleted_at'
         ],
-        'exact_fields': [
-            'repository_id',
-            'name',
-            'endpoint',
-            'version'
-        ],
         'minimal_fields': [
             'repository_id',
             'name',
@@ -41,7 +35,8 @@ class Repository(MongoModel):
             'repository_id',
             'name',
             'repository_type'
-        ]
+        ],
+        'auto_create_index': False
     }
 
     @queryset_manager

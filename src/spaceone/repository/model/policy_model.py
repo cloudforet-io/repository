@@ -30,11 +30,6 @@ class Policy(MongoModel):
             'labels',
             'tags'
         ],
-        'exact_fields': [
-            'policy_id',
-            'project_id',
-            'domain_id',
-        ],
         'minimal_fields': [
             'policy_id',
             'name'
@@ -53,5 +48,6 @@ class Policy(MongoModel):
             'project_id',
             'domain_id',
             ('tags.key', 'tags.value')
-        ]
+        ],
+        'auto_create_index': False
     }

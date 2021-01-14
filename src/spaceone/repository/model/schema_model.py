@@ -31,11 +31,6 @@ class Schema(MongoModel):
             'labels',
             'tags'
         ],
-        'exact_fields': [
-            'name',
-            'project_id',
-            'domain_id',
-        ],
         'minimal_fields': [
             'name',
             'service_type'
@@ -54,5 +49,6 @@ class Schema(MongoModel):
             'project_id',
             'domain_id',
             ('tags.key', 'tags.value')
-        ]
+        ],
+        'auto_create_index': False
     }
