@@ -47,6 +47,7 @@ class SchemaService(BaseService):
         # Only LOCAL repository can be registered
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
         params['repository'] = repo_mgr.get_local_repository()
+        params['repository_id'] = params['repository'].repository_id
 
         return schema_mgr.register_schema(params)
 
