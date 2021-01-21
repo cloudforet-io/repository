@@ -258,6 +258,11 @@ class PluginService(BaseService):
 
         plugin_mgr = self._get_plugin_manager_by_repo(repo_vo)
         query = params.get('query', {})
+
+        # Temporary code for DB migration
+        if 'only' in query:
+            query['only'] += ['repository_id']
+
         return plugin_mgr.list_plugins(query, params['domain_id'])
 
     @transaction
