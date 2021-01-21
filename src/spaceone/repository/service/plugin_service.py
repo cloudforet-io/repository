@@ -52,6 +52,7 @@ class PluginService(BaseService):
         # Only LOCAL repository can be registered
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
         params['repository'] = repo_mgr.get_local_repository()
+        params['repository_id'] = params['repository'].repository_id
 
         return plugin_mgr.register_plugin(params)
 
@@ -258,6 +259,11 @@ class PluginService(BaseService):
 
         plugin_mgr = self._get_plugin_manager_by_repo(repo_vo)
         query = params.get('query', {})
+
+        # Temporary code for DB migration
+        if 'only' in query:
+            query['only'] += ['repository_id']
+
         return plugin_mgr.list_plugins(query, params['domain_id'])
 
     @transaction

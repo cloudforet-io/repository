@@ -23,6 +23,8 @@ class TestSchemaService(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         config.init_conf(package='spaceone.repository')
+        config.set_service_config()
+        config.set_global(DATABASE_SUPPORT_AWS_DOCUMENT_DB=True)
         connect('test', host='mongomock://localhost')
 
         cls.repository_vo = RepositoryFactory(repository_type='local')
@@ -115,7 +117,7 @@ class TestSchemaService(unittest.TestCase):
         self.transaction.method = 'create'
         schema_svc = SchemaService(transaction=self.transaction)
 
-        with self.assertRaises(ERROR_NOT_UNIQUE_KEYS):
+        with self.assertRaises(ERROR_SAVE_UNIQUE_VALUES):
             schema_svc.create(params)
 
     @patch.object(MongoModel, 'connect', return_value=None)

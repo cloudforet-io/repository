@@ -43,6 +43,7 @@ class PolicyService(BaseService):
         # Only LOCAL repository can be created
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
         params['repository'] = repo_mgr.get_local_repository()
+        params['repository_id'] = params['repository'].repository_id
 
         return policy_mgr.create_policy(params)
 
@@ -155,6 +156,11 @@ class PolicyService(BaseService):
 
         policy_mgr = self._get_policy_manager_by_repo(repo_vo)
         query = params.get('query', {})
+
+        # Temporary code for DB migration
+        if 'only' in query:
+            query['only'] += ['repository_id']
+
         return policy_mgr.list_policies(query, params['domain_id'])
 
     @transaction
