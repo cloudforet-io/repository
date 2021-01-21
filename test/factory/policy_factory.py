@@ -28,6 +28,7 @@ class PolicyFactory(factory.mongoengine.MongoEngineFactory):
     ]
 
     repository = factory.SubFactory(RepositoryFactory)
+    repository_id = factory.LazyAttribute(lambda o: utils.generate_id('repo'))
     project_id = None
     domain_id = utils.generate_id('domain')
     created_at = factory.Faker('date_time')

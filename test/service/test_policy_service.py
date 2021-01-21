@@ -23,6 +23,8 @@ class TestPolicyService(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         config.init_conf(package='spaceone.repository')
+        config.set_service_config()
+        config.set_global(DATABASE_SUPPORT_AWS_DOCUMENT_DB=True)
         connect('test', host='mongomock://localhost')
 
         cls.repository_vo = RepositoryFactory(repository_type='local')
@@ -94,7 +96,7 @@ class TestPolicyService(unittest.TestCase):
         self.transaction.method = 'create'
         policy_svc = PolicyService(transaction=self.transaction)
 
-        with self.assertRaises(ERROR_NOT_UNIQUE_KEYS):
+        with self.assertRaises(ERROR_SAVE_UNIQUE_VALUES):
             policy_svc.create(params)
 
     @patch.object(IdentityManager, 'get_project', return_value=None)

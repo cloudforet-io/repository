@@ -18,6 +18,7 @@ class Policy(MongoModel):
     labels = ListField(StringField(max_length=255))
     tags = ListField(EmbeddedDocumentField(PolicyTag))
     repository = ReferenceField('Repository', reverse_delete_rule=DENY)
+    repository_id = StringField(max_length=40)
     project_id = StringField(max_length=255, default=None, null=True)
     domain_id = StringField(max_length=255)
     created_at = DateTimeField(auto_now_add=True)
@@ -27,6 +28,7 @@ class Policy(MongoModel):
         'updatable_fields': [
             'name',
             'permissions',
+            'repository_id',
             'labels',
             'tags'
         ],
