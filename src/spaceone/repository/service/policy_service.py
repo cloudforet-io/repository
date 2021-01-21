@@ -43,6 +43,7 @@ class PolicyService(BaseService):
         # Only LOCAL repository can be created
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
         params['repository'] = repo_mgr.get_local_repository()
+        params['repository_id'] = params['repository'].repository_id
 
         return policy_mgr.create_policy(params)
 
