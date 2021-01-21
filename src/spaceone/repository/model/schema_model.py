@@ -48,6 +48,7 @@ class Schema(MongoModel):
             'name',
             'service_type',
             'repository',
+            'repository_id',
             'project_id',
             'domain_id',
             ('tags.key', 'tags.value')
