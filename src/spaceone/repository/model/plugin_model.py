@@ -70,6 +70,7 @@ class Plugin(MongoModel):
             'service_type',
             'provider',
             'repository',
+            'repository_id',
             'project_id',
             'domain_id',
             ('tags.key', 'tags.value')

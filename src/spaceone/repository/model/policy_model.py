@@ -47,6 +47,7 @@ class Policy(MongoModel):
             'policy_id',
             'name',
             'repository',
+            'repository_id',
             'project_id',
             'domain_id',
             ('tags.key', 'tags.value')
