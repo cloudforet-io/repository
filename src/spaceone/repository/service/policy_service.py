@@ -12,12 +12,13 @@ from spaceone.repository.manager.repository_manager import RepositoryManager
 _LOGGER = logging.getLogger(__name__)
 
 
-@authentication_handler(exclude=['get'])
+@authentication_handler
 @authorization_handler
+@mutation_handler
 @event_handler
 class PolicyService(BaseService):
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['name', 'permissions', 'domain_id'])
     def create(self, params):
         """Create Policy (local repo only)
@@ -47,7 +48,7 @@ class PolicyService(BaseService):
 
         return policy_mgr.create_policy(params)
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['policy_id', 'domain_id'])
     def update(self, params):
         """Update Policy. (local repo only)
@@ -69,7 +70,7 @@ class PolicyService(BaseService):
         policy_mgr: LocalPolicyManager = self.locator.get_manager('LocalPolicyManager')
         return policy_mgr.update_policy(params)
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['policy_id', 'domain_id'])
     def delete(self, params):
         """Delete Policy (local repo only)
@@ -89,7 +90,7 @@ class PolicyService(BaseService):
         policy_mgr: LocalPolicyManager = self.locator.get_manager('LocalPolicyManager')
         return policy_mgr.delete_policy(policy_id, domain_id)
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['policy_id', 'domain_id'])
     @change_only_key({'repository_info': 'repository'})
     def get(self, params):
@@ -126,7 +127,7 @@ class PolicyService(BaseService):
 
         raise ERROR_NO_POLICY(policy_id=policy_id)
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['repository_id', 'domain_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'policy_id', 'name', 'project_id', 'domain_id'])
@@ -163,7 +164,7 @@ class PolicyService(BaseService):
 
         return policy_mgr.list_policies(query, params['domain_id'])
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['query', 'repository_id', 'domain_id'])
     @append_query_filter(['repository_id', 'domain_id'])
     @change_tag_filter('tags')

@@ -13,12 +13,13 @@ from spaceone.repository.manager.repository_manager import RepositoryManager
 _LOGGER = logging.getLogger(__name__)
 
 
-@authentication_handler(exclude=['get', 'get_versions'])
+@authentication_handler
 @authorization_handler
+@mutation_handler
 @event_handler
 class PluginService(BaseService):
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['name', 'service_type', 'image', 'domain_id'])
     def register(self, params):
         """Register Plugin (local repo only)
@@ -56,7 +57,7 @@ class PluginService(BaseService):
 
         return plugin_mgr.register_plugin(params)
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['plugin_id', 'domain_id'])
     def update(self, params):
         """Update Plugin. (local repo only)
@@ -83,7 +84,7 @@ class PluginService(BaseService):
         plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager')
         return plugin_mgr.update_plugin(params)
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['plugin_id', 'domain_id'])
     def deregister(self, params):
         """Deregister Plugin (local repo only)
@@ -112,7 +113,7 @@ class PluginService(BaseService):
         plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager')
         return plugin_mgr.delete_plugin(plugin_id, domain_id)
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['plugin_id', 'domain_id'])
     def enable(self, params):
         """ Enable plugin (local repo only)
@@ -129,7 +130,7 @@ class PluginService(BaseService):
         plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager')
         return plugin_mgr.enable_plugin(params['plugin_id'], params['domain_id'])
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['plugin_id', 'domain_id'])
     def disable(self, params):
         """ Disable Plugin (local repo only)
@@ -146,7 +147,7 @@ class PluginService(BaseService):
         plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager')
         return plugin_mgr.disable_plugin(params['plugin_id'], params['domain_id'])
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['plugin_id', 'domain_id'])
     def get_versions(self, params):
         """ Get Plugin version (local & remote)
@@ -188,7 +189,7 @@ class PluginService(BaseService):
         _LOGGER.error(f'[get_versions] no version: {plugin_id}')
         raise ERROR_NO_PLUGIN(plugin_id=plugin_id)
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['plugin_id', 'domain_id'])
     @change_only_key({'repository_info': 'repository'})
     def get(self, params):
@@ -225,7 +226,7 @@ class PluginService(BaseService):
 
         raise ERROR_NO_PLUGIN(plugin_id=plugin_id)
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['repository_id', 'domain_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'plugin_id', 'name', 'state', 'service_type',
@@ -266,7 +267,7 @@ class PluginService(BaseService):
 
         return plugin_mgr.list_plugins(query, params['domain_id'])
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['query', 'repository_id', 'domain_id'])
     @append_query_filter(['repository_id', 'domain_id'])
     @change_tag_filter('tags')

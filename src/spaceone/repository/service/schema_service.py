@@ -12,12 +12,13 @@ from spaceone.repository.manager.repository_manager import RepositoryManager
 _LOGGER = logging.getLogger(__name__)
 
 
-@authentication_handler(exclude=['get'])
+@authentication_handler
 @authorization_handler
+@mutation_handler
 @event_handler
 class SchemaService(BaseService):
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['name', 'service_type', 'schema', 'domain_id'])
     def create(self, params):
         """Create Schema
@@ -51,7 +52,7 @@ class SchemaService(BaseService):
 
         return schema_mgr.register_schema(params)
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['name', 'domain_id'])
     def update(self, params):
         """Update Schema. (local repo only)
@@ -75,7 +76,7 @@ class SchemaService(BaseService):
         schema_mgr: LocalSchemaManager = self.locator.get_manager('LocalSchemaManager')
         return schema_mgr.update_schema(params)
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['name', 'domain_id'])
     def delete(self, params):
         """Delete Schema (local repo only)
@@ -95,7 +96,7 @@ class SchemaService(BaseService):
         schema_mgr: LocalSchemaManager = self.locator.get_manager('LocalSchemaManager')
         return schema_mgr.delete_schema(schema_name, domain_id)
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['name', 'domain_id'])
     @change_only_key({'repository_info': 'repository'})
     def get(self, params):
@@ -132,7 +133,7 @@ class SchemaService(BaseService):
 
         raise ERROR_NO_SCHEMA(name=schema_name)
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['repository_id', 'domain_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'name', 'service_type', 'project_id', 'domain_id'])
@@ -169,7 +170,7 @@ class SchemaService(BaseService):
 
         return schema_mgr.list_schemas(query, params['domain_id'])
 
-    @transaction
+    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['query', 'repository_id', 'domain_id'])
     @append_query_filter(['repository_id', 'domain_id'])
     @change_tag_filter('tags')
