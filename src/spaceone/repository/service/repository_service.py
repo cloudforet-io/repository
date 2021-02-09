@@ -2,8 +2,6 @@ import logging
 
 from spaceone.core.error import *
 from spaceone.core.service import *
-
-from spaceone.repository.error import *
 from spaceone.repository.manager import *
 
 _LOGGER = logging.getLogger(__name__)
