@@ -281,7 +281,7 @@ class TestPolicyService(unittest.TestCase):
             'domain_id': self.domain_id,
             'repository_id': self.repository_vo.repository_id,
             'query': {
-                'aggregate': {
+                'aggregate': [{
                     'group': {
                         'keys': [{
                             'key': 'name',
@@ -292,11 +292,12 @@ class TestPolicyService(unittest.TestCase):
                             'name': 'Count'
                         }]
                     }
-                },
-                'sort': {
-                    'name': 'Count',
-                    'desc': True
-                }
+                }, {
+                    'sort': {
+                        'key': 'Count',
+                        'desc': True
+                    }
+                }]
             }
         }
 
