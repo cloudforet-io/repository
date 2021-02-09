@@ -1,6 +1,8 @@
 import logging
 import jsonschema
 
+from distutils.version import LooseVersion
+
 from spaceone.core.service import *
 
 from spaceone.repository.error import *
@@ -182,9 +184,9 @@ class PluginService(BaseService):
             if version_list:
                 _LOGGER.debug(f'[get_versions] version_list: {version_list}')
                 # User wants reverse list
-                version_list.sort(reverse=True)
-                _LOGGER.debug(f'[get_versions] sorted version_list: {version_list}')
-                return version_list
+                sorted_version_list = sorted(version_list, key=LooseVersion, reverse=True)
+                _LOGGER.debug(f'[get_versions] sorted version_list: {sorted_version_list}')
+                return sorted_version_list
 
         _LOGGER.error(f'[get_versions] no version: {plugin_id}')
         raise ERROR_NO_PLUGIN(plugin_id=plugin_id)
