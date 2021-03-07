@@ -8,8 +8,7 @@ worker: false
 name: repository
 replicas: 1
 image:
-    repository: spaceone
-    name: repository
+    name: spaceone/repository
     version: latest
 imagePullPolicy: IfNotPresent
 
