@@ -15,8 +15,8 @@ from spaceone.repository.manager.repository_manager import RepositoryManager
 _LOGGER = logging.getLogger(__name__)
 
 
-@authentication_handler
-@authorization_handler
+@authentication_handler(exclude=['get', 'get_versions'])
+@authorization_handler(exclude=['get', 'get_versions'])
 @mutation_handler
 @event_handler
 class PluginService(BaseService):
