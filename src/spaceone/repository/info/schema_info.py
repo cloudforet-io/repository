@@ -21,8 +21,8 @@ def SchemaInfo(schema_vo: Schema, minimal=False):
             'tags': change_struct_type(utils.tags_to_dict(schema_vo.tags)),
             'project_id': schema_vo.project_id,
             'domain_id': schema_vo.domain_id,
-            'created_at': utils.datetime_to_iso8601(schema_vo.created_at),
-            'updated_at': utils.datetime_to_iso8601(schema_vo.updated_at)
+            'created_at': utils.datetime_to_iso8601(schema_vo.created_at) or schema_vo.created_at,
+            'updated_at': utils.datetime_to_iso8601(schema_vo.updated_at) or schema_vo.updated_at
             })
         # WARNING
         # Based on local_schema or remote_schema

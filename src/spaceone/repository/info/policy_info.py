@@ -21,8 +21,8 @@ def PolicyInfo(policy_vo: Policy, minimal=False):
             'tags': change_struct_type(utils.tags_to_dict(policy_vo.tags)),
             'project_id': policy_vo.project_id,
             'domain_id': policy_vo.domain_id,
-            'created_at': utils.datetime_to_iso8601(policy_vo.created_at),
-            'updated_at': utils.datetime_to_iso8601(policy_vo.updated_at)
+            'created_at': utils.datetime_to_iso8601(policy_vo.created_at) or policy_vo.created_at,
+            'updated_at': utils.datetime_to_iso8601(policy_vo.updated_at) or policy_vo.updated_at
             })
         # WARNING
         # Based on local_policy or remote_policy
