@@ -1,7 +1,7 @@
 import functools
-from spaceone.api.core.v1 import tag_pb2
 from spaceone.api.repository.v1 import policy_pb2
 from spaceone.core.pygrpc.message_type import *
+from spaceone.core import utils
 from spaceone.repository.model.policy_model import Policy
 from spaceone.repository.info.repository_info import RepositoryInfo
 
@@ -17,12 +17,12 @@ def PolicyInfo(policy_vo: Policy, minimal=False):
     if not minimal:
         info.update({
             'permissions': change_list_value_type(policy_vo.permissions),
-            'labels': policy_vo.labels,
-            'tags': [tag_pb2.Tag(key=tag.key, value=tag.value) for tag in policy_vo.tags],
+            'labels': change_list_value_type(policy_vo.labels),
+            'tags': change_struct_type(utils.tags_to_dict(policy_vo.tags)),
             'project_id': policy_vo.project_id,
             'domain_id': policy_vo.domain_id,
-            'created_at': change_timestamp_type(policy_vo.created_at),
-            'updated_at': change_timestamp_type(policy_vo.updated_at)
+            'created_at': utils.datetime_to_iso8601(policy_vo.created_at),
+            'updated_at': utils.datetime_to_iso8601(policy_vo.updated_at)
             })
         # WARNING
         # Based on local_policy or remote_policy

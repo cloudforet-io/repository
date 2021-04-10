@@ -1,7 +1,7 @@
 import functools
-from spaceone.api.core.v1 import tag_pb2
 from spaceone.api.repository.v1 import plugin_pb2
 from spaceone.core.pygrpc.message_type import *
+from spaceone.core import utils
 from spaceone.repository.model.plugin_model import Plugin
 from spaceone.repository.info.repository_info import RepositoryInfo
 
@@ -22,12 +22,12 @@ def PluginInfo(plugin_vo: Plugin, minimal=False):
             'registry_url': plugin_vo.registry_url,
             'capability': change_struct_type(plugin_vo.capability),
             'template': change_struct_type(plugin_vo.template),
-            'labels': plugin_vo.labels,
-            'tags': [tag_pb2.Tag(key=tag.key, value=tag.value) for tag in plugin_vo.tags],
+            'labels': change_list_value_type(plugin_vo.labels),
+            'tags': change_struct_type(utils.tags_to_dict(plugin_vo.tags)),
             'project_id': plugin_vo.project_id,
             'domain_id': plugin_vo.domain_id,
-            'created_at': change_timestamp_type(plugin_vo.created_at),
-            'updated_at': change_timestamp_type(plugin_vo.updated_at)
+            'created_at': utils.datetime_to_iso8601(plugin_vo.created_at),
+            'updated_at': utils.datetime_to_iso8601(plugin_vo.updated_at)
             })
         # WARNING
         # Based on local_plugin or remote_plugin

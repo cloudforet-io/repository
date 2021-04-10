@@ -4,6 +4,7 @@ import jsonschema
 from distutils.version import LooseVersion
 
 from spaceone.core.service import *
+from spaceone.core import utils
 
 from spaceone.repository.error import *
 from spaceone.repository.model.capability_model import Capability
@@ -44,6 +45,9 @@ class PluginService(BaseService):
             plugin_vo (object)
         """
 
+        if 'tags' in params:
+            params['tags'] = utils.dict_to_tags(params['tags'])
+
         # Pre-condition Check
         self._check_template(params.get('template'))
         # self._check_capability(params.get('capability'))
@@ -78,6 +82,10 @@ class PluginService(BaseService):
         Returns:
             plugin_vo (object)
         """
+
+        if 'tags' in params:
+            params['tags'] = utils.dict_to_tags(params['tags'])
+
         # Pre-condition Check
         self._check_template(params.get('template'))
         # self._check_capability(params.get('capability'))

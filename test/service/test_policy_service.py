@@ -58,12 +58,9 @@ class TestPolicyService(unittest.TestCase):
                 'monitoring.*'
             ],
             'labels': ['cc', 'dd'],
-            'tags': [
-                {
-                    'key': 'tag_key',
-                    'value': 'tag_value'
-                }
-            ],
+            'tags': {
+                utils.random_string(): utils.random_string()
+            },
             'domain_id': self.domain_id
         }
 
@@ -78,7 +75,7 @@ class TestPolicyService(unittest.TestCase):
         self.assertEqual(params['name'], policy_vo.name)
         self.assertEqual(params.get('permissions', []), policy_vo.permissions)
         self.assertEqual(params.get('labels', []), policy_vo.labels)
-        self.assertEqual(params.get('tags', {}), policy_vo.to_dict()['tags'])
+        self.assertEqual(params['tags'], utils.tags_to_dict(policy_vo.tags))
         self.assertEqual(params['domain_id'], policy_vo.domain_id)
 
     @patch.object(MongoModel, 'connect', return_value=None)
@@ -127,12 +124,9 @@ class TestPolicyService(unittest.TestCase):
                 '*'
             ],
             'labels': ['ee', 'ff'],
-            'tags': [
-                {
-                    'key': 'update_key',
-                    'value': 'update_value'
-                }
-            ],
+            'tags': {
+                'update_key': 'update_value'
+            },
             'domain_id': self.domain_id
         }
 
@@ -147,7 +141,7 @@ class TestPolicyService(unittest.TestCase):
         self.assertEqual(params['name'], policy_vo.name)
         self.assertEqual(params.get('permissions', []), policy_vo.permissions)
         self.assertEqual(params.get('labels', []), policy_vo.labels)
-        self.assertEqual(params.get('tags', {}), policy_vo.to_dict()['tags'])
+        self.assertEqual(params['tags'], utils.tags_to_dict(policy_vo.tags))
 
     @patch.object(MongoModel, 'connect', return_value=None)
     def test_delete_policy(self, *args):

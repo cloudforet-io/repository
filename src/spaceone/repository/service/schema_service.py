@@ -2,6 +2,7 @@ import logging
 import jsonschema
 
 from spaceone.core.service import *
+from spaceone.core import utils
 
 from spaceone.repository.error import *
 from spaceone.repository.manager.identity_manager import IdentityManager
@@ -38,6 +39,9 @@ class SchemaService(BaseService):
             schema_vo (object)
         """
 
+        if 'tags' in params:
+            params['tags'] = utils.dict_to_tags(params['tags'])
+
         # Pre-condition Check
         self._check_schema(params['schema'])
         self._check_project(params.get('project_id'), params['domain_id'])
@@ -69,6 +73,10 @@ class SchemaService(BaseService):
         Returns:
             schema_vo (object)
         """
+
+        if 'tags' in params:
+            params['tags'] = utils.dict_to_tags(params['tags'])
+
         # Pre-condition Check
         self._check_schema(params.get('schema'))
         self._check_service_type(params.get('service_type'))
