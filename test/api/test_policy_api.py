@@ -1,4 +1,5 @@
 import unittest
+import copy
 from unittest.mock import patch
 from mongoengine import connect, disconnect
 from google.protobuf.json_format import MessageToDict
@@ -19,9 +20,17 @@ from test.factory.policy_factory import PolicyFactory
 class _MockPolicyService(BaseService):
 
     def create(self, params):
+        params = copy.deepcopy(params)
+        if 'tags' in params:
+            params['tags'] = utils.dict_to_tags(params['tags'])
+
         return PolicyFactory(**params)
 
     def update(self, params):
+        params = copy.deepcopy(params)
+        if 'tags' in params:
+            params['tags'] = utils.dict_to_tags(params['tags'])
+
         return PolicyFactory(**params)
 
     def delete(self, params):
@@ -62,12 +71,9 @@ class TestPolicyAPI(unittest.TestCase):
                 'inventory.Collector.list',
             ],
             'labels': ['cc', 'dd'],
-            'tags': [
-                {
-                    'key': 'tag_key',
-                    'value': 'tag_value'
-                }
-            ],
+            'tags': {
+                utils.random_string(): utils.random_string()
+            },
             'domain_id': utils.generate_id('domain')
         }
         mock_parse_request.return_value = (params, {})
@@ -82,7 +88,7 @@ class TestPolicyAPI(unittest.TestCase):
         self.assertEqual(policy_info.name, params['name'])
         self.assertEqual(list(policy_info.permissions), params['permissions'])
         self.assertListEqual(list(policy_info.labels), params['labels'])
-        self.assertListEqual(policy_data['tags'], params['tags'])
+        self.assertDictEqual(policy_data['tags'], params['tags'])
         self.assertEqual(policy_info.domain_id, params['domain_id'])
         self.assertIsNotNone(getattr(policy_info, 'created_at', None))
 
@@ -96,12 +102,9 @@ class TestPolicyAPI(unittest.TestCase):
                 'inventory.Region.*',
                 'inventory.Server.*'
             ],
-            'tags': [
-                {
-                    'key': 'update_key',
-                    'value': 'update_value'
-                }
-            ],
+            'tags': {
+                'update_key': 'update_value'
+            },
             'domain_id': utils.generate_id('domain')
         }
         mock_parse_request.return_value = (params, {})
@@ -115,7 +118,7 @@ class TestPolicyAPI(unittest.TestCase):
         self.assertIsInstance(policy_info, policy_pb2.PolicyInfo)
         self.assertEqual(policy_info.name, params['name'])
         self.assertEqual(list(policy_info.permissions), params['permissions'])
-        self.assertListEqual(policy_data['tags'], params['tags'])
+        self.assertDictEqual(policy_data['tags'], params['tags'])
 
     @patch.object(BaseAPI, '__init__', return_value=None)
     @patch.object(Locator, 'get_service', return_value=_MockPolicyService())

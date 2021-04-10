@@ -1,6 +1,7 @@
 import logging
 
 from spaceone.core.service import *
+from spaceone.core import utils
 
 from spaceone.repository.error import *
 from spaceone.repository.model.capability_model import Capability
@@ -28,7 +29,7 @@ class PolicyService(BaseService):
                 'name': 'str',
                 'permissions': 'list',
                 'labels': 'list',
-                'tags': 'list',
+                'tags': 'dict',
                 'project_id': 'str',
                 'domain_id': 'str'
             }
@@ -36,6 +37,9 @@ class PolicyService(BaseService):
         Returns:
             policy_vo (object)
         """
+
+        if 'tags' in params:
+            params['tags'] = utils.dict_to_tags(params['tags'])
 
         self._check_project(params.get('project_id'), params['domain_id'])
 
@@ -59,13 +63,16 @@ class PolicyService(BaseService):
                 'name': 'str',
                 'permissions': 'list',
                 'labels': 'list',
-                'tags': 'list'
+                'tags': 'dict'
                 'domain_id': 'str'
             }
 
         Returns:
             policy_vo (object)
         """
+
+        if 'tags' in params:
+            params['tags'] = utils.dict_to_tags(params['tags'])
 
         policy_mgr: LocalPolicyManager = self.locator.get_manager('LocalPolicyManager')
         return policy_mgr.update_policy(params)
