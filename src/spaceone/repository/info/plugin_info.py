@@ -26,8 +26,8 @@ def PluginInfo(plugin_vo: Plugin, minimal=False):
             'tags': change_struct_type(utils.tags_to_dict(plugin_vo.tags)),
             'project_id': plugin_vo.project_id,
             'domain_id': plugin_vo.domain_id,
-            'created_at': utils.datetime_to_iso8601(plugin_vo.created_at),
-            'updated_at': utils.datetime_to_iso8601(plugin_vo.updated_at)
+            'created_at': utils.datetime_to_iso8601(plugin_vo.created_at) or plugin_vo.created_at,
+            'updated_at': utils.datetime_to_iso8601(plugin_vo.updated_at) or plugin_vo.updated_at
             })
         # WARNING
         # Based on local_plugin or remote_plugin
