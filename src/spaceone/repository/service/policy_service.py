@@ -29,7 +29,7 @@ class PolicyService(BaseService):
                 'name': 'str',
                 'permissions': 'list',
                 'labels': 'list',
-                'tags': 'list',
+                'tags': 'dict',
                 'project_id': 'str',
                 'domain_id': 'str'
             }
@@ -63,7 +63,7 @@ class PolicyService(BaseService):
                 'name': 'str',
                 'permissions': 'list',
                 'labels': 'list',
-                'tags': 'list'
+                'tags': 'dict'
                 'domain_id': 'str'
             }
 

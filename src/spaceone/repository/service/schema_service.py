@@ -30,7 +30,7 @@ class SchemaService(BaseService):
                 'service_type': 'str',
                 'schema': 'dict',
                 'labels': 'list',
-                'tags': 'list',
+                'tags': 'dict',
                 'project_id': 'str',
                 'domain_id': 'str'
             }
@@ -66,7 +66,7 @@ class SchemaService(BaseService):
                 'name': 'str',
                 'schema': 'dict',
                 'labels': 'list',
-                'tags': 'list'
+                'tags': 'dict'
                 'domain_id': 'str'
             }
 

@@ -36,7 +36,7 @@ class PluginService(BaseService):
                 'capability': 'dict',
                 'template': 'dict',
                 'labels': 'list',
-                'tags': 'list',
+                'tags': 'dict',
                 'project_id': 'str',
                 'domain_id': 'str'
             }
@@ -75,7 +75,7 @@ class PluginService(BaseService):
                 'capability': 'dict',
                 'template': 'dict',
                 'labels': 'list',
-                'tags': 'list'
+                'tags': 'dict'
                 'domain_id': 'str'
             }
 
