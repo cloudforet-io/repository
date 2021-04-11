@@ -1,4 +1,5 @@
 import functools
+from google.protobuf.struct_pb2 import Struct
 from spaceone.api.repository.v1 import policy_pb2
 from spaceone.core.pygrpc.message_type import *
 from spaceone.core import utils
@@ -18,7 +19,8 @@ def PolicyInfo(policy_vo: Policy, minimal=False):
         info.update({
             'permissions': change_list_value_type(policy_vo.permissions),
             'labels': change_list_value_type(policy_vo.labels),
-            'tags': change_struct_type(utils.tags_to_dict(policy_vo.tags)),
+            'tags': policy_vo.tags if isinstance(policy_vo.tags, Struct)
+            else change_struct_type(utils.tags_to_dict(policy_vo.tags)),
             'project_id': policy_vo.project_id,
             'domain_id': policy_vo.domain_id,
             'created_at': utils.datetime_to_iso8601(policy_vo.created_at) or policy_vo.created_at,
