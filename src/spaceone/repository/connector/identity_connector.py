@@ -2,7 +2,7 @@ from google.protobuf.json_format import MessageToDict
 
 from spaceone.core.connector import BaseConnector
 from spaceone.core import pygrpc
-from spaceone.core.utils import parse_endpoint
+from spaceone.core.utils import parse_grpc_endpoint
 from spaceone.repository.error import *
 
 __all__ = ["IdentityConnector"]
@@ -20,8 +20,8 @@ class IdentityConnector(BaseConnector):
 
         for (k, v) in self.config['endpoint'].items():
             # parse endpoint
-            e = parse_endpoint(v)
-            self.client = pygrpc.client(endpoint="%s:%s" % (e['hostname'], e['port']), version=k)
+            e = parse_grpc_endpoint(v)
+            self.client = pygrpc.client(endpoint=e['endpoint'], ssl_enabled=e['ssl_enabled'])
 
     def get_project(self, project_id, domain_id):
         response = self.client.Project.get({
