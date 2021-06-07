@@ -21,24 +21,19 @@ class RepositoryConnector(BaseConnector):
 
         """ Overwrite configuration
 
-        Remote Repository has diffrent authentication.
+        Remote Repository has different authentication.
         So do not use your token at meta.
         Use another authentication algorithm like token
 
         Args:
-            connn: dict (endpoint, version, ...)
+            conn: dict (endpoint, version, ...)
 
         """
         #_LOGGER.debug("[RepositoryConnector] meta: %s" % self.transaction.meta)
         #_LOGGER.debug("[RepositoryConnector] self.conn: %s" % self.conn)
 
-        e = parse_endpoint(self.conn['endpoint'])
-        self.protocol = e['scheme']
-        if self.protocol == 'grpc':
-            self.client = pygrpc.client(endpoint="%s:%s" % (e['hostname'], e['port']), version=self.conn['version'])
-        elif self.protocol == 'http':
-            # TODO: implement
-            raise ERROR_UNSUPPORTED_API(message=self.protocol)
+        e = parse_grpc_endpoint(self.conn['endpoint'])
+        self.client = pygrpc.client(endpoint=e['endpoint'], ssl_enabled=e['ssl_enabled'])
 
         # Update meta (like domain_id)
         # TODO: change meta to marketplace token
