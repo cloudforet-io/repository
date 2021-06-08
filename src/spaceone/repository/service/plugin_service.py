@@ -58,6 +58,7 @@ class PluginService(BaseService):
 
         # Only LOCAL repository can be registered
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
+        params['plugin_id'] = self._check_plugin_naming_rules(params['image'])
         params['repository'] = repo_mgr.get_local_repository()
         params['repository_id'] = params['repository'].repository_id
 
@@ -374,3 +375,14 @@ class PluginService(BaseService):
             raise ERROR_NO_REPOSITORY()
 
         return repo_vos
+
+    def _check_plugin_naming_rules(self, image):
+        """ Check plugin name conventions
+
+        Rules:
+          - no space
+        """
+        parsed_items = image.split('/')
+        checked_name = parsed_items[-1]
+
+        return checked_name
