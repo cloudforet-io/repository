@@ -112,7 +112,7 @@ class SchemaService(BaseService):
 
         Args:
             params (dict): {
-                'schema_id': 'str',
+                'name': 'str',
                 'repository_id': 'str',
                 'domain_id': 'str',
                 'only': 'list'

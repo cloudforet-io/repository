@@ -8,12 +8,12 @@ from spaceone.core.utils import *
 from spaceone.core.auth.jwt.jwt_util import JWTUtil
 from spaceone.repository.error import *
 
-__all__ = ["RepositoryConnector"]
+__all__ = ["RemoteRepositoryConnector"]
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class RepositoryConnector(BaseConnector):
+class RemoteRepositoryConnector(BaseConnector):
     client = None
 
     def __init__(self, transaction, config, **kwargs):
@@ -29,8 +29,8 @@ class RepositoryConnector(BaseConnector):
             conn: dict (endpoint, version, ...)
 
         """
-        #_LOGGER.debug("[RepositoryConnector] meta: %s" % self.transaction.meta)
-        #_LOGGER.debug("[RepositoryConnector] self.conn: %s" % self.conn)
+        #_LOGGER.debug("[RemoteRepositoryConnector] meta: %s" % self.transaction.meta)
+        #_LOGGER.debug("[RemoteRepositoryConnector] self.conn: %s" % self.conn)
 
         e = parse_grpc_endpoint(self.conn['endpoint'])
         self.client = pygrpc.client(endpoint=e['endpoint'], ssl_enabled=e['ssl_enabled'])
@@ -146,7 +146,7 @@ class RepositoryConnector(BaseConnector):
 
     def get_plugin_version(self, plugin_id):
         param = {'plugin_id': plugin_id, 'domain_id': self.domain_id}
-        _LOGGER.debug("[RepositoryConnector] call get_plugin_versions")
+        _LOGGER.debug("[RemoteRepositoryConnector] call get_plugin_versions")
         res = self.client.Plugin.get_versions(param, metadata=self.meta)
         # Convert to list
         _LOGGER.debug(f'[get_plugin_version] {res}')

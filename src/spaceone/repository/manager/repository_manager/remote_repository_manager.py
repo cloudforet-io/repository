@@ -8,7 +8,7 @@ from google.protobuf.json_format import MessageToDict
 from spaceone.core import config
 from spaceone.core.auth.jwt.jwt_util import JWTUtil
 
-from spaceone.repository.connector.repository_connector import RepositoryConnector
+from spaceone.repository.connector.remote_repository_connector import RemoteRepositoryConnector
 from spaceone.repository.manager.repository_manager import RepositoryManager
 
 _INTERVAL = 10
@@ -62,7 +62,7 @@ class RemoteRepositoryManager(RepositoryManager):
             'credential': {'token': remote_token['token']}
         }
 
-        connector: RepositoryConnector = self.locator.get_connector('RepositoryConnector', conn=conn)
+        connector: RemoteRepositoryConnector = self.locator.get_connector('RemoteRepositoryConnector', conn=conn)
         repo_info = connector.get_local_repository(remote_domain_id)
         # Overwrite repository_id to Remote one
         params['repository_id'] = repo_info.repository_id
@@ -96,12 +96,9 @@ class RemoteRepositoryManager(RepositoryManager):
             _LOGGER.warn(f'[_get_secret] root_token is not configured, may be your are root')
             root_token = self.transaction.get_meta('token')
 
-
-        connector = self.locator.get_connector('SecretConnector', token=root_token, domain_id=root_domain_id)
-        secret_data = connector.get_secret_data(secret_id, domain_id)
-        secret_data_json = MessageToDict(secret_data)
-        return secret_data_json['data']
-        #return MessageToDict(secret_data.data)
+        secret_connector = self.locator.get_connector('SpaceConnector', service='secret', token=root_token)
+        secret_data = secret_connector.Secret.get_data({'secret_id': secret_id, 'domain_id': root_domain_id})
+        return secret_data['data']
 
     def _get_domain_id_from_token(self, token):
         decoded_token = JWTUtil.unverified_decode(token)
