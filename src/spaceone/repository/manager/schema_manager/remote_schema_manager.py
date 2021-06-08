@@ -46,7 +46,7 @@ class RemoteSchemaManager(SchemaManager):
             - domain_id : my domain_id
         """
         conn = self._get_conn_from_repository(self.repository, domain_id)
-        connector = self.locator.get_connector('RepositoryConnector', conn=conn) 
+        connector = self.locator.get_connector('RemoteRepositoryConnector', conn=conn)
 
         # schema_info, dict
         schema_info = connector.get_schema(schema_id, only)
@@ -54,7 +54,7 @@ class RemoteSchemaManager(SchemaManager):
 
     def list_schemas(self, query, domain_id):
         conn = self._get_conn_from_repository(self.repository, domain_id)
-        connector = self.locator.get_connector('RepositoryConnector', conn=conn) 
+        connector = self.locator.get_connector('RemoteRepositoryConnector', conn=conn)
 
         # Notice:
         # query should be JSON style query, not gRPC
@@ -128,9 +128,9 @@ class RemoteSchemaManager(SchemaManager):
             _LOGGER.warn(f'[_get_secret_data] root_token is not configured, may be your are root')
             root_token = self.transaction.get_meta('token')
 
-        connector = self.locator.get_connector('SecretConnector', token=root_token, domain_id=root_domain_id)
-        secret_data = connector.get_secret_data(secret_id, root_domain_id)
-        return secret_data.data
+        secret_connector = self.locator.get_connector('SpaceConnector', service='secret', token=root_token)
+        secret_data = secret_connector.Secret.get_data({'secret_id': secret_id, 'domain_id': root_domain_id})
+        return secret_data['data']
 
     def _get_domain_id_from_token(self, token):
         decoded_token = JWTUtil.unverified_decode(token)

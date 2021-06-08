@@ -28,11 +28,13 @@ CONNECTORS = {
         'password': '',
         'auth_service_url': '',
     },
-    'IdentityConnector': {
-    },
-    'RepositoryConnector': {
-    },
-    'SecretConnector': {
+    'RemoteRepositoryConnector': {},
+    'SpaceConnector': {
+        'backend': 'spaceone.core.connector.space_connector.SpaceConnector',
+        'endpoints': {
+            'identity': 'grpc://identity:50051',
+            'secret': 'grpc://secret:50051'
+        }
     }
 }
 
@@ -41,7 +43,7 @@ HANDLERS = {
 }
 
 # Docker Registry Base URL: https://index.docker.io/v1/
-REGISTRY_URL=""
+REGISTRY_URL = ""
 
 ENDPOINTS = {
 }
@@ -52,9 +54,6 @@ LOGGING = {
 LOG = {
 }
 
-################################################################
-# SecretConnector needs acess to Domain root's Secret Service
-################################################################
 ROOT_TOKEN = ""
 ROOT_TOKEN_INFO = {}
 
