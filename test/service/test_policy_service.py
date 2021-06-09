@@ -6,7 +6,6 @@ from spaceone.core.unittest.result import print_data
 from spaceone.core.unittest.runner import RichTestRunner
 from spaceone.core import config
 from spaceone.core import utils
-from spaceone.core.model.mongo_model import MongoModel
 from spaceone.core.transaction import Transaction
 from spaceone.repository.error.policy import *
 from spaceone.repository.service.policy_service import PolicyService
@@ -23,6 +22,8 @@ class TestPolicyService(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         config.init_conf(package='spaceone.repository')
+        config.set_service_config()
+        config.set_global(MOCK_MODE=True)
         connect('test', host='mongomock://localhost')
 
         cls.repository_vo = RepositoryFactory(repository_type='local')
@@ -39,14 +40,12 @@ class TestPolicyService(unittest.TestCase):
         super().tearDownClass()
         disconnect()
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def tearDown(self, *args) -> None:
         print()
         print('(tearDown) ==> Delete all policys')
         policy_vos = Policy.objects.filter()
         policy_vos.delete()
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_create_policy(self, *args):
         params = {
             'name': 'Domain Admin',
@@ -78,7 +77,6 @@ class TestPolicyService(unittest.TestCase):
         self.assertEqual(params['tags'], utils.tags_to_dict(policy_vo.tags))
         self.assertEqual(params['domain_id'], policy_vo.domain_id)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_duplicate_create_policy(self, *args):
         PolicyFactory(domain_id=self.domain_id, repository=self.repository_vo,
                       name='Domain Admin')
@@ -95,7 +93,6 @@ class TestPolicyService(unittest.TestCase):
             policy_svc.create(params)
 
     @patch.object(IdentityManager, 'get_project', return_value=None)
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_create_policy_with_project(self, *args):
         params = {
             'name': 'Domain Admin',
@@ -114,7 +111,6 @@ class TestPolicyService(unittest.TestCase):
         self.assertIsInstance(policy_vo, Policy)
         self.assertEqual(policy_vo.project_id, params['project_id'])
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_update_policy(self, *args):
         new_policy_vo = PolicyFactory(domain_id=self.domain_id)
         params = {
@@ -143,7 +139,6 @@ class TestPolicyService(unittest.TestCase):
         self.assertEqual(params.get('labels', []), policy_vo.labels)
         self.assertEqual(params['tags'], utils.tags_to_dict(policy_vo.tags))
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_delete_policy(self, *args):
         new_policy_vo = PolicyFactory(domain_id=self.domain_id)
         params = {
@@ -157,7 +152,6 @@ class TestPolicyService(unittest.TestCase):
 
         self.assertIsNone(result)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_get_policy(self, *args):
         new_policy_vo = PolicyFactory(domain_id=self.domain_id)
         params = {
@@ -175,7 +169,6 @@ class TestPolicyService(unittest.TestCase):
 
         self.assertIsInstance(policy_vo, Policy)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_get_policy_from_multi_repositories(self, *args):
         new_repository_vo = RepositoryFactory(repository_type='remote')
         new_policy_vo = PolicyFactory(domain_id=self.domain_id, repository=new_repository_vo)
@@ -193,7 +186,6 @@ class TestPolicyService(unittest.TestCase):
 
         self.assertIsInstance(policy_vo, Policy)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_list_policies_by_name(self, *args):
         policy_vos = PolicyFactory.build_batch(10, repository=self.repository_vo,
                                                domain_id=self.domain_id)
@@ -213,7 +205,6 @@ class TestPolicyService(unittest.TestCase):
         self.assertIsInstance(policy_vos[0], Policy)
         self.assertEqual(total_count, 1)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_list_policies_by_repository(self, *args):
         new_repository_vo = RepositoryFactory(repository_type='local')
         policy_vos = PolicyFactory.build_batch(3, repository=new_repository_vo,
@@ -237,7 +228,6 @@ class TestPolicyService(unittest.TestCase):
         self.assertIsInstance(policy_vos[0], Policy)
         self.assertEqual(total_count, 3)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_list_policies_by_tag(self, *args):
         PolicyFactory(tags=[{'key': 'tag_key_1', 'value': 'tag_value_1'}], repository=self.repository_vo,
                       domain_id=self.domain_id)
@@ -265,7 +255,6 @@ class TestPolicyService(unittest.TestCase):
         self.assertIsInstance(policy_vos[0], Policy)
         self.assertEqual(total_count, 1)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_stat_policy(self, *args):
         policy_vos = PolicyFactory.build_batch(10, repository=self.repository_vo,
                                                domain_id=self.domain_id)
@@ -302,7 +291,6 @@ class TestPolicyService(unittest.TestCase):
 
         print_data(values, 'test_stat_policy')
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_stat_policy_distinct(self, *args):
         policy_vos = PolicyFactory.build_batch(10, repository=self.repository_vo,
                                                domain_id=self.domain_id)
