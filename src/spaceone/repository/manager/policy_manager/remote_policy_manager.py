@@ -4,6 +4,7 @@ import time
 
 from spaceone.core import config
 from spaceone.core.auth.jwt.jwt_util import JWTUtil
+from spaceone.core.connector.space_connector import SpaceConnector
 from spaceone.repository.manager.policy_manager import PolicyManager
 
 __all__ = ['RemotePolicyManager']
@@ -129,8 +130,9 @@ class RemotePolicyManager(PolicyManager):
             _LOGGER.warn(f'[_get_secret_data] root_token is not configured, may be your are root')
             root_token = self.transaction.get_meta('token')
 
-        secret_connector = self.locator.get_connector('SpaceConnector', service='secret', token=root_token)
-        secret_data = secret_connector.Secret.get_data({'secret_id': secret_id, 'domain_id': root_domain_id})
+        secret_connector: SpaceConnector = self.locator.get_connector('SpaceConnector', service='secret', token=root_token)
+        secret_data = secret_connector.dispatch('Secret.get_data',
+                                                {'secret_id': secret_id, 'domain_id': root_domain_id})
         return secret_data['data']
 
     def _get_domain_id_from_token(self, token):
