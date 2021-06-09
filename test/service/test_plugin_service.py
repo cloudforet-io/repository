@@ -6,7 +6,6 @@ from spaceone.core.unittest.result import print_data
 from spaceone.core.unittest.runner import RichTestRunner
 from spaceone.core import config
 from spaceone.core import utils
-from spaceone.core.model.mongo_model import MongoModel
 from spaceone.core.transaction import Transaction
 from spaceone.repository.error.plugin import *
 from spaceone.repository.service.plugin_service import PluginService
@@ -25,6 +24,8 @@ class TestPluginService(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         config.init_conf(package='spaceone.repository')
+        config.set_service_config()
+        config.set_global(MOCK_MODE=True)
         connect('test', host='mongomock://localhost')
 
         cls.repository_vo = RepositoryFactory(repository_type='local')
@@ -41,14 +42,12 @@ class TestPluginService(unittest.TestCase):
         super().tearDownClass()
         disconnect()
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def tearDown(self, *args) -> None:
         print()
         print('(tearDown) ==> Delete all plugins')
         plugin_vos = Plugin.objects.filter()
         plugin_vos.delete()
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     @patch.object(LocalPluginManager, '_get_registry_url', return_value='registry.hub.docker.com')
     def test_register_plugin(self, *args):
         params = {
@@ -107,7 +106,6 @@ class TestPluginService(unittest.TestCase):
         self.assertEqual(params['tags'], utils.tags_to_dict(plugin_vo.tags))
         self.assertEqual(params['domain_id'], plugin_vo.domain_id)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_register_plugin_invalid_template(self, *args):
         params = {
             'name': 'google_oauth2',
@@ -130,7 +128,6 @@ class TestPluginService(unittest.TestCase):
         with self.assertRaises(ERROR_INVALID_TEMPLATE_SCHEMA):
             plugin_svc.register(params)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_register_plugin_invalid_capability(self, *args):
         params = {
             'name': 'google_oauth2',
@@ -148,7 +145,6 @@ class TestPluginService(unittest.TestCase):
         # with self.assertRaises(ERROR_INVALID_PARAMETER):
         #     plugin_svc.register(params)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_register_plugin_invalid_service_type(self, *args):
         params = {
             'name': 'google_oauth2',
@@ -164,7 +160,6 @@ class TestPluginService(unittest.TestCase):
         #     plugin_svc.register(params)
 
     @patch.object(IdentityManager, 'get_project', return_value=None)
-    @patch.object(MongoModel, 'connect', return_value=None)
     @patch.object(LocalPluginManager, '_get_registry_url', return_value='registry.hub.docker.com')
     def test_register_plugin_with_project(self, *args):
         params = {
@@ -185,7 +180,6 @@ class TestPluginService(unittest.TestCase):
         self.assertIsInstance(plugin_vo, Plugin)
         self.assertEqual(plugin_vo.project_id, params['project_id'])
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_update_plugin(self, *args):
         new_plugin_vo = PluginFactory(domain_id=self.domain_id)
         params = {
@@ -234,7 +228,6 @@ class TestPluginService(unittest.TestCase):
         self.assertEqual(params.get('labels', []), plugin_vo.labels)
         self.assertEqual(params['tags'], utils.tags_to_dict(plugin_vo.tags))
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_delete_plugin(self, *args):
         new_plugin_vo = PluginFactory(domain_id=self.domain_id)
         params = {
@@ -248,7 +241,6 @@ class TestPluginService(unittest.TestCase):
 
         self.assertIsNone(result)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_enable_plugin(self, *args):
         new_plugin_vo = PluginFactory(domain_id=self.domain_id, state='DISABLED')
         params = {
@@ -267,7 +259,6 @@ class TestPluginService(unittest.TestCase):
         self.assertEqual(new_plugin_vo.plugin_id, plugin_vo.plugin_id)
         self.assertEqual('ENABLED', plugin_vo.state)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_disable_plugin(self, *args):
         new_plugin_vo = PluginFactory(domain_id=self.domain_id, state='ENABLED')
         params = {
@@ -287,7 +278,6 @@ class TestPluginService(unittest.TestCase):
         self.assertEqual('DISABLED', plugin_vo.state)
 
     @patch.object(RegistryConnector, 'get_tags', return_value=['1.0', '2.0'])
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_get_versions(self, *args):
         new_plugin_vo = PluginFactory(domain_id=self.domain_id)
         params = {
@@ -306,7 +296,6 @@ class TestPluginService(unittest.TestCase):
         self.assertIsInstance(version_list, list)
 
     @patch.object(RegistryConnector, 'get_tags', return_value=['1.0', '2.0'])
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_get_versions_from_multi_repositories(self, *args):
         new_repository_vo = RepositoryFactory(repository_type='remote')
         new_plugin_vo = PluginFactory(domain_id=self.domain_id, repository=new_repository_vo)
@@ -324,7 +313,6 @@ class TestPluginService(unittest.TestCase):
 
         self.assertIsInstance(version_list, list)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_get_plugin(self, *args):
         new_plugin_vo = PluginFactory(domain_id=self.domain_id)
         params = {
@@ -342,7 +330,6 @@ class TestPluginService(unittest.TestCase):
 
         self.assertIsInstance(plugin_vo, Plugin)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_get_plugin_from_multi_repositories(self, *args):
         new_repository_vo = RepositoryFactory(repository_type='remote')
         new_plugin_vo = PluginFactory(domain_id=self.domain_id, repository=new_repository_vo)
@@ -360,7 +347,6 @@ class TestPluginService(unittest.TestCase):
 
         self.assertIsInstance(plugin_vo, Plugin)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_list_plugins_by_plugin_id(self, *args):
         plugin_vos = PluginFactory.build_batch(10, repository=self.repository_vo,
                                                domain_id=self.domain_id)
@@ -380,7 +366,6 @@ class TestPluginService(unittest.TestCase):
         self.assertIsInstance(plugins_vos[0], Plugin)
         self.assertEqual(total_count, 1)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_list_plugins_by_name(self, *args):
         plugin_vos = PluginFactory.build_batch(10, repository=self.repository_vo,
                                                domain_id=self.domain_id)
@@ -399,7 +384,6 @@ class TestPluginService(unittest.TestCase):
         self.assertIsInstance(plugins_vos[0], Plugin)
         self.assertEqual(total_count, 1)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_list_plugins_by_repository(self, *args):
         new_repository_vo = RepositoryFactory(repository_type='local')
         plugin_vos = PluginFactory.build_batch(3, repository=new_repository_vo,
@@ -423,7 +407,6 @@ class TestPluginService(unittest.TestCase):
         self.assertIsInstance(plugins_vos[0], Plugin)
         self.assertEqual(total_count, 3)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_list_plugins_by_tag(self, *args):
         PluginFactory(tags=[{'key': 'tag_key_1', 'value': 'tag_value_1'}], repository=self.repository_vo,
                       domain_id=self.domain_id)
@@ -451,7 +434,6 @@ class TestPluginService(unittest.TestCase):
         self.assertIsInstance(plugins_vos[0], Plugin)
         self.assertEqual(total_count, 1)
 
-    @patch.object(MongoModel, 'connect', return_value=None)
     def test_stat_plugin(self, *args):
         plugin_vos = PluginFactory.build_batch(10, repository=self.repository_vo,
                                                domain_id=self.domain_id)
