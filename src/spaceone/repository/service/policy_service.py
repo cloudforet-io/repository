@@ -13,7 +13,7 @@ from spaceone.repository.manager.repository_manager import RepositoryManager
 _LOGGER = logging.getLogger(__name__)
 
 
-@authentication_handler(exclude=['get'])
+@authentication_handler
 @authorization_handler(exclude=['get'])
 @mutation_handler
 @event_handler
