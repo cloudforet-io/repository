@@ -12,7 +12,7 @@ class PolicyTag(EmbeddedDocument):
 
 
 class Policy(MongoModel):
-    policy_id = StringField(max_length=40, generate_id='policy', unique=True)
+    policy_id = StringField(max_length=255, generate_id='policy', unique=True)
     name = StringField(max_length=255, unique_with='domain_id')
     permissions = ListField(StringField())
     labels = ListField(StringField(max_length=255))
