@@ -1,5 +1,6 @@
 import logging
 import jsonschema
+import re
 
 from distutils.version import LooseVersion
 
@@ -15,6 +16,7 @@ from spaceone.repository.manager.repository_manager import RepositoryManager
 
 _LOGGER = logging.getLogger(__name__)
 
+MAX_IMAGE_NAME_LENGTH = 40
 
 @authentication_handler(exclude=['get', 'get_versions'])
 @authorization_handler(exclude=['get', 'get_versions'])
@@ -53,6 +55,7 @@ class PluginService(BaseService):
         # self._check_capability(params.get('capability'))
         self._check_project(params.get('project_id'), params['domain_id'])
         self._check_service_type(params.get('service_type'))
+        self._check_image(params['image'])
 
         plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager')
 
@@ -386,3 +389,36 @@ class PluginService(BaseService):
         checked_name = parsed_items[-1]
 
         return checked_name
+
+    @staticmethod
+    def _check_image(name):
+        """ Check image name
+        format: repository/image_name
+        length of image_name: < 40
+        format of image_name: string and - (underbar is not allowed)
+        """
+        _LOGGER.debug(f'[_check_image] {name}')
+        items = name.split('/')
+        siz = len(items)
+        if siz == 1:
+            # Not repository
+            image_name = items[0]
+        elif siz == 2:
+            repo = items[0]
+            image_name = items[1]
+        else:
+            # wrong format
+            raise ERROR_INVALID_IMAGE_FORMAT(name=name)
+
+        # check image_name
+        image_len = len(image_name)
+        if image_len > MAX_IMAGE_NAME_LENGTH:
+            raise ERROR_INVALID_IMAGE_LENGTH(name=image_name, length=MAX_IMAGE_NAME_LENGTH)
+
+        # Search naming format
+        m = re.search('(?![a-zA-Z0-9\-]).*', image_name)
+        if m:
+            if len(m.group()) > 1:
+                raise ERROR_INVALID_IMAGE_NAME_FORMAT(name=image_name)
+            return True
+        raise ERROR_INVALID_IMAGE_NAME_FORMAT(name=image_name)
