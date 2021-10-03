@@ -34,10 +34,10 @@ setup(
         'spaceone-core',
         'spaceone-api',
         'mongoengine',
-        'docker_registry_client',
         'python-consul',
         'schematics',
-        'boto3'
+        'boto3',
+        'requests'
     ],
     zip_safe=False,
 )
