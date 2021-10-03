@@ -169,7 +169,7 @@ class PolicyService(BaseService):
         if 'only' in query:
             query['only'] += ['repository_id']
 
-        return policy_mgr.list_policies(query, params['domain_id'])
+        return policy_mgr.list_policies(query)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['query', 'repository_id'])
@@ -195,7 +195,7 @@ class PolicyService(BaseService):
 
         policy_mgr = self._get_policy_manager_by_repo(repo_vo)
         query = params.get('query', {})
-        return policy_mgr.stat_policies(query, params['domain_id'])
+        return policy_mgr.stat_policies(query)
 
     def _get_policy_manager_by_repo(self, repo_vo):
         if repo_vo.repository_type == 'local':
