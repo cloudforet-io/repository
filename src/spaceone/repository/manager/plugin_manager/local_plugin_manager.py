@@ -7,6 +7,10 @@ from spaceone.repository.manager.plugin_manager import PluginManager
 __all__ = ['LocalPluginManager']
 
 _LOGGER = logging.getLogger(__name__)
+_REGISTRY_CONNECTOR_MAP = {
+    'DOCKER_HUB': 'DockerHubConnector',
+    'AWS_ECR': 'AWSECRConnector'
+}
 
 
 class LocalPluginManager(PluginManager):
@@ -71,8 +75,8 @@ class LocalPluginManager(PluginManager):
         Returns:
             A list of docker tag
         """
-        plugin_vo = self.get_plugin(plugin_id, domain_id)
+        plugin_vo: Plugin = self.get_plugin(plugin_id, domain_id)
 
-        connector = self.locator.get_connector("RegistryConnector")
-        tags = connector.get_tags(plugin_vo.image)
+        connector = self.locator.get_connector(plugin_vo.registry_type)
+        tags = connector.get_tags(plugin_vo.registry_url, plugin_vo.image)
         return tags

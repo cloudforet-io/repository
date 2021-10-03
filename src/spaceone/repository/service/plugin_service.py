@@ -194,16 +194,19 @@ class PluginService(BaseService):
             except Exception as e:
                 version_list = None
 
-            if version_list:
-                _LOGGER.debug(f'[get_versions] version_list: {version_list}')
-                # User wants reverse list
-                try:
-                    sorted_version_list = sorted(version_list, key=LooseVersion, reverse=True)
-                except Exception as e:
-                    _LOGGER.debug(f'[get_versions] loose sort failed: {e}')
-                    sorted_version_list = sorted(version_list, reverse=True)
-                _LOGGER.debug(f'[get_versions] sorted version_list: {sorted_version_list}')
-                return sorted_version_list
+            if version_list is not None:
+                return version_list
+
+            # if version_list:
+            #     _LOGGER.debug(f'[get_versions] version_list: {version_list}')
+            #     # User wants reverse list
+            #     try:
+            #         sorted_version_list = sorted(version_list, key=LooseVersion, reverse=True)
+            #     except Exception as e:
+            #         _LOGGER.debug(f'[get_versions] loose sort failed: {e}')
+            #         sorted_version_list = sorted(version_list, reverse=True)
+            #     _LOGGER.debug(f'[get_versions] sorted version_list: {sorted_version_list}')
+            #     return sorted_version_list
 
         _LOGGER.error(f'[get_versions] no version: {plugin_id}')
         raise ERROR_NO_PLUGIN(plugin_id=plugin_id)
