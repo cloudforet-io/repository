@@ -25,15 +25,15 @@ class PluginManager(BaseManager):
         pass
 
     @abstractmethod
-    def get_plugin(self, plugin_id, domain_id):
+    def get_plugin(self, plugin_id, domain_id, only=None):
         pass
 
     @abstractmethod
-    def list_plugins(self, query, domain_id):
+    def list_plugins(self, query):
         pass
 
     @abstractmethod
-    def stat_plugins(self, query, domain_id):
+    def stat_plugins(self, query):
         pass
 
     @abstractmethod
