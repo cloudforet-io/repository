@@ -17,6 +17,7 @@ from spaceone.repository.manager.repository_manager import RepositoryManager
 _LOGGER = logging.getLogger(__name__)
 
 MAX_IMAGE_NAME_LENGTH = 40
+SUPPORTED_REGISTRY_TYPE = ['DOCKER_HUB', 'AWS_ECR']
 
 
 @authentication_handler(exclude=['get', 'get_versions'])
@@ -56,6 +57,7 @@ class PluginService(BaseService):
         # self._check_capability(params.get('capability'))
         self._check_project(params.get('project_id'), params['domain_id'])
         self._check_service_type(params.get('service_type'))
+        self._check_registry(params.get('registry_type'), params.get('registry_url'))
         self._check_image(params['image'])
 
         plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager')
@@ -247,7 +249,7 @@ class PluginService(BaseService):
     @check_required(['repository_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'plugin_id', 'name', 'state', 'service_type',
-                          'provider', 'project_id', 'domain_id'])
+                          'registry_type', 'provider', 'project_id', 'domain_id'])
     @change_tag_filter('tags')
     @append_keyword_filter(['plugin_id', 'name', 'provider', 'labels'])
     def list(self, params):
@@ -260,6 +262,7 @@ class PluginService(BaseService):
                 'name': 'str',
                 'state': 'str',
                 'service_type': 'str',
+                'registry_type': 'str',
                 'provider': 'str',
                 'project_id': 'str',
                 'domain_id': 'str',
@@ -335,6 +338,16 @@ class PluginService(BaseService):
                 capability_vo.validate()
             except Exception as e:
                 raise ERROR_INVALID_PARAMETER(key='capability', reason=e)
+
+    @staticmethod
+    def _check_registry(registry_type, registry_url):
+        if registry_type:
+            if registry_type not in SUPPORTED_REGISTRY_TYPE:
+                raise ERROR_INVALID_PARAMETER(key='registry_type', reason=f'Registry type supports only '
+                                                                          f'{SUPPORTED_REGISTRY_TYPE}.')
+
+            if registry_url is None:
+                raise ERROR_REQUIRED_PARAMETER(key='registry_url')
 
     @staticmethod
     def _check_service_type(name):
