@@ -23,7 +23,7 @@ class Plugin(MongoModel):
     state = StringField(max_length=40, default='ENABLED', choices=('ENABLED', 'DISABLED', 'DELETED'))
     image = StringField(max_length=255)
     registry_url = StringField(max_length=255, default='registry.hub.docker.com')
-    registry_type = StringField(max_length=255, DEFAULT='DOCKER_HUB')
+    registry_type = StringField(max_length=255, default='DOCKER_HUB')
     service_type = StringField(max_length=255)
     provider = StringField(max_length=255, default=None, null=True)
     capability = DictField()
