@@ -38,7 +38,7 @@ class RemotePolicyManager(PolicyManager):
     def stat_policies(self, query):
         raise NotImplementedError('Remote repository is not supported.')
 
-    def _get_conn_from_repository(self, repo, domain_id):
+    def _get_conn_from_repository(self):
         conn = {'endpoint': self.repository.endpoint}
         return conn
 
