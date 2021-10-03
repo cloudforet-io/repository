@@ -77,6 +77,6 @@ class LocalPluginManager(PluginManager):
         """
         plugin_vo: Plugin = self.get_plugin(plugin_id, domain_id)
 
-        connector = self.locator.get_connector(plugin_vo.registry_type)
+        connector = self.locator.get_connector(_REGISTRY_CONNECTOR_MAP[plugin_vo.registry_type])
         tags = connector.get_tags(plugin_vo.registry_url, plugin_vo.image)
         return tags
