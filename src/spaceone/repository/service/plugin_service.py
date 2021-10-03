@@ -378,7 +378,8 @@ class PluginService(BaseService):
 
         return repo_vos
 
-    def _check_plugin_naming_rules(self, image):
+    @staticmethod
+    def _check_plugin_naming_rules(image):
         """ Check plugin name conventions
 
         Rules:
@@ -394,7 +395,7 @@ class PluginService(BaseService):
         """ Check image name
         format: repository/image_name
         length of image_name: < 40
-        format of image_name: string and - (underbar is not allowed)
+        format of image_name: string and - (underscore is not allowed)
         """
         _LOGGER.debug(f'[_check_image] {name}')
         items = name.split('/')
