@@ -165,10 +165,6 @@ class PolicyService(BaseService):
         policy_mgr = self._get_policy_manager_by_repo(repo_vo)
         query = params.get('query', {})
 
-        # Temporary code for DB migration
-        if 'only' in query:
-            query['only'] += ['repository_id']
-
         return policy_mgr.list_policies(query)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})

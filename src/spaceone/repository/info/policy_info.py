@@ -35,10 +35,6 @@ def PolicyInfo(policy_vo: Policy, minimal=False):
             info.update({
                 'repository_info': RepositoryInfo(policy_vo.repository_info, minimal=True)})
 
-        # Temporary code for DB migration
-        if not getattr(policy_vo, 'repository_id', None) and getattr(policy_vo, 'repository', None):
-            policy_vo.update({'repository_id': policy_vo.repository.repository_id})
-
     return policy_pb2.PolicyInfo(**info)
 
 
