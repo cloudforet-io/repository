@@ -14,7 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @authentication_handler
-@authorization_handler
+@authorization_handler(exclude=['get'])
 @mutation_handler
 @event_handler
 class PolicyService(BaseService):
