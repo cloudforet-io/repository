@@ -20,13 +20,13 @@ class SchemaManager(BaseManager):
         pass
 
     @abstractmethod
-    def get_schema(self, schema_id, domain_id):
+    def get_schema(self, schema_id, domain_id, only=None):
         pass
 
     @abstractmethod
-    def list_schemas(self, query, domain_id):
+    def list_schemas(self, query):
         pass
 
     @abstractmethod
-    def stat_schemas(self, query, domain_id):
+    def stat_schemas(self, query):
         pass

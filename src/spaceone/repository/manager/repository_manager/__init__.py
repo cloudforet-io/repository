@@ -33,6 +33,9 @@ class RepositoryManager(BaseManager):
     def get_repository(self, repository_id, only=None):
         return self.repo_model.get(repository_id=repository_id, only=only)
 
+    def filter_repositories(self, **conditions):
+        return self.repo_model.filter(**conditions)
+
     def list_repositories(self, query):
         return self.repo_model.query(**query)
 

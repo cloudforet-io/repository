@@ -14,7 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 class RepositoryService(BaseService):
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['name', 'repository_type', 'domain_id'])
+    @check_required(['name', 'repository_type'])
     def register(self, params):
         """
         Args:
@@ -36,26 +36,25 @@ class RepositoryService(BaseService):
         return repo_mgr.register_repository(params)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['repository_id', 'domain_id'])
+    @check_required(['repository_id'])
     def update(self, params):
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
         return repo_mgr.update_repository(params)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['repository_id', 'domain_id'])
+    @check_required(['repository_id'])
     def deregister(self, params):
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
 
         return repo_mgr.delete_repository(params['repository_id'])
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['repository_id', 'domain_id'])
+    @check_required(['repository_id'])
     def get(self, params):
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
         return repo_mgr.get_repository(params['repository_id'], params.get('only'))
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['domain_id'])
     @append_query_filter(['repository_id', 'name', 'repository_type'])
     @append_keyword_filter(['repository_id', 'name'])
     def list(self, params):
