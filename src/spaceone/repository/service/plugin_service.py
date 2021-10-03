@@ -35,6 +35,8 @@ class PluginService(BaseService):
             params (dict): {
                 'name': 'str',
                 'service_type': 'str',
+                'registry_type': 'registry_type',
+                'registry_url': 'registry_rul',
                 'image': 'str',
                 'provider': 'str',
                 'capability': 'dict',
