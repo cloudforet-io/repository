@@ -41,10 +41,6 @@ def PluginInfo(plugin_vo: Plugin, minimal=False):
             info.update({
                 'repository_info': RepositoryInfo(plugin_vo.repository_info, minimal=True)})
 
-        # Temporary code for DB migration
-        if not getattr(plugin_vo, 'repository_id', None) and getattr(plugin_vo, 'repository', None):
-            plugin_vo.update({'repository_id': plugin_vo.repository.repository_id})
-
     return plugin_pb2.PluginInfo(**info)
 
 

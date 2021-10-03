@@ -172,10 +172,6 @@ class SchemaService(BaseService):
         schema_mgr = self._get_schema_manager_by_repo(repo_vo)
         query = params.get('query', {})
 
-        # Temporary code for DB migration
-        if 'only' in query:
-            query['only'] += ['repository_id']
-
         return schema_mgr.list_schemas(query)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})

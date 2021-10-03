@@ -35,10 +35,6 @@ def SchemaInfo(schema_vo: Schema, minimal=False):
             info.update({
                 'repository_info': RepositoryInfo(schema_vo.repository_info, minimal=True)})
 
-        # Temporary code for DB migration
-        if not getattr(schema_vo, 'repository_id', None) and getattr(schema_vo, 'repository', None):
-            schema_vo.update({'repository_id': schema_vo.repository.repository_id})
-
     return schema_pb2.SchemaInfo(**info)
 
 
