@@ -16,6 +16,7 @@ def PluginInfo(plugin_vo: Plugin, minimal=False):
         'state': plugin_vo.state,
         'image': plugin_vo.image,
         'service_type': plugin_vo.service_type,
+        'registry_type': plugin_vo.registry_type,
         'provider': plugin_vo.provider
     }
     if not minimal:
