@@ -18,7 +18,7 @@ class Plugin(MongoModel):
     """
     name is unique per domain
     """
-    plugin_id = StringField(max_length=255, unique=True)
+    plugin_id = StringField(max_length=255, unique_with=True)
     name = StringField(max_length=255)
     state = StringField(max_length=40, default='ENABLED', choices=('ENABLED', 'DISABLED', 'DELETED'))
     image = StringField(max_length=255)
