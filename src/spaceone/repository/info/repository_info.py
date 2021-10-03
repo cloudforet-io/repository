@@ -15,11 +15,11 @@ def RepositoryInfo(repository_vo: Repository, minimal=False):
     }
     if not minimal:
         info.update({
-                'endpoint': repository_vo.endpoint,
-                'version': repository_vo.version,
-                'secret_id': repository_vo.secret_id,
-                'created_at': utils.datetime_to_iso8601(repository_vo.created_at)
-                })
+            'endpoint': repository_vo.endpoint,
+            'version': repository_vo.version,
+            'secret_id': repository_vo.secret_id,
+            'created_at': utils.datetime_to_iso8601(repository_vo.created_at)
+        })
 
     return repository_pb2.RepositoryInfo(**info)
 
