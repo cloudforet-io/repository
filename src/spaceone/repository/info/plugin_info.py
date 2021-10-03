@@ -16,6 +16,7 @@ def PluginInfo(plugin_vo: Plugin, minimal=False):
         'state': plugin_vo.state,
         'image': plugin_vo.image,
         'service_type': plugin_vo.service_type,
+        'registry_type': plugin_vo.registry_type,
         'provider': plugin_vo.provider
     }
     if not minimal:
@@ -24,8 +25,7 @@ def PluginInfo(plugin_vo: Plugin, minimal=False):
             'capability': change_struct_type(plugin_vo.capability),
             'template': change_struct_type(plugin_vo.template),
             'labels': change_list_value_type(plugin_vo.labels),
-            'tags': plugin_vo.tags if isinstance(plugin_vo.tags, Struct)
-            else change_struct_type(utils.tags_to_dict(plugin_vo.tags)),
+            'tags': change_struct_type(utils.tags_to_dict(plugin_vo.tags)),
             'project_id': plugin_vo.project_id,
             'domain_id': plugin_vo.domain_id,
             'created_at': utils.datetime_to_iso8601(plugin_vo.created_at) or plugin_vo.created_at,
@@ -40,10 +40,6 @@ def PluginInfo(plugin_vo: Plugin, minimal=False):
         if getattr(plugin_vo, 'repository_info', None):
             info.update({
                 'repository_info': RepositoryInfo(plugin_vo.repository_info, minimal=True)})
-
-        # Temporary code for DB migration
-        if not getattr(plugin_vo, 'repository_id', None) and getattr(plugin_vo, 'repository', None):
-            plugin_vo.update({'repository_id': plugin_vo.repository.repository_id})
 
     return plugin_pb2.PluginInfo(**info)
 

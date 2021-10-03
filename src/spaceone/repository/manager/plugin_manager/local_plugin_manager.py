@@ -1,13 +1,16 @@
 import logging
 
-from spaceone.core import config
 from spaceone.core.error import *
-from spaceone.repository.model import *
+from spaceone.repository.model import Plugin
 from spaceone.repository.manager.plugin_manager import PluginManager
 
 __all__ = ['LocalPluginManager']
 
 _LOGGER = logging.getLogger(__name__)
+_REGISTRY_CONNECTOR_MAP = {
+    'DOCKER_HUB': 'DockerHubConnector',
+    'AWS_ECR': 'AWSECRConnector'
+}
 
 
 class LocalPluginManager(PluginManager):
@@ -19,7 +22,6 @@ class LocalPluginManager(PluginManager):
         def _rollback(plugin_vo):
             plugin_vo.delete()
 
-        params['registry_url'] = self._get_registry_url()
         plugin_vo = self.plugin_model.create(params)
         self.transaction.add_rollback(_rollback, plugin_vo)
 
@@ -73,24 +75,8 @@ class LocalPluginManager(PluginManager):
         Returns:
             A list of docker tag
         """
-        plugin_vo = self.get_plugin(plugin_id, domain_id)
+        plugin_vo: Plugin = self.get_plugin(plugin_id, domain_id)
 
-        connector = self.locator.get_connector("RegistryConnector")
-        tags = connector.get_tags(plugin_vo.image)
+        connector = self.locator.get_connector(plugin_vo.registry_type)
+        tags = connector.get_tags(plugin_vo.registry_url, plugin_vo.image)
         return tags
-
-    @staticmethod
-    def _get_registry_url():
-        """
-        Get a registry_url from RegistryConnector Config
-        """
-
-        try:
-            connector_conf = config.get_global("CONNECTORS")
-            # ex) 'https://registry.hub.docker.com'
-            reg_con = connector_conf['RegistryConnector']['host']
-            item = reg_con.split('://')
-            return item[1]
-        except Exception as e:
-            raise ERROR_CONFIGURATION(key='CONNECTORS.RegistryConnector')
-            _LOGGER.error('No RegistryConnector.host:%s' % config.get_global())

@@ -17,6 +17,7 @@ from spaceone.repository.manager.repository_manager import RepositoryManager
 _LOGGER = logging.getLogger(__name__)
 
 MAX_IMAGE_NAME_LENGTH = 40
+SUPPORTED_REGISTRY_TYPE = ['DOCKER_HUB', 'AWS_ECR']
 
 
 @authentication_handler(exclude=['get', 'get_versions'])
@@ -56,6 +57,7 @@ class PluginService(BaseService):
         # self._check_capability(params.get('capability'))
         self._check_project(params.get('project_id'), params['domain_id'])
         self._check_service_type(params.get('service_type'))
+        self._check_registry(params.get('registry_type'), params.get('registry_url'))
         self._check_image(params['image'])
 
         plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager')
@@ -192,16 +194,19 @@ class PluginService(BaseService):
             except Exception as e:
                 version_list = None
 
-            if version_list:
-                _LOGGER.debug(f'[get_versions] version_list: {version_list}')
-                # User wants reverse list
-                try:
-                    sorted_version_list = sorted(version_list, key=LooseVersion, reverse=True)
-                except Exception as e:
-                    _LOGGER.debug(f'[get_versions] loose sort failed: {e}')
-                    sorted_version_list = sorted(version_list, reverse=True)
-                _LOGGER.debug(f'[get_versions] sorted version_list: {sorted_version_list}')
-                return sorted_version_list
+            if version_list is not None:
+                return version_list
+
+            # if version_list:
+            #     _LOGGER.debug(f'[get_versions] version_list: {version_list}')
+            #     # User wants reverse list
+            #     try:
+            #         sorted_version_list = sorted(version_list, key=LooseVersion, reverse=True)
+            #     except Exception as e:
+            #         _LOGGER.debug(f'[get_versions] loose sort failed: {e}')
+            #         sorted_version_list = sorted(version_list, reverse=True)
+            #     _LOGGER.debug(f'[get_versions] sorted version_list: {sorted_version_list}')
+            #     return sorted_version_list
 
         _LOGGER.error(f'[get_versions] no version: {plugin_id}')
         raise ERROR_NO_PLUGIN(plugin_id=plugin_id)
@@ -247,7 +252,7 @@ class PluginService(BaseService):
     @check_required(['repository_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'plugin_id', 'name', 'state', 'service_type',
-                          'provider', 'project_id', 'domain_id'])
+                          'registry_type', 'provider', 'project_id', 'domain_id'])
     @change_tag_filter('tags')
     @append_keyword_filter(['plugin_id', 'name', 'provider', 'labels'])
     def list(self, params):
@@ -260,6 +265,7 @@ class PluginService(BaseService):
                 'name': 'str',
                 'state': 'str',
                 'service_type': 'str',
+                'registry_type': 'str',
                 'provider': 'str',
                 'project_id': 'str',
                 'domain_id': 'str',
@@ -277,10 +283,6 @@ class PluginService(BaseService):
 
         plugin_mgr = self._get_plugin_manager_by_repo(repo_vo)
         query = params.get('query', {})
-
-        # Temporary code for DB migration
-        if 'only' in query:
-            query['only'] += ['repository_id']
 
         return plugin_mgr.list_plugins(query)
 
@@ -341,6 +343,16 @@ class PluginService(BaseService):
                 raise ERROR_INVALID_PARAMETER(key='capability', reason=e)
 
     @staticmethod
+    def _check_registry(registry_type, registry_url):
+        if registry_type:
+            if registry_type not in SUPPORTED_REGISTRY_TYPE:
+                raise ERROR_INVALID_PARAMETER(key='registry_type', reason=f'Registry type supports only '
+                                                                          f'{SUPPORTED_REGISTRY_TYPE}.')
+
+            if registry_url is None:
+                raise ERROR_REQUIRED_PARAMETER(key='registry_url')
+
+    @staticmethod
     def _check_service_type(name):
         """
         service_type has format rule
@@ -378,7 +390,8 @@ class PluginService(BaseService):
 
         return repo_vos
 
-    def _check_plugin_naming_rules(self, image):
+    @staticmethod
+    def _check_plugin_naming_rules(image):
         """ Check plugin name conventions
 
         Rules:
@@ -394,7 +407,7 @@ class PluginService(BaseService):
         """ Check image name
         format: repository/image_name
         length of image_name: < 40
-        format of image_name: string and - (underbar is not allowed)
+        format of image_name: string and - (underscore is not allowed)
         """
         _LOGGER.debug(f'[_check_image] {name}')
         items = name.split('/')

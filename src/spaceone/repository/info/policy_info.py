@@ -19,8 +19,7 @@ def PolicyInfo(policy_vo: Policy, minimal=False):
         info.update({
             'permissions': change_list_value_type(policy_vo.permissions),
             'labels': change_list_value_type(policy_vo.labels),
-            'tags': policy_vo.tags if isinstance(policy_vo.tags, Struct)
-            else change_struct_type(utils.tags_to_dict(policy_vo.tags)),
+            'tags': change_struct_type(utils.tags_to_dict(policy_vo.tags)),
             'project_id': policy_vo.project_id,
             'domain_id': policy_vo.domain_id,
             'created_at': utils.datetime_to_iso8601(policy_vo.created_at) or policy_vo.created_at,
@@ -35,10 +34,6 @@ def PolicyInfo(policy_vo: Policy, minimal=False):
         if getattr(policy_vo, 'repository_info', None):
             info.update({
                 'repository_info': RepositoryInfo(policy_vo.repository_info, minimal=True)})
-
-        # Temporary code for DB migration
-        if not getattr(policy_vo, 'repository_id', None) and getattr(policy_vo, 'repository', None):
-            policy_vo.update({'repository_id': policy_vo.repository.repository_id})
 
     return policy_pb2.PolicyInfo(**info)
 

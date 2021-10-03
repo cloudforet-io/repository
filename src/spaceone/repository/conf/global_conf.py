@@ -20,14 +20,12 @@ CACHES = {
 }
 
 CONNECTORS = {
-    'RegistryConnector': {
-        'host': 'https://registry.hub.docker.com',
-        'verify_ssl': False,
-        'api_version': 1,
-        'username': '',
-        'password': '',
-        'auth_service_url': '',
+    'AWSECRConnector': {
+        'aws_access_key_id': '',
+        'aws_secret_access_key': '',
+        'region_name': ''
     },
+    'DockerHubConnector': {},
     'RemoteRepositoryConnector': {},
     'SpaceConnector': {
         'backend': 'spaceone.core.connector.space_connector.SpaceConnector',
