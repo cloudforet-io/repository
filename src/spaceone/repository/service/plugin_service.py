@@ -19,8 +19,8 @@ _LOGGER = logging.getLogger(__name__)
 MAX_IMAGE_NAME_LENGTH = 40
 
 
-@authentication_handler
-@authorization_handler
+@authentication_handler(exclude=['get', 'get_versions'])
+@authorization_handler(exclude=['get', 'get_versions'])
 @mutation_handler
 @event_handler
 class PluginService(BaseService):
