@@ -19,8 +19,7 @@ def SchemaInfo(schema_vo: Schema, minimal=False):
         info.update({
             'schema': change_struct_type(schema_vo.schema),
             'labels': change_list_value_type(schema_vo.labels),
-            'tags': schema_vo.tags if isinstance(schema_vo.tags, Struct)
-            else change_struct_type(utils.tags_to_dict(schema_vo.tags)),
+            'tags': change_struct_type(utils.tags_to_dict(schema_vo.tags)),
             'project_id': schema_vo.project_id,
             'domain_id': schema_vo.domain_id,
             'created_at': utils.datetime_to_iso8601(schema_vo.created_at) or schema_vo.created_at,
