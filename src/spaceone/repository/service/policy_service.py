@@ -14,7 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @authentication_handler
-@authorization_handler(exclude=['get'])
+@authorization_handler
 @mutation_handler
 @event_handler
 class PolicyService(BaseService):
@@ -98,7 +98,7 @@ class PolicyService(BaseService):
         return policy_mgr.delete_policy(policy_id, domain_id)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['policy_id', 'domain_id'])
+    @check_required(['policy_id'])
     @change_only_key({'repository_info': 'repository'})
     def get(self, params):
         """ Get Policy (local & remote)
@@ -115,14 +115,14 @@ class PolicyService(BaseService):
             policy_vo (object)
         """
         policy_id = params['policy_id']
-        domain_id = params['domain_id']
+        domain_id = params.get('domain_id')
         repo_id = params.get('repository_id')
         only = params.get('only')
 
         repo_vos = self._list_repositories(repo_id)
         for repo_vo in repo_vos:
             _LOGGER.debug(f'[get] find at name: {repo_vo.name} '
-                          f'repo_type: {repo_vo.repository_type}')
+                          f'(repo_type: {repo_vo.repository_type})')
             policy_mgr = self._get_policy_manager_by_repo(repo_vo)
             try:
                 policy_vo = policy_mgr.get_policy(policy_id, domain_id, only)
@@ -135,7 +135,7 @@ class PolicyService(BaseService):
         raise ERROR_NO_POLICY(policy_id=policy_id)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['repository_id', 'domain_id'])
+    @check_required(['repository_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'policy_id', 'name', 'project_id', 'domain_id'])
     @change_tag_filter('tags')
@@ -172,7 +172,7 @@ class PolicyService(BaseService):
         return policy_mgr.list_policies(query, params['domain_id'])
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['query', 'repository_id', 'domain_id'])
+    @check_required(['query', 'repository_id'])
     @append_query_filter(['repository_id', 'domain_id'])
     @change_tag_filter('tags')
     @append_keyword_filter(['policy_id', 'name', 'labels'])
@@ -197,12 +197,12 @@ class PolicyService(BaseService):
         query = params.get('query', {})
         return policy_mgr.stat_policies(query, params['domain_id'])
 
-    def _get_policy_manager_by_repo(self, repo):
-        if repo.repository_type == 'local':
-            local_policy_mgr: LocalPolicyManager = self.locator.get_manager('LocalPolicyManager', repository=repo)
+    def _get_policy_manager_by_repo(self, repo_vo):
+        if repo_vo.repository_type == 'local':
+            local_policy_mgr: LocalPolicyManager = self.locator.get_manager('LocalPolicyManager', repository=repo_vo)
             return local_policy_mgr
         else:
-            remote_policy_mgr: RemotePolicyManager = self.locator.get_manager('RemotePolicyManager', repository=repo)
+            remote_policy_mgr: RemotePolicyManager = self.locator.get_manager('RemotePolicyManager', repository=repo_vo)
             return remote_policy_mgr
 
     def _check_project(self, project_id, domain_id):
@@ -212,14 +212,16 @@ class PolicyService(BaseService):
 
     def _list_repositories(self, repository_id):
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
-        query = {}
+
+        conditions = {}
+
         if repository_id:
-            query.update({'repository_id': repository_id})
+            conditions['repository_id'] = repository_id
 
-        repo_vos, total_count = repo_mgr.list_repositories(query)
-        _LOGGER.debug(f'[_list_repositories] Number of repositories: {total_count}')
+        repo_vos = repo_mgr.filter_repositories(**conditions)
+        _LOGGER.debug(f'[_list_repositories] Number of repositories: {repo_vos.count()}')
 
-        if total_count == 0:
+        if repo_vos.count() == 0:
             raise ERROR_NO_REPOSITORY()
 
         return repo_vos

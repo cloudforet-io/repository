@@ -18,8 +18,9 @@ _LOGGER = logging.getLogger(__name__)
 
 MAX_IMAGE_NAME_LENGTH = 40
 
-@authentication_handler(exclude=['get', 'get_versions'])
-@authorization_handler(exclude=['get', 'get_versions'])
+
+@authentication_handler
+@authorization_handler
 @mutation_handler
 @event_handler
 class PluginService(BaseService):
@@ -118,7 +119,7 @@ class PluginService(BaseService):
         #########################################################################
         # Warning 
         #
-        # To degister plugin, plugin has to verify there is no installed plugins
+        # To deregister plugin, plugin has to verify there is no installed plugins
         # If there was installed plugin, other micro service can query endpoint
         # But plugin can not reply endpoint
         ##########################################################################
@@ -162,7 +163,7 @@ class PluginService(BaseService):
         return plugin_mgr.disable_plugin(params['plugin_id'], params['domain_id'])
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['plugin_id', 'domain_id'])
+    @check_required(['plugin_id'])
     def get_versions(self, params):
         """ Get Plugin version (local & remote)
 
@@ -178,17 +179,15 @@ class PluginService(BaseService):
         """
 
         plugin_id = params['plugin_id']
-        domain_id = params['domain_id']
-        repo_id = params.get('repository_id', None)
+        domain_id = params.get('domain_id')
+        repo_id = params.get('repository_id')
 
         repo_vos = self._list_repositories(repo_id)
         for repo_vo in repo_vos:
             plugin_mgr = self._get_plugin_manager_by_repo(repo_vo)
-            # plugin_manager may emit Error, if it is not found
-            # skip error
             try:
                 _LOGGER.debug(f'[get_versions] find at name: {repo_vo.name} '
-                              f'repo_type: {repo_vo.repository_type}')
+                              f'(repo_type: {repo_vo.repository_type})')
                 version_list = plugin_mgr.get_plugin_versions(plugin_id, domain_id)
             except Exception as e:
                 version_list = None
@@ -208,7 +207,7 @@ class PluginService(BaseService):
         raise ERROR_NO_PLUGIN(plugin_id=plugin_id)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['plugin_id', 'domain_id'])
+    @check_required(['plugin_id'])
     @change_only_key({'repository_info': 'repository'})
     def get(self, params):
         """ Get Plugin (local & remote)
@@ -225,14 +224,14 @@ class PluginService(BaseService):
             plugin_vo (object)
         """
         plugin_id = params['plugin_id']
-        domain_id = params['domain_id']
+        domain_id = params.get('domain_id')
         repo_id = params.get('repository_id')
         only = params.get('only')
 
         repo_vos = self._list_repositories(repo_id)
         for repo_vo in repo_vos:
             _LOGGER.debug(f'[get] find at name: {repo_vo.name} '
-                          f'repo_type: {repo_vo.repository_type}')
+                          f'(repo_type: {repo_vo.repository_type})')
             plugin_mgr = self._get_plugin_manager_by_repo(repo_vo)
             try:
                 plugin_vo = plugin_mgr.get_plugin(plugin_id, domain_id, only)
@@ -245,7 +244,7 @@ class PluginService(BaseService):
         raise ERROR_NO_PLUGIN(plugin_id=plugin_id)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['repository_id', 'domain_id'])
+    @check_required(['repository_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'plugin_id', 'name', 'state', 'service_type',
                           'provider', 'project_id', 'domain_id'])
@@ -283,10 +282,10 @@ class PluginService(BaseService):
         if 'only' in query:
             query['only'] += ['repository_id']
 
-        return plugin_mgr.list_plugins(query, params['domain_id'])
+        return plugin_mgr.list_plugins(query)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['query', 'repository_id', 'domain_id'])
+    @check_required(['query', 'repository_id'])
     @append_query_filter(['repository_id', 'domain_id'])
     @change_tag_filter('tags')
     @append_keyword_filter(['plugin_id', 'name', 'provider', 'labels'])
@@ -309,14 +308,14 @@ class PluginService(BaseService):
 
         plugin_mgr = self._get_plugin_manager_by_repo(repo_vo)
         query = params.get('query', {})
-        return plugin_mgr.stat_plugins(query, params['domain_id'])
+        return plugin_mgr.stat_plugins(query)
 
-    def _get_plugin_manager_by_repo(self, repo):
-        if repo.repository_type == 'local':
-            local_plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager', repository=repo)
+    def _get_plugin_manager_by_repo(self, repo_vo):
+        if repo_vo.repository_type == 'local':
+            local_plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager', repository=repo_vo)
             return local_plugin_mgr
         else:
-            remote_plugin_mgr: RemotePluginManager = self.locator.get_manager('RemotePluginManager', repository=repo)
+            remote_plugin_mgr: RemotePluginManager = self.locator.get_manager('RemotePluginManager', repository=repo_vo)
             return remote_plugin_mgr
 
     @staticmethod

@@ -19,13 +19,13 @@ class PolicyManager(BaseManager):
         pass
 
     @abstractmethod
-    def get_policy(self, policy_id, domain_id):
+    def get_policy(self, policy_id, domain_id, only=None):
         pass
 
     @abstractmethod
-    def list_policies(self, query, domain_id):
+    def list_policies(self, query):
         pass
 
     @abstractmethod
-    def stat_policies(self, query, domain_id):
+    def stat_policies(self, query):
         pass
