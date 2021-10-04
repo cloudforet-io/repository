@@ -10,7 +10,7 @@ _LOGGER = logging.getLogger(__name__)
 class RepositoryManager(BaseManager):
     def __init__(self, transaction, **kwargs):
         super().__init__(transaction, **kwargs)
-        self.repo_model : Repository = self.locator.get_model('Repository')
+        self.repo_model: Repository = self.locator.get_model('Repository')
 
     @abstractmethod
     def register_repository(self, params):
@@ -42,14 +42,29 @@ class RepositoryManager(BaseManager):
     def stat_repositories(self, query):
         return self.repo_model.stat(**query)
 
-    def get_repository_by_name(self, name='local'):
-        return self.repo_model.get(name=name)
+    def get_all_repositories(self, repository_id=None):
+        query = {
+            'sort': {
+                'key': 'repository_type'
+            },
+            'filter': []
+        }
 
-    def get_repository_by_type(self, repository_type):
-        query = {'filter': [{'k':'repository_type', 'v': repository_type, 'o':'eq'}]}
-        return self.list_repositories(query)
+        if repository_id:
+            query['filter'].append({'k': 'repository_id', 'v': repository_id, 'o': 'eq'})
+
+        repo_vos, total_count = self.list_repositories(query)
+        _LOGGER.debug(f'[list_repositories_by_id] Number of repositories: {total_count}')
+
+        return repo_vos
 
     def get_local_repository(self):
-        result, count = self.get_repository_by_type('local')
-        _LOGGER.debug(f'[get_local_repository] local_repo_count: {count}')
-        return result[0]
+        repo_vos = self.filter_repositories(repository_type='local')
+        local_repo_count = repo_vos.count()
+        _LOGGER.debug(f'[get_local_repository] local_repo_count: {local_repo_count}')
+        if local_repo_count > 0:
+            return repo_vos[0]
+        else:
+            return None
+
+

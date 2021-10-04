@@ -2,10 +2,9 @@ import logging
 import jsonschema
 import re
 
-from distutils.version import LooseVersion
-
 from spaceone.core.service import *
 from spaceone.core import utils
+from spaceone.core import config
 
 from spaceone.repository.error import *
 from spaceone.repository.model.capability_model import Capability
@@ -16,8 +15,7 @@ from spaceone.repository.manager.repository_manager import RepositoryManager
 
 _LOGGER = logging.getLogger(__name__)
 
-MAX_IMAGE_NAME_LENGTH = 40
-SUPPORTED_REGISTRY_TYPE = ['DOCKER_HUB', 'AWS_ECR']
+MAX_IMAGE_NAME_LENGTH = 48
 
 
 @authentication_handler(exclude=['get', 'get_versions'])
@@ -35,8 +33,8 @@ class PluginService(BaseService):
             params (dict): {
                 'name': 'str',
                 'service_type': 'str',
-                'registry_type': 'registry_type',
-                'registry_url': 'registry_rul',
+                'registry_type': 'str',
+                'registry_config': 'dict',
                 'image': 'str',
                 'provider': 'str',
                 'capability': 'dict',
@@ -59,8 +57,8 @@ class PluginService(BaseService):
         # self._check_capability(params.get('capability'))
         self._check_project(params.get('project_id'), params['domain_id'])
         self._check_service_type(params.get('service_type'))
-        self._check_registry(params.get('registry_type'), params.get('registry_url'))
         self._check_image(params['image'])
+        self._check_registry_config(params.get('registry_type'), params.get('registry_config', {}))
 
         plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager')
 
@@ -70,7 +68,14 @@ class PluginService(BaseService):
         params['repository'] = repo_mgr.get_local_repository()
         params['repository_id'] = params['repository'].repository_id
 
-        return plugin_mgr.register_plugin(params)
+        plugin_vo = plugin_mgr.register_plugin(params)
+
+        versions = plugin_mgr.get_plugin_versions(plugin_vo.plugin_id, plugin_vo.domain_id)
+
+        if len(versions) == 0:
+            raise ERROR_NO_IMAGE_IN_REGISTRY(registry_type=plugin_vo.registry_type, image=plugin_vo.image)
+
+        return plugin_vo
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['plugin_id', 'domain_id'])
@@ -186,7 +191,9 @@ class PluginService(BaseService):
         domain_id = params.get('domain_id')
         repo_id = params.get('repository_id')
 
-        repo_vos = self._list_repositories(repo_id)
+        repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
+        repo_vos = repo_mgr.get_all_repositories(repo_id)
+
         for repo_vo in repo_vos:
             plugin_mgr = self._get_plugin_manager_by_repo(repo_vo)
             try:
@@ -235,7 +242,9 @@ class PluginService(BaseService):
         repo_id = params.get('repository_id')
         only = params.get('only')
 
-        repo_vos = self._list_repositories(repo_id)
+        repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
+        repo_vos = repo_mgr.get_all_repositories(repo_id)
+
         for repo_vo in repo_vos:
             _LOGGER.debug(f'[get] find at name: {repo_vo.name} '
                           f'(repo_type: {repo_vo.repository_type})')
@@ -345,16 +354,6 @@ class PluginService(BaseService):
                 raise ERROR_INVALID_PARAMETER(key='capability', reason=e)
 
     @staticmethod
-    def _check_registry(registry_type, registry_url):
-        if registry_type:
-            if registry_type not in SUPPORTED_REGISTRY_TYPE:
-                raise ERROR_INVALID_PARAMETER(key='registry_type', reason=f'Registry type supports only '
-                                                                          f'{SUPPORTED_REGISTRY_TYPE}.')
-
-            if registry_url is None:
-                raise ERROR_REQUIRED_PARAMETER(key='registry_url')
-
-    @staticmethod
     def _check_service_type(name):
         """
         service_type has format rule
@@ -378,20 +377,6 @@ class PluginService(BaseService):
             identity_mgr: IdentityManager = self.locator.get_manager('IdentityManager')
             identity_mgr.get_project(project_id, domain_id)
 
-    def _list_repositories(self, repository_id):
-        repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
-        query = {}
-        if repository_id:
-            query.update({'repository_id': repository_id})
-
-        repo_vos, total_count = repo_mgr.list_repositories(query)
-        _LOGGER.debug(f'[_list_repositories] Number of repositories: {total_count}')
-
-        if total_count == 0:
-            raise ERROR_NO_REPOSITORY()
-
-        return repo_vos
-
     @staticmethod
     def _check_plugin_naming_rules(image):
         """ Check plugin name conventions
@@ -405,6 +390,12 @@ class PluginService(BaseService):
         return checked_name
 
     @staticmethod
+    def _check_registry_config(registry_type, registry_config):
+        if registry_type == 'AWS_PUBLIC_ECR':
+            if 'account_id' not in registry_config:
+                raise ERROR_REQUIRED_PARAMETER(key='registry_config.account_id')
+
+    @staticmethod
     def _check_image(name):
         """ Check image name
         format: repository/image_name
@@ -413,13 +404,17 @@ class PluginService(BaseService):
         """
         _LOGGER.debug(f'[_check_image] {name}')
         items = name.split('/')
-        siz = len(items)
-        if siz == 1:
+        size = len(items)
+        if size == 1:
             # Not repository
             image_name = items[0]
-        elif siz == 2:
+        elif size == 2:
             repo = items[0]
             image_name = items[1]
+        elif size == 3:
+            alias = items[0]
+            alias = items[1]
+            image_name = items[2]
         else:
             # wrong format
             raise ERROR_INVALID_IMAGE_FORMAT(name=name)

@@ -1,6 +1,6 @@
 import functools
-from google.protobuf.struct_pb2 import Struct
 from spaceone.api.repository.v1 import plugin_pb2
+from spaceone.core import config
 from spaceone.core.pygrpc.message_type import *
 from spaceone.core import utils
 from spaceone.repository.model.plugin_model import Plugin
@@ -21,7 +21,7 @@ def PluginInfo(plugin_vo: Plugin, minimal=False):
     }
     if not minimal:
         info.update({
-            'registry_url': plugin_vo.registry_url,
+            'registry_config': change_struct_type(plugin_vo.registry_config),
             'capability': change_struct_type(plugin_vo.capability),
             'template': change_struct_type(plugin_vo.template),
             'labels': change_list_value_type(plugin_vo.labels),
@@ -31,6 +31,10 @@ def PluginInfo(plugin_vo: Plugin, minimal=False):
             'created_at': utils.datetime_to_iso8601(plugin_vo.created_at) or plugin_vo.created_at,
             'updated_at': utils.datetime_to_iso8601(plugin_vo.updated_at) or plugin_vo.updated_at
             })
+
+        if plugin_vo.registry_type:
+            info['registry_url'] = config.get_global('REGISTRY_URL_MAP', {}).get(plugin_vo.registry_type)
+
         # WARNING
         # Based on local_plugin or remote_plugin
         # vo has different repository or repository_info field

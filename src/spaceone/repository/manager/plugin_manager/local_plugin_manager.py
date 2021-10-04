@@ -1,5 +1,6 @@
 import logging
 
+from spaceone.core import config
 from spaceone.core.error import *
 from spaceone.repository.model import Plugin
 from spaceone.repository.manager.plugin_manager import PluginManager
@@ -9,7 +10,7 @@ __all__ = ['LocalPluginManager']
 _LOGGER = logging.getLogger(__name__)
 _REGISTRY_CONNECTOR_MAP = {
     'DOCKER_HUB': 'DockerHubConnector',
-    'AWS_ECR': 'AWSECRConnector'
+    'AWS_PUBLIC_ECR': 'AWSPublicECRConnector'
 }
 
 
@@ -77,6 +78,13 @@ class LocalPluginManager(PluginManager):
         """
         plugin_vo: Plugin = self.get_plugin(plugin_id, domain_id)
 
-        connector = self.locator.get_connector(_REGISTRY_CONNECTOR_MAP[plugin_vo.registry_type])
-        tags = connector.get_tags(plugin_vo.registry_url, plugin_vo.image)
-        return tags
+        registry_url = config.get_global('REGISTRY_URL_MAP', {}).get(plugin_vo.registry_type)
+
+        try:
+            connector = self.locator.get_connector(_REGISTRY_CONNECTOR_MAP[plugin_vo.registry_type])
+            tags = connector.get_tags(registry_url, plugin_vo.image, plugin_vo.registry_config)
+        except Exception as e:
+            _LOGGER.error(f'[get_plugin_versions] get_tags error: {e}', exc_info=True)
+            raise e
+        else:
+            return tags
