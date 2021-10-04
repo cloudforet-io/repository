@@ -126,7 +126,9 @@ class SchemaService(BaseService):
         repo_id = params.get('repository_id')
         only = params.get('only')
 
-        repo_vos = self._list_repositories(repo_id)
+        repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
+        repo_vos = repo_mgr.get_all_repositories(repo_id)
+
         for repo_vo in repo_vos:
             _LOGGER.debug(f'[get] find at name: {repo_vo.name} '
                           f'(repo_type: {repo_vo.repository_type})')
@@ -242,19 +244,3 @@ class SchemaService(BaseService):
         if project_id:
             identity_mgr: IdentityManager = self.locator.get_manager('IdentityManager')
             identity_mgr.get_project(project_id, domain_id)
-
-    def _list_repositories(self, repository_id):
-        repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
-
-        conditions = {}
-
-        if repository_id:
-            conditions['repository_id'] = repository_id
-
-        repo_vos = repo_mgr.filter_repositories(**conditions)
-        _LOGGER.debug(f'[_list_repositories] Number of repositories: {repo_vos.count()}')
-
-        if repo_vos.count() == 0:
-            raise ERROR_NO_REPOSITORY()
-
-        return repo_vos
