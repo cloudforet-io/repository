@@ -16,7 +16,7 @@ from spaceone.repository.manager.repository_manager import RepositoryManager
 
 _LOGGER = logging.getLogger(__name__)
 
-MAX_IMAGE_NAME_LENGTH = 40
+MAX_IMAGE_NAME_LENGTH = 48
 
 
 @authentication_handler(exclude=['get', 'get_versions'])
@@ -183,7 +183,9 @@ class PluginService(BaseService):
         domain_id = params.get('domain_id')
         repo_id = params.get('repository_id')
 
-        repo_vos = self._list_repositories(repo_id)
+        repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
+        repo_vos = repo_mgr.get_all_repositories(repo_id)
+
         for repo_vo in repo_vos:
             plugin_mgr = self._get_plugin_manager_by_repo(repo_vo)
             try:
@@ -232,7 +234,9 @@ class PluginService(BaseService):
         repo_id = params.get('repository_id')
         only = params.get('only')
 
-        repo_vos = self._list_repositories(repo_id)
+        repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
+        repo_vos = repo_mgr.get_all_repositories(repo_id)
+
         for repo_vo in repo_vos:
             _LOGGER.debug(f'[get] find at name: {repo_vo.name} '
                           f'(repo_type: {repo_vo.repository_type})')
@@ -364,20 +368,6 @@ class PluginService(BaseService):
         if project_id:
             identity_mgr: IdentityManager = self.locator.get_manager('IdentityManager')
             identity_mgr.get_project(project_id, domain_id)
-
-    def _list_repositories(self, repository_id):
-        repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
-        query = {}
-        if repository_id:
-            query.update({'repository_id': repository_id})
-
-        repo_vos, total_count = repo_mgr.list_repositories(query)
-        _LOGGER.debug(f'[_list_repositories] Number of repositories: {total_count}')
-
-        if total_count == 0:
-            raise ERROR_NO_REPOSITORY()
-
-        return repo_vos
 
     @staticmethod
     def _check_plugin_naming_rules(image):
