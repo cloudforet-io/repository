@@ -2,8 +2,6 @@ import logging
 import jsonschema
 import re
 
-from distutils.version import LooseVersion
-
 from spaceone.core.service import *
 from spaceone.core import utils
 
@@ -390,13 +388,17 @@ class PluginService(BaseService):
         """
         _LOGGER.debug(f'[_check_image] {name}')
         items = name.split('/')
-        siz = len(items)
-        if siz == 1:
+        size = len(items)
+        if size == 1:
             # Not repository
             image_name = items[0]
-        elif siz == 2:
+        elif size == 2:
             repo = items[0]
             image_name = items[1]
+        elif size == 3:
+            alias = items[0]
+            alias = items[1]
+            image_name = items[2]
         else:
             # wrong format
             raise ERROR_INVALID_IMAGE_FORMAT(name=name)
