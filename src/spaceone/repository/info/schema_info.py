@@ -9,7 +9,7 @@ from spaceone.repository.info.repository_info import RepositoryInfo
 __all__ = ['SchemaInfo', 'SchemasInfo']
 
 
-def SchemaInfo(schema_vo: Schema, minimal=False):
+def SchemaInfo(schema_vo, minimal=False):
     info = {
         'name': schema_vo.name,
         'service_type': schema_vo.service_type
