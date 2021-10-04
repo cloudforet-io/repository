@@ -10,7 +10,7 @@ __all__ = ['LocalPluginManager']
 _LOGGER = logging.getLogger(__name__)
 _REGISTRY_CONNECTOR_MAP = {
     'DOCKER_HUB': 'DockerHubConnector',
-    'AWS_ECR': 'AWSECRConnector'
+    'AWS_PUBLIC_ECR': 'AWSPublicECRConnector'
 }
 
 
@@ -80,6 +80,11 @@ class LocalPluginManager(PluginManager):
 
         registry_url = config.get_global('REGISTRY_URL_MAP', {}).get(plugin_vo.registry_type)
 
-        connector = self.locator.get_connector(_REGISTRY_CONNECTOR_MAP[plugin_vo.registry_type])
-        tags = connector.get_tags(registry_url, plugin_vo.image)
-        return tags
+        try:
+            connector = self.locator.get_connector(_REGISTRY_CONNECTOR_MAP[plugin_vo.registry_type])
+            tags = connector.get_tags(registry_url, plugin_vo.image)
+        except Exception as e:
+            _LOGGER.error(f'[get_plugin_versions] get_tags error: {e}', exc_info=True)
+            raise e
+        else:
+            return tags

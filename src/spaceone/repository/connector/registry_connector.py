@@ -6,7 +6,7 @@ import boto3
 from spaceone.core.connector import BaseConnector
 from spaceone.repository.error import *
 
-__all__ = ["DockerHubConnector", "AWSECRConnector"]
+__all__ = ["DockerHubConnector", "AWSPublicECRConnector"]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ class DockerHubConnector(RegistryConnector):
             raise ERROR_NO_IMAGE_IN_REGISTRY(image=image, registry_url=registry_url)
 
 
-class AWSECRConnector(RegistryConnector):
+class AWSPublicECRConnector(RegistryConnector):
 
     def __init__(self, transaction, config):
         super().__init__(transaction, config)
@@ -49,12 +49,13 @@ class AWSECRConnector(RegistryConnector):
         region_name = self.config.get('region_name')
 
         if not all([aws_access_key_id, aws_secret_access_key, region_name]):
-            raise ERROR_CONNECTOR_CONFIGURATION(backend='AWSECRConnector')
+            raise ERROR_CONNECTOR_CONFIGURATION(connector='AWSECRConnector')
 
         self.client = boto3.client('ecr', aws_access_key_id=aws_access_key_id,
                                    aws_secret_access_key=aws_secret_access_key, region_name=region_name)
 
     def get_tags(self, registry_url, image):
+        print(registry_url, image)
         pass
 
 
