@@ -17,7 +17,6 @@ from spaceone.repository.manager.repository_manager import RepositoryManager
 _LOGGER = logging.getLogger(__name__)
 
 MAX_IMAGE_NAME_LENGTH = 40
-SUPPORTED_REGISTRY_TYPE = ['DOCKER_HUB', 'AWS_ECR']
 
 
 @authentication_handler(exclude=['get', 'get_versions'])
@@ -36,7 +35,6 @@ class PluginService(BaseService):
                 'name': 'str',
                 'service_type': 'str',
                 'registry_type': 'registry_type',
-                'registry_url': 'registry_rul',
                 'image': 'str',
                 'provider': 'str',
                 'capability': 'dict',
@@ -59,7 +57,6 @@ class PluginService(BaseService):
         # self._check_capability(params.get('capability'))
         self._check_project(params.get('project_id'), params['domain_id'])
         self._check_service_type(params.get('service_type'))
-        self._check_registry(params.get('registry_type'), params.get('registry_url'))
         self._check_image(params['image'])
 
         plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager')
@@ -343,16 +340,6 @@ class PluginService(BaseService):
                 capability_vo.validate()
             except Exception as e:
                 raise ERROR_INVALID_PARAMETER(key='capability', reason=e)
-
-    @staticmethod
-    def _check_registry(registry_type, registry_url):
-        if registry_type:
-            if registry_type not in SUPPORTED_REGISTRY_TYPE:
-                raise ERROR_INVALID_PARAMETER(key='registry_type', reason=f'Registry type supports only '
-                                                                          f'{SUPPORTED_REGISTRY_TYPE}.')
-
-            if registry_url is None:
-                raise ERROR_REQUIRED_PARAMETER(key='registry_url')
 
     @staticmethod
     def _check_service_type(name):
