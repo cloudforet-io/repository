@@ -36,20 +36,9 @@ CONNECTORS = {
     }
 }
 
-
-HANDLERS = {
-}
-
-# Docker Registry Base URL: https://index.docker.io/v1/
-REGISTRY_URL = ""
-
-ENDPOINTS = {
-}
-
-LOGGING = {
-}
-
-LOG = {
+REGISTRY_URL_MAP = {
+    'DOCKER_HUB': 'registry.hub.docker.com',
+    'AWS_PUBLIC_ECR': 'public.ecr.aws'
 }
 
 ROOT_TOKEN = ""
