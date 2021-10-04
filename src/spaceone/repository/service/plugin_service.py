@@ -4,6 +4,7 @@ import re
 
 from spaceone.core.service import *
 from spaceone.core import utils
+from spaceone.core import config
 
 from spaceone.repository.error import *
 from spaceone.repository.model.capability_model import Capability
@@ -32,7 +33,8 @@ class PluginService(BaseService):
             params (dict): {
                 'name': 'str',
                 'service_type': 'str',
-                'registry_type': 'registry_type',
+                'registry_type': 'str',
+                'registry_config': 'dict',
                 'image': 'str',
                 'provider': 'str',
                 'capability': 'dict',
@@ -56,6 +58,7 @@ class PluginService(BaseService):
         self._check_project(params.get('project_id'), params['domain_id'])
         self._check_service_type(params.get('service_type'))
         self._check_image(params['image'])
+        self._check_registry_config(params.get('registry_type'), params.get('registry_config', {}))
 
         plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager')
 
@@ -65,7 +68,14 @@ class PluginService(BaseService):
         params['repository'] = repo_mgr.get_local_repository()
         params['repository_id'] = params['repository'].repository_id
 
-        return plugin_mgr.register_plugin(params)
+        plugin_vo = plugin_mgr.register_plugin(params)
+
+        versions = plugin_mgr.get_plugin_versions(plugin_vo.plugin_id, plugin_vo.domain_id)
+
+        if len(versions) == 0:
+            raise ERROR_NO_IMAGE_IN_REGISTRY(registry_type=plugin_vo.registry_type, image=plugin_vo.image)
+
+        return plugin_vo
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['plugin_id', 'domain_id'])
@@ -378,6 +388,12 @@ class PluginService(BaseService):
         checked_name = parsed_items[-1]
 
         return checked_name
+
+    @staticmethod
+    def _check_registry_config(registry_type, registry_config):
+        if registry_type == 'AWS_PUBLIC_ECR':
+            if 'account_id' not in registry_config:
+                raise ERROR_REQUIRED_PARAMETER(key='registry_config.account_id')
 
     @staticmethod
     def _check_image(name):
