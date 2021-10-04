@@ -21,6 +21,7 @@ def PluginInfo(plugin_vo: Plugin, minimal=False):
     }
     if not minimal:
         info.update({
+            'registry_config': change_struct_type(plugin_vo.registry_config),
             'capability': change_struct_type(plugin_vo.capability),
             'template': change_struct_type(plugin_vo.template),
             'labels': change_list_value_type(plugin_vo.labels),

@@ -22,4 +22,4 @@ class ERROR_INVALID_TEMPLATE_SCHEMA(ERROR_INVALID_ARGUMENT):
 
 
 class ERROR_NO_IMAGE_IN_REGISTRY(ERROR_UNKNOWN):
-    _message = 'Image does not found. (image = {image}, registry_url = {registry_url})'
+    _message = 'Image does not found. (registry_type = {registry_type}, image = {image})'

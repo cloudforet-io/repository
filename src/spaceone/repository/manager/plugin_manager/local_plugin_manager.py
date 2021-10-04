@@ -82,7 +82,7 @@ class LocalPluginManager(PluginManager):
 
         try:
             connector = self.locator.get_connector(_REGISTRY_CONNECTOR_MAP[plugin_vo.registry_type])
-            tags = connector.get_tags(registry_url, plugin_vo.image)
+            tags = connector.get_tags(registry_url, plugin_vo.image, plugin_vo.registry_config)
         except Exception as e:
             _LOGGER.error(f'[get_plugin_versions] get_tags error: {e}', exc_info=True)
             raise e
