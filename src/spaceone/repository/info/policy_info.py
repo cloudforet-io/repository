@@ -9,7 +9,7 @@ from spaceone.repository.info.repository_info import RepositoryInfo
 __all__ = ['PolicyInfo', 'PoliciesInfo']
 
 
-def PolicyInfo(policy_vo: Policy, minimal=False):
+def PolicyInfo(policy_vo, minimal=False):
     info = {
         'policy_id': policy_vo.policy_id,
         'name': policy_vo.name

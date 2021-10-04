@@ -9,7 +9,7 @@ from spaceone.repository.info.repository_info import RepositoryInfo
 __all__ = ['PluginInfo', 'PluginsInfo', 'VersionsInfo']
 
 
-def PluginInfo(plugin_vo: Plugin, minimal=False):
+def PluginInfo(plugin_vo, minimal=False):
     info = {
         'plugin_id': plugin_vo.plugin_id,
         'name': plugin_vo.name,
@@ -32,8 +32,11 @@ def PluginInfo(plugin_vo: Plugin, minimal=False):
             'updated_at': utils.datetime_to_iso8601(plugin_vo.updated_at) or plugin_vo.updated_at
             })
 
-        if plugin_vo.registry_type:
-            info['registry_url'] = config.get_global('REGISTRY_URL_MAP', {}).get(plugin_vo.registry_type)
+        if isinstance(plugin_vo, plugin_pb2.PluginInfo):
+            info['registry_url'] = plugin_vo.registry_url
+        else:
+            if plugin_vo.registry_type:
+                info['registry_url'] = config.get_global('REGISTRY_URL_MAP', {}).get(plugin_vo.registry_type)
 
         # WARNING
         # Based on local_plugin or remote_plugin
