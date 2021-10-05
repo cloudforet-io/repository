@@ -25,7 +25,6 @@ def PluginInfo(plugin_vo, minimal=False):
             'capability': change_struct_type(plugin_vo.capability),
             'template': change_struct_type(plugin_vo.template),
             'labels': change_list_value_type(plugin_vo.labels),
-            'tags': change_struct_type(utils.tags_to_dict(plugin_vo.tags)),
             'project_id': plugin_vo.project_id,
             'domain_id': plugin_vo.domain_id,
             'created_at': utils.datetime_to_iso8601(plugin_vo.created_at) or plugin_vo.created_at,
@@ -33,8 +32,10 @@ def PluginInfo(plugin_vo, minimal=False):
             })
 
         if isinstance(plugin_vo, plugin_pb2.PluginInfo):
+            info['tags'] = plugin_vo.tags
             info['registry_url'] = plugin_vo.registry_url
         else:
+            info['tags'] = change_struct_type(utils.tags_to_dict(plugin_vo.tags))
             if plugin_vo.registry_type:
                 info['registry_url'] = config.get_global('REGISTRY_URL_MAP', {}).get(plugin_vo.registry_type)
 
