@@ -26,6 +26,7 @@ class PolicyService(BaseService):
 
         Args:
             params (dict): {
+                'policy_id': 'str',
                 'name': 'str',
                 'permissions': 'list',
                 'labels': 'list',
