@@ -1,0 +1,6 @@
+---
+policy_id: Policy-test-1923-asdf-#567
+name: Test Managed Policy Invalid Format
+permissions:
+  - 'identity.ServiceAccount.get'
+  - 'identity.ServiceAccount.list'

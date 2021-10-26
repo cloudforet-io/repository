@@ -1,0 +1,6 @@
+---
+policy_id: policy-managed-test
+name: Test Managed Policy 01
+permissions:
+  - 'identity.ServiceAccount.get'
+  - 'identity.ServiceAccount.list'
