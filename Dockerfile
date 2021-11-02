@@ -5,11 +5,11 @@ ENV SPACEONE_PORT 50051
 ENV SERVER_TYPE grpc
 ENV PKG_DIR /tmp/pkg
 ENV SRC_DIR /tmp/src
-ENV ETC_PATH /etc/spaceone
-ENV LOG_PATH /var/log/spaceone
-ENV PYTHONPATH /opt/spaceone
+ENV CONF_DIR /etc/spaceone
+ENV LOG_DIR /var/log/spaceone
 ENV EXTENSION_NAME extension
 ENV EXTENSION_SRC_DIR /opt/spaceone
+
 
 COPY pkg/*.txt ${PKG_DIR}/
 
