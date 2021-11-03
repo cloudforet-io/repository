@@ -1,4 +1,5 @@
 import logging
+import re
 
 from spaceone.core.service import *
 from spaceone.core import utils
@@ -12,6 +13,8 @@ from spaceone.repository.manager.repository_manager import RepositoryManager
 
 _LOGGER = logging.getLogger(__name__)
 
+MAX_POLICY_ID_LENGTH = 48
+
 
 @authentication_handler(exclude=['get'])
 @authorization_handler(exclude=['get'])
@@ -20,12 +23,13 @@ _LOGGER = logging.getLogger(__name__)
 class PolicyService(BaseService):
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['name', 'permissions', 'domain_id'])
+    @check_required(['policy_id', 'name', 'permissions', 'domain_id'])
     def create(self, params):
         """Create Policy (local repo only)
 
         Args:
             params (dict): {
+                'policy_id': 'str',
                 'name': 'str',
                 'permissions': 'list',
                 'labels': 'list',
@@ -41,6 +45,9 @@ class PolicyService(BaseService):
         if 'tags' in params:
             params['tags'] = utils.dict_to_tags(params['tags'])
 
+        # Pre-condition Check
+        _LOGGER.debug(f'[create] input param: {params} ')
+        self._check_policy_id(params.get('policy_id'))
         self._check_project(params.get('project_id'), params['domain_id'])
 
         policy_mgr: LocalPolicyManager = self.locator.get_manager('LocalPolicyManager')
@@ -207,3 +214,21 @@ class PolicyService(BaseService):
         if project_id:
             identity_mgr: IdentityManager = self.locator.get_manager('IdentityManager')
             identity_mgr.get_project(project_id, domain_id)
+
+    def _check_policy_id(self, policy_id):
+        """ Check policy id
+        format of policy id: alphabet lower case, number and - (underscore is not allowed)
+        """
+        _LOGGER.debug(f'[_check_policy_id] policy_id => {policy_id}')
+        # check policy_id
+        policy_id_len = len(policy_id)
+        if policy_id_len > MAX_POLICY_ID_LENGTH:
+            raise ERROR_INVALID_POLICY_ID_LENGTH(length=MAX_POLICY_ID_LENGTH, policy_id=policy_id)
+
+        # Search policy_id format
+        m = re.search('(?![a-z0-9\-]).*', policy_id)
+        if m:
+            if len(m.group()) > 1:
+                raise ERROR_INVALID_POLICY_ID_FORMAT(policy_id=policy_id)
+            return True
+        raise ERROR_INVALID_POLICY_ID_FORMAT(policy_id=policy_id)

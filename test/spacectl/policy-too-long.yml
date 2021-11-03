@@ -1,0 +1,6 @@
+---
+policy_id: policy-managed-test-test-123-policy-managed-test-test-123-policy-managed-test-wanny-123
+name: Test Managed Policy Too Long
+permissions:
+  - 'identity.ServiceAccount.get'
+  - 'identity.ServiceAccount.list'
