@@ -14,6 +14,7 @@ class PolicyTag(EmbeddedDocument):
 class Policy(MongoModel):
     policy_id = StringField(max_length=255, required=True, unique=True)
     name = StringField(max_length=255, unique_with='domain_id')
+    state = StringField(max_length=40, default='ENABLED', choices=('ENABLED', 'DISABLED', 'DELETED'))
     permissions = ListField(StringField())
     labels = ListField(StringField(max_length=255))
     tags = ListField(EmbeddedDocumentField(PolicyTag))
