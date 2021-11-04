@@ -47,7 +47,7 @@ class PolicyService(BaseService):
 
         # Pre-condition Check
         _LOGGER.debug(f'[create] input param: {params} ')
-        self._check_policy_id(params.get('policy_id'))
+        self._check_policy_id(params['policy_id'])
         self._check_project(params.get('project_id'), params['domain_id'])
 
         policy_mgr: LocalPolicyManager = self.locator.get_manager('LocalPolicyManager')
