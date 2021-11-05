@@ -17,6 +17,7 @@ def PolicyInfo(policy_vo, minimal=False):
 
     if not minimal:
         info.update({
+            'state': policy_vo.state,
             'permissions': change_list_value_type(policy_vo.permissions),
             'labels': change_list_value_type(policy_vo.labels),
             'tags': change_struct_type(utils.tags_to_dict(policy_vo.tags)),
