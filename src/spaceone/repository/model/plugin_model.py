@@ -19,8 +19,8 @@ class Plugin(MongoModel):
     name is unique per domain
     """
     plugin_id = StringField(max_length=255, unique=True)
-    name = StringField(max_length=255)
-    state = StringField(max_length=40, default='ENABLED', choices=('ENABLED', 'DISABLED', 'DELETED'))
+    name = StringField(max_length=255, unique_with='domain_id')
+    state = StringField(max_length=40, default='ENABLED', choices=('ENABLED', 'DISABLED'))
     image = StringField(max_length=255)
     registry_type = StringField(max_length=255, default='DOCKER_HUB')
     registry_config = DictField()
@@ -36,7 +36,6 @@ class Plugin(MongoModel):
     domain_id = StringField(max_length=255)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
-    deleted_at = DateTimeField(default=None, null=True)
 
     meta = {
         'updatable_fields': [
@@ -47,8 +46,7 @@ class Plugin(MongoModel):
             'capability',
             'repository_id',
             'labels',
-            'tags',
-            'deleted_at'
+            'tags'
         ],
         'minimal_fields': [
             'plugin_id',
@@ -79,33 +77,3 @@ class Plugin(MongoModel):
             ('tags.key', 'tags.value')
         ]
     }
-
-    @queryset_manager
-    def objects(doc_cls, queryset):
-        return queryset.filter(state__ne='DELETED')
-
-    @classmethod
-    def create(cls, data):
-        """ Unique per domain
-        """
-        plugin_vos = cls.filter(name=data['name'], domain_id=data['domain_id'])
-        if plugin_vos.count() > 0:
-            raise ERROR_NOT_UNIQUE(key='name', value=data['name'])
-
-        return super().create(data)
-
-    def update(self, data):
-        """ Unique per domain
-        """
-        if 'name' in data:
-            plugin_vos = self.filter(name=data['name'], domain_id=data['domain_id'], plugin_id__ne=self.plugin_id)
-            if plugin_vos.count() > 0:
-                raise ERROR_NOT_UNIQUE(key='name', value=data['name'])
-
-        return super().update(data)
-
-    def delete(self):
-        self.update({
-            'state': 'DELETED',
-            'deleted_at': datetime.utcnow()
-        })
