@@ -294,6 +294,10 @@ class PluginService(BaseService):
 
         plugin_mgr = self._get_plugin_manager_by_repo(repo_vo)
         query = params.get('query', {})
+        only = query.get('only', [])
+
+        if 'registry_url' in only:
+            only.remove('registry_url')
 
         return plugin_mgr.list_plugins(query)
 

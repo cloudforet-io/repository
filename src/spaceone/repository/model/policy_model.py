@@ -45,7 +45,7 @@ class Policy(MongoModel):
         },
         'ordering': ['name'],
         'indexes': [
-            'policy_id',
+            # 'policy_id',
             'name',
             'repository',
             'repository_id',

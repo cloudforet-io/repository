@@ -32,7 +32,7 @@ class Repository(MongoModel):
         ],
         'ordering': ['name'],
         'indexes': [
-            'repository_id',
+            # 'repository_id',
             'name',
             'repository_type'
         ]
