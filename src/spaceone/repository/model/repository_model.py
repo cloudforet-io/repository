@@ -8,7 +8,7 @@ __all__ = ['Repository']
 
 
 class Repository(MongoModel):
-    repository_id = StringField(max_length=40, generate_id='repo', unique=True)
+    repository_id = StringField(max_length=40, generate_id='repo')
     name = StringField(max_length=255)
     repository_type = StringField(max_length=255, choices=['local', 'remote'])
     state = StringField(max_length=20, default='ENABLED')
@@ -32,7 +32,7 @@ class Repository(MongoModel):
         ],
         'ordering': ['name'],
         'indexes': [
-            # 'repository_id',
+            'repository_id',
             'name',
             'repository_type'
         ]
