@@ -65,7 +65,7 @@ class Plugin(MongoModel):
         },
         'ordering': ['name'],
         'indexes': [
-            'plugin_id',
+            # 'plugin_id',
             'state',
             'registry_type',
             'service_type',
