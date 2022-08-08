@@ -5,3 +5,4 @@ python-consul
 schematics
 boto3
 requests
+mongomock

@@ -91,7 +91,7 @@ class TestSchemaService(unittest.TestCase):
         self.assertEqual(params['service_type'], schema_vo.service_type)
         self.assertEqual(params.get('schema', {}), schema_vo.schema)
         self.assertEqual(params.get('labels', []), schema_vo.labels)
-        self.assertEqual(params['tags'], utils.tags_to_dict(schema_vo.tags))
+        self.assertEqual(params['tags'], schema_vo.tags)
         self.assertEqual(params['domain_id'], schema_vo.domain_id)
 
     def test_duplicate_create_schema(self, *args):
@@ -204,7 +204,7 @@ class TestSchemaService(unittest.TestCase):
         self.assertEqual(params['name'], schema_vo.name)
         self.assertEqual(params.get('schema', {}), schema_vo.schema)
         self.assertEqual(params.get('labels', []), schema_vo.labels)
-        self.assertEqual(params['tags'], utils.tags_to_dict(schema_vo.tags))
+        self.assertEqual(params['tags'], schema_vo.tags)
 
     def test_delete_schema(self, *args):
         new_schema_vo = SchemaFactory(domain_id=self.domain_id)
@@ -296,7 +296,7 @@ class TestSchemaService(unittest.TestCase):
         self.assertEqual(total_count, 3)
 
     def test_list_schemas_by_tag(self, *args):
-        SchemaFactory(tags=[{'key': 'tag_key_1', 'value': 'tag_value_1'}], repository=self.repository_vo,
+        SchemaFactory(tags={'tag_key_1': 'tag_value_1'}, repository=self.repository_vo,
                       domain_id=self.domain_id)
         schema_vos = SchemaFactory.build_batch(9, repository=self.repository_vo,
                                                domain_id=self.domain_id)

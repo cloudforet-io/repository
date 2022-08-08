@@ -39,9 +39,6 @@ class SchemaService(BaseService):
             schema_vo (object)
         """
 
-        if 'tags' in params:
-            params['tags'] = utils.dict_to_tags(params['tags'])
-
         # Pre-condition Check
         self._check_schema(params['schema'])
         self._check_project(params.get('project_id'), params['domain_id'])
@@ -73,9 +70,6 @@ class SchemaService(BaseService):
         Returns:
             schema_vo (object)
         """
-
-        if 'tags' in params:
-            params['tags'] = utils.dict_to_tags(params['tags'])
 
         # Pre-condition Check
         self._check_schema(params.get('schema'))
@@ -147,7 +141,6 @@ class SchemaService(BaseService):
     @check_required(['repository_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'name', 'service_type', 'project_id', 'domain_id'])
-    @change_tag_filter('tags')
     @append_keyword_filter(['name', 'labels'])
     def list(self, params):
         """ List schemas (local or repo)
@@ -179,7 +172,6 @@ class SchemaService(BaseService):
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['query', 'repository_id'])
     @append_query_filter(['repository_id', 'domain_id'])
-    @change_tag_filter('tags')
     @append_keyword_filter(['name', 'labels'])
     def stat(self, params):
         """

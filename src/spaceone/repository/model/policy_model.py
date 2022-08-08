@@ -6,18 +6,13 @@ from spaceone.repository.model.repository_model import Repository
 __all__ = ['Policy']
 
 
-class PolicyTag(EmbeddedDocument):
-    key = StringField(max_length=255)
-    value = StringField(max_length=255)
-
-
 class Policy(MongoModel):
     policy_id = StringField(max_length=255, required=True, unique=True)
     name = StringField(max_length=255, unique_with='domain_id')
     state = StringField(max_length=40, default='ENABLED', choices=('ENABLED', 'DISABLED'))
     permissions = ListField(StringField())
     labels = ListField(StringField(max_length=255))
-    tags = ListField(EmbeddedDocumentField(PolicyTag))
+    tags = DictField()
     repository = ReferenceField('Repository', reverse_delete_rule=DENY)
     repository_id = StringField(max_length=40)
     project_id = StringField(max_length=255, default=None, null=True)
@@ -51,6 +46,5 @@ class Policy(MongoModel):
             'repository_id',
             'project_id',
             'domain_id',
-            ('tags.key', 'tags.value')
         ]
     }

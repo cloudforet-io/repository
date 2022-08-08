@@ -6,7 +6,6 @@ from test.factory.repository_factory import RepositoryFactory
 
 
 class SchemaFactory(factory.mongoengine.MongoEngineFactory):
-
     class Meta:
         model = Schema
 
@@ -31,12 +30,9 @@ class SchemaFactory(factory.mongoengine.MongoEngineFactory):
         'required': ['domain', 'client_id']
     }
     labels = ['aa', 'bb']
-    tags = [
-        {
-            'key': 'tag_key',
-            'value': 'tag_value'
-        }
-    ]
+    tags = {
+        'tag_key': 'tag_value'
+    }
 
     repository = factory.SubFactory(RepositoryFactory)
     repository_id = factory.LazyAttribute(lambda o: utils.generate_id('repo'))

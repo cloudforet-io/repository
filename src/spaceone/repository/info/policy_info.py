@@ -20,7 +20,7 @@ def PolicyInfo(policy_vo, minimal=False):
             'state': policy_vo.state,
             'permissions': change_list_value_type(policy_vo.permissions),
             'labels': change_list_value_type(policy_vo.labels),
-            'tags': change_struct_type(utils.tags_to_dict(policy_vo.tags)),
+            'tags': change_struct_type(policy_vo.tags),
             'project_id': policy_vo.project_id,
             'domain_id': policy_vo.domain_id,
             'created_at': utils.datetime_to_iso8601(policy_vo.created_at) or policy_vo.created_at,

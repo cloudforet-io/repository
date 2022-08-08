@@ -74,7 +74,7 @@ class TestPolicyService(unittest.TestCase):
         self.assertEqual(params['name'], policy_vo.name)
         self.assertEqual(params.get('permissions', []), policy_vo.permissions)
         self.assertEqual(params.get('labels', []), policy_vo.labels)
-        self.assertEqual(params['tags'], utils.tags_to_dict(policy_vo.tags))
+        self.assertEqual(params['tags'], policy_vo.tags)
         self.assertEqual(params['domain_id'], policy_vo.domain_id)
 
     def test_duplicate_create_policy(self, *args):
@@ -137,7 +137,7 @@ class TestPolicyService(unittest.TestCase):
         self.assertEqual(params['name'], policy_vo.name)
         self.assertEqual(params.get('permissions', []), policy_vo.permissions)
         self.assertEqual(params.get('labels', []), policy_vo.labels)
-        self.assertEqual(params['tags'], utils.tags_to_dict(policy_vo.tags))
+        self.assertEqual(params['tags'], policy_vo.tags)
 
     def test_delete_policy(self, *args):
         new_policy_vo = PolicyFactory(domain_id=self.domain_id)
@@ -229,7 +229,7 @@ class TestPolicyService(unittest.TestCase):
         self.assertEqual(total_count, 3)
 
     def test_list_policies_by_tag(self, *args):
-        PolicyFactory(tags=[{'key': 'tag_key_1', 'value': 'tag_value_1'}], repository=self.repository_vo,
+        PolicyFactory(tags={'tag_key_1': 'tag_value_1'}, repository=self.repository_vo,
                       domain_id=self.domain_id)
         policy_vos = PolicyFactory.build_batch(9, repository=self.repository_vo,
                                                domain_id=self.domain_id)

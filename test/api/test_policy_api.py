@@ -21,15 +21,11 @@ class _MockPolicyService(BaseService):
 
     def create(self, params):
         params = copy.deepcopy(params)
-        if 'tags' in params:
-            params['tags'] = utils.dict_to_tags(params['tags'])
 
         return PolicyFactory(**params)
 
     def update(self, params):
         params = copy.deepcopy(params)
-        if 'tags' in params:
-            params['tags'] = utils.dict_to_tags(params['tags'])
 
         return PolicyFactory(**params)
 

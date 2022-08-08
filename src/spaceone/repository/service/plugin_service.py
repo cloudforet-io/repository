@@ -49,9 +49,6 @@ class PluginService(BaseService):
             plugin_vo (object)
         """
 
-        if 'tags' in params:
-            params['tags'] = utils.dict_to_tags(params['tags'])
-
         # Pre-condition Check
         self._check_template(params.get('template'))
         # self._check_capability(params.get('capability'))
@@ -96,9 +93,6 @@ class PluginService(BaseService):
         Returns:
             plugin_vo (object)
         """
-
-        if 'tags' in params:
-            params['tags'] = utils.dict_to_tags(params['tags'])
 
         # Pre-condition Check
         self._check_template(params.get('template'))
@@ -264,7 +258,6 @@ class PluginService(BaseService):
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'plugin_id', 'name', 'state', 'service_type',
                           'registry_type', 'provider', 'project_id', 'domain_id'])
-    @change_tag_filter('tags')
     @append_keyword_filter(['plugin_id', 'name', 'provider', 'labels'])
     def list(self, params):
         """ List plugins (local or repo)
@@ -304,7 +297,6 @@ class PluginService(BaseService):
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['query', 'repository_id'])
     @append_query_filter(['repository_id', 'domain_id'])
-    @change_tag_filter('tags')
     @append_keyword_filter(['plugin_id', 'name', 'provider', 'labels'])
     def stat(self, params):
         """

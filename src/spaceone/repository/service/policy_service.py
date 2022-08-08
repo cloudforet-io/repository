@@ -42,9 +42,6 @@ class PolicyService(BaseService):
             policy_vo (object)
         """
 
-        if 'tags' in params:
-            params['tags'] = utils.dict_to_tags(params['tags'])
-
         # Pre-condition Check
         _LOGGER.debug(f'[create] input param: {params} ')
         self._check_policy_id(params['policy_id'])
@@ -77,9 +74,6 @@ class PolicyService(BaseService):
         Returns:
             policy_vo (object)
         """
-
-        if 'tags' in params:
-            params['tags'] = utils.dict_to_tags(params['tags'])
 
         policy_mgr: LocalPolicyManager = self.locator.get_manager('LocalPolicyManager')
         return policy_mgr.update_policy(params)
@@ -147,7 +141,6 @@ class PolicyService(BaseService):
     @check_required(['repository_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'policy_id', 'name', 'project_id', 'domain_id'])
-    @change_tag_filter('tags')
     @append_keyword_filter(['policy_id', 'name', 'labels'])
     def list(self, params):
         """ List policies (local or repo)
@@ -179,7 +172,6 @@ class PolicyService(BaseService):
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['query', 'repository_id'])
     @append_query_filter(['repository_id', 'domain_id'])
-    @change_tag_filter('tags')
     @append_keyword_filter(['policy_id', 'name', 'labels'])
     def stat(self, params):
         """

@@ -103,7 +103,7 @@ class TestPluginService(unittest.TestCase):
         self.assertEqual(params.get('capability', {}), plugin_vo.capability)
         self.assertEqual(params.get('template', {}), plugin_vo.template)
         self.assertEqual(params.get('labels', []), plugin_vo.labels)
-        self.assertEqual(params['tags'], utils.tags_to_dict(plugin_vo.tags))
+        self.assertEqual(params['tags'], plugin_vo.tags)
         self.assertEqual(params['domain_id'], plugin_vo.domain_id)
 
     def test_register_plugin_invalid_template(self, *args):
@@ -226,7 +226,7 @@ class TestPluginService(unittest.TestCase):
         self.assertEqual(params.get('capability', {}), plugin_vo.capability)
         self.assertEqual(params.get('template', {}), plugin_vo.template)
         self.assertEqual(params.get('labels', []), plugin_vo.labels)
-        self.assertEqual(params['tags'], utils.tags_to_dict(plugin_vo.tags))
+        self.assertEqual(params['tags'], plugin_vo.tags)
 
     def test_delete_plugin(self, *args):
         new_plugin_vo = PluginFactory(domain_id=self.domain_id)
@@ -408,7 +408,7 @@ class TestPluginService(unittest.TestCase):
         self.assertEqual(total_count, 3)
 
     def test_list_plugins_by_tag(self, *args):
-        PluginFactory(tags=[{'key': 'tag_key_1', 'value': 'tag_value_1'}], repository=self.repository_vo,
+        PluginFactory(tags={'tag_key_1': 'tag_value_1'}, repository=self.repository_vo,
                       domain_id=self.domain_id)
         plugin_vos = PluginFactory.build_batch(9, repository=self.repository_vo,
                                                domain_id=self.domain_id)

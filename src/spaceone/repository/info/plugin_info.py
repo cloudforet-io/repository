@@ -35,7 +35,7 @@ def PluginInfo(plugin_vo, minimal=False):
             info['tags'] = plugin_vo.tags
             info['registry_url'] = plugin_vo.registry_url
         else:
-            info['tags'] = change_struct_type(utils.tags_to_dict(plugin_vo.tags))
+            info['tags'] = change_struct_type(plugin_vo.tags)
             if plugin_vo.registry_type:
                 info['registry_url'] = config.get_global('REGISTRY_URL_MAP', {}).get(plugin_vo.registry_type)
 
