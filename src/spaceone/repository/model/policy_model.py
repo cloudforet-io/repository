@@ -40,7 +40,6 @@ class Policy(MongoModel):
         'ordering': ['name'],
         'indexes': [
             'policy_id',
-            'name',
             'repository',
             'repository_id',
             'project_id',
