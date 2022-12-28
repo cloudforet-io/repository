@@ -2,13 +2,15 @@ import abc
 import requests
 import logging
 import boto3
+from distutils.version import StrictVersion
 
 from spaceone.core.connector import BaseConnector
 from spaceone.repository.error import *
 
-__all__ = ["DockerHubConnector", "AWSPublicECRConnector"]
+__all__ = ['DockerHubConnector', 'AWSPublicECRConnector', 'HarborConnector']
 
 _LOGGER = logging.getLogger(__name__)
+_DEFAULT_PAGE_SIZE = 10
 
 
 class RegistryConnector(BaseConnector):
@@ -20,10 +22,9 @@ class RegistryConnector(BaseConnector):
 
 class DockerHubConnector(RegistryConnector):
 
-    _DEFAULT_PAGE_SIZE = 1024
-
     def get_tags(self, registry_url, image, config):
-        url = f'https://{registry_url}/v2/repositories/{image}/tags?page_size={self._DEFAULT_PAGE_SIZE}'
+        # url = f'https://{registry_url}/v2/repositories/{image}/tags?page_size={_DEFAULT_PAGE_SIZE}'
+        url = f'https://{registry_url}/v2/repositories/{image}/tags'
 
         response = requests.get(url)
 
@@ -37,6 +38,27 @@ class DockerHubConnector(RegistryConnector):
 
         else:
             raise ERROR_NO_IMAGE_IN_REGISTRY(registry_type='DOCKER_HUB', image=image)
+
+
+class HarborConnector(RegistryConnector):
+
+    def get_tags(self, registry_url, image, config):
+        base_url = self.config.get('base_url')
+
+        headers = {
+            'authorization': f'Basic {self.config["token"]}'
+        }
+
+        url = f'{base_url}/v2/{image}/tags/list'
+
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 200:
+            image_tags = response.json().get('tags', [])
+            image_tags.sort(key=StrictVersion, reverse=True)
+            return image_tags
+
+        raise ERROR_NO_IMAGE_IN_REGISTRY(registry_type='HARBOR', image=image)
 
 
 class AWSPublicECRConnector(RegistryConnector):
