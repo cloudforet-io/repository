@@ -25,6 +25,10 @@ CONNECTORS = {
         'region_name': ''
     },
     'DockerHubConnector': {},
+    'HarborConnector': {
+        'base_url': '',
+        'token': ''
+    },
     'RemoteRepositoryConnector': {},
     'SpaceConnector': {
         'backend': 'spaceone.core.connector.space_connector.SpaceConnector',
@@ -37,7 +41,8 @@ CONNECTORS = {
 
 REGISTRY_URL_MAP = {
     'DOCKER_HUB': 'registry.hub.docker.com',
-    'AWS_PUBLIC_ECR': 'public.ecr.aws'
+    'AWS_PUBLIC_ECR': 'public.ecr.aws',
+    'HARBOR': ''
 }
 
 ROOT_TOKEN = ""

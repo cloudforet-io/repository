@@ -7,8 +7,8 @@ __all__ = ['Policy']
 
 
 class Policy(MongoModel):
-    policy_id = StringField(max_length=255, required=True, unique=True)
-    name = StringField(max_length=255, unique_with='domain_id')
+    policy_id = StringField(max_length=255, required=True, unique_with='domain_id')
+    name = StringField(max_length=255)
     state = StringField(max_length=40, default='ENABLED', choices=('ENABLED', 'DISABLED'))
     permissions = ListField(StringField())
     labels = ListField(StringField(max_length=255))
@@ -24,7 +24,6 @@ class Policy(MongoModel):
         'updatable_fields': [
             'name',
             'permissions',
-            'repository_id',
             'labels',
             'tags'
         ],
@@ -40,8 +39,7 @@ class Policy(MongoModel):
         },
         'ordering': ['name'],
         'indexes': [
-            # 'policy_id',
-            'name',
+            'policy_id',
             'repository',
             'repository_id',
             'project_id',

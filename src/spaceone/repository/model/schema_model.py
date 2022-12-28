@@ -1,7 +1,6 @@
 from mongoengine import *
 
 from spaceone.core.model.mongo_model import MongoModel
-
 from spaceone.repository.model.repository_model import Repository
 
 __all__ = ['Schema']
@@ -24,7 +23,6 @@ class Schema(MongoModel):
         'updatable_fields': [
             'name',
             'schema',
-            'repository_id',
             'labels',
             'tags'
         ],

@@ -49,13 +49,17 @@ class PluginService(BaseService):
             plugin_vo (object)
         """
 
+        registry_type = params.get('registry_type', 'DOCKER_HUB')
+        registry_config = params.get('registry_config', {})
+
         # Pre-condition Check
         self._check_template(params.get('template'))
         # self._check_capability(params.get('capability'))
         self._check_project(params.get('project_id'), params['domain_id'])
         self._check_service_type(params.get('service_type'))
         self._check_image(params['image'])
-        self._check_registry_config(params.get('registry_type'), params.get('registry_config', {}))
+        self._check_registry_type(registry_type)
+        self._check_registry_config(registry_type, registry_config)
 
         plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager')
 
@@ -384,6 +388,13 @@ class PluginService(BaseService):
         checked_name = parsed_items[-1]
 
         return checked_name
+
+    @staticmethod
+    def _check_registry_type(registry_type):
+        registry_url = config.get_global('REGISTRY_URL_MAP', {}).get(registry_type)
+
+        if registry_url.strip() == '':
+            raise ERROR_REGISTRY_SETTINGS(registry_type=registry_type)
 
     @staticmethod
     def _check_registry_config(registry_type, registry_config):

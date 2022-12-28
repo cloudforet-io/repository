@@ -1,9 +1,6 @@
-from datetime import datetime
 from mongoengine import *
 
-from spaceone.core.error import *
 from spaceone.core.model.mongo_model import MongoModel
-
 from spaceone.repository.model.repository_model import Repository
 
 __all__ = ['Plugin']
@@ -13,8 +10,8 @@ class Plugin(MongoModel):
     """
     name is unique per domain
     """
-    plugin_id = StringField(max_length=255, unique=True)
-    name = StringField(max_length=255, unique_with='domain_id')
+    plugin_id = StringField(max_length=255, unique_with='domain_id')
+    name = StringField(max_length=255)
     state = StringField(max_length=40, default='ENABLED', choices=('ENABLED', 'DISABLED'))
     image = StringField(max_length=255)
     registry_type = StringField(max_length=255, default='DOCKER_HUB')
@@ -36,10 +33,8 @@ class Plugin(MongoModel):
         'updatable_fields': [
             'name',
             'state',
-            'provider',
-            'template',
             'capability',
-            'repository_id',
+            'template',
             'labels',
             'tags'
         ],
@@ -60,7 +55,7 @@ class Plugin(MongoModel):
         },
         'ordering': ['name'],
         'indexes': [
-            # 'plugin_id',
+            'plugin_id',
             'state',
             'registry_type',
             'service_type',
