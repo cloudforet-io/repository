@@ -1,4 +1,6 @@
 import logging
+import sys
+
 import jsonschema
 import re
 
@@ -258,7 +260,6 @@ class PluginService(BaseService):
         raise ERROR_NO_PLUGIN(plugin_id=plugin_id)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['repository_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'plugin_id', 'name', 'state', 'service_type',
                           'registry_type', 'provider', 'project_id', 'domain_id'])
@@ -286,17 +287,33 @@ class PluginService(BaseService):
         """
 
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
-        repository_id = params['repository_id']
-        repo_vo = repo_mgr.get_repository(repository_id)
-
-        plugin_mgr = self._get_plugin_manager_by_repo(repo_vo)
         query = params.get('query', {})
         only = query.get('only', [])
 
         if 'registry_url' in only:
             only.remove('registry_url')
 
-        return plugin_mgr.list_plugins(query)
+        if params.get('repository_id'):
+            repository_id = params['repository_id']
+            repo_vo = repo_mgr.get_repository(repository_id)
+
+            plugin_mgr = self._get_plugin_manager_by_repo(repo_vo)
+
+            return plugin_mgr.list_plugins(query)
+        else:
+            list_repositories = repo_mgr.list_repositories({})
+
+            list_plugin_in_all_repositories = [[], 0]
+            for repository_vo in list_repositories[0]:
+                plugin_mgr = self._get_plugin_manager_by_repo(repository_vo)
+                list_plugin = plugin_mgr.list_plugins(query)
+
+                for plugin_vo in list_plugin[0]:
+                    list_plugin_in_all_repositories[0].append(plugin_vo)
+
+                list_plugin_in_all_repositories[1] += list_plugin[1]
+
+            return list_plugin_in_all_repositories
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['query', 'repository_id'])
