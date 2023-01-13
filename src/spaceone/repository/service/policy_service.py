@@ -138,7 +138,6 @@ class PolicyService(BaseService):
         raise ERROR_NO_POLICY(policy_id=policy_id)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['repository_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'policy_id', 'name', 'project_id', 'domain_id'])
     @append_keyword_filter(['policy_id', 'name', 'labels'])
@@ -161,13 +160,26 @@ class PolicyService(BaseService):
         """
 
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
-        repository_id = params['repository_id']
-        repo_vo = repo_mgr.get_repository(repository_id)
-
-        policy_mgr = self._get_policy_manager_by_repo(repo_vo)
         query = params.get('query', {})
 
-        return policy_mgr.list_policies(query)
+        if repository_id := params.get('repository_id'):
+            repo_vo = repo_mgr.get_repository(repository_id)
+            policy_mgr = self._get_policy_manager_by_repo(repo_vo)
+
+            return policy_mgr.list_policies(query)
+        else:
+            repository_vos, total_count = repo_mgr.list_repositories({})
+
+            all_policy_vos = []
+            policy_total_count = 0
+            for repository_vo in repository_vos:
+                policy_mgr = self._get_policy_manager_by_repo(repository_vo)
+                policy_vos, total_count = policy_mgr.list_policies(query)
+
+                all_policy_vos += policy_vos
+                policy_total_count += total_count
+
+            return all_policy_vos, policy_total_count
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['query', 'repository_id'])

@@ -138,7 +138,6 @@ class SchemaService(BaseService):
         raise ERROR_NO_SCHEMA(name=schema_name)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['repository_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'name', 'service_type', 'project_id', 'domain_id'])
     @append_keyword_filter(['name', 'labels'])
@@ -161,13 +160,26 @@ class SchemaService(BaseService):
         """
 
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
-        repository_id = params['repository_id']
-        repo_vo = repo_mgr.get_repository(repository_id)
-
-        schema_mgr = self._get_schema_manager_by_repo(repo_vo)
         query = params.get('query', {})
 
-        return schema_mgr.list_schemas(query)
+        if repository_id := params.get('repository_id'):
+            repo_vo = repo_mgr.get_repository(repository_id)
+            schema_mgr = self._get_schema_manager_by_repo(repo_vo)
+
+            return schema_mgr.list_schemas(query)
+        else:
+            repository_vos, total_count = repo_mgr.list_repositories({})
+
+            all_schema_vos = []
+            schema_total_count = 0
+            for repository_vo in repository_vos:
+                schema_mgr = self._get_schema_manager_by_repo(repository_vo)
+                schema_vos, total_count = schema_mgr.list_schemas(query)
+
+                all_schema_vos += schema_vos
+                schema_total_count += total_count
+
+            return all_schema_vos, schema_total_count
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['query', 'repository_id'])
