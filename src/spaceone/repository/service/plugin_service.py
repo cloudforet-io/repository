@@ -1,4 +1,6 @@
 import logging
+import sys
+
 import jsonschema
 import re
 
@@ -258,7 +260,6 @@ class PluginService(BaseService):
         raise ERROR_NO_PLUGIN(plugin_id=plugin_id)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['repository_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
     @append_query_filter(['repository_id', 'plugin_id', 'name', 'state', 'service_type',
                           'registry_type', 'provider', 'project_id', 'domain_id'])
@@ -286,17 +287,31 @@ class PluginService(BaseService):
         """
 
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
-        repository_id = params['repository_id']
-        repo_vo = repo_mgr.get_repository(repository_id)
-
-        plugin_mgr = self._get_plugin_manager_by_repo(repo_vo)
         query = params.get('query', {})
         only = query.get('only', [])
 
         if 'registry_url' in only:
             only.remove('registry_url')
 
-        return plugin_mgr.list_plugins(query)
+        if repository_id := params.get('repository_id'):
+            repo_vo = repo_mgr.get_repository(repository_id)
+
+            plugin_mgr = self._get_plugin_manager_by_repo(repo_vo)
+
+            return plugin_mgr.list_plugins(query)
+        else:
+            repository_vos, total_count = repo_mgr.list_repositories({})
+
+            all_plugin_vos = []
+            plugin_total_count = 0
+            for repository_vo in repository_vos:
+                plugin_mgr = self._get_plugin_manager_by_repo(repository_vo)
+                plugin_vos, total_count = plugin_mgr.list_plugins(query)
+
+                all_plugin_vos += plugin_vos
+                plugin_total_count += total_count
+
+            return all_plugin_vos, plugin_total_count
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['query', 'repository_id'])
