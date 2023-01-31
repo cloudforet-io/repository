@@ -1,17 +1,17 @@
 apiVersion: skaffold/v4beta1
 kind: Config
 metadata:
-  name: identity 
+  name: repository 
 build:
   platforms: ["linux/amd64"]
   artifacts:
-    - image: ${IMAGE_REPOSITORY}/identity
+    - image: ${IMAGE_REPOSITORY}/repository
       docker:
         dockerfile: Dockerfile
 deploy:
   helm:
     releases:
-    - name: identity 
+    - name: repository 
       chartPath: deploy/helm
       valuesFiles:
-      - ${VALUES_LOCATION}/identity.yaml
+      - ${VALUES_LOCATION}/repository.yaml
