@@ -44,6 +44,7 @@ class HarborConnector(RegistryConnector):
 
     def get_tags(self, registry_url, image, config):
         base_url = self.config.get('base_url')
+        verify = self.config.get('verify', True)
 
         headers = {
             'authorization': f'Basic {self.config["token"]}'
@@ -51,7 +52,7 @@ class HarborConnector(RegistryConnector):
 
         url = f'{base_url}/v2/{image}/tags/list'
 
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, verify=verify)
 
         if response.status_code == 200:
             image_tags = response.json().get('tags', [])

@@ -27,7 +27,8 @@ CONNECTORS = {
     'DockerHubConnector': {},
     'HarborConnector': {
         'base_url': '',
-        'token': ''
+        'token': '',
+        'verify': True
     },
     'RemoteRepositoryConnector': {},
     'SpaceConnector': {
