@@ -29,7 +29,7 @@ def PluginInfo(plugin_vo, minimal=False):
             'domain_id': plugin_vo.domain_id,
             'created_at': utils.datetime_to_iso8601(plugin_vo.created_at) or plugin_vo.created_at,
             'updated_at': utils.datetime_to_iso8601(plugin_vo.updated_at) or plugin_vo.updated_at
-            })
+        })
 
         if isinstance(plugin_vo, plugin_pb2.PluginInfo):
             info['tags'] = plugin_vo.tags
