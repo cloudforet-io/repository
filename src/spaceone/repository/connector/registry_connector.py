@@ -66,8 +66,8 @@ class AWSPublicECRConnector(RegistryConnector):
 
     _DEFAULT_REGION_NAME = 'us-east-1'
 
-    def __init__(self, transaction, config):
-        super().__init__(transaction, config)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         aws_access_key_id = self.config.get('aws_access_key_id')
         aws_secret_access_key = self.config.get('aws_secret_access_key')
