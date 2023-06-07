@@ -14,8 +14,8 @@ _LOGGER = logging.getLogger(__name__)
 class RemoteRepositoryConnector(BaseConnector):
     client = None
 
-    def __init__(self, transaction, config, **kwargs):
-        super().__init__(transaction, config, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         """ Overwrite configuration
 
