@@ -8,8 +8,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class RepositoryManager(BaseManager):
-    def __init__(self, transaction, **kwargs):
-        super().__init__(transaction, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.repo_model: Repository = self.locator.get_model('Repository')
 
     @abstractmethod
