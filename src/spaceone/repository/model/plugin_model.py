@@ -28,7 +28,6 @@ class Plugin(MongoModel):
     domain_id = StringField(max_length=255)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
-
     meta = {
         'updatable_fields': [
             'name',
@@ -63,6 +62,6 @@ class Plugin(MongoModel):
             'repository',
             'repository_id',
             'project_id',
-            'domain_id',
+            'domain_id'
         ]
     }

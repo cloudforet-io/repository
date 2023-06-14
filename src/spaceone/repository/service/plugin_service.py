@@ -1,8 +1,11 @@
 import logging
 import sys
-
+import os
 import jsonschema
 import re
+import yaml
+
+from pathlib import Path
 
 from spaceone.core.service import *
 from spaceone.core import utils
@@ -12,13 +15,36 @@ from spaceone.repository.error import *
 from spaceone.repository.model.capability_model import Capability
 from spaceone.repository.manager.identity_manager import IdentityManager
 from spaceone.repository.manager.plugin_manager.local_plugin_manager import LocalPluginManager
+from spaceone.repository.manager.plugin_manager.managed_plugin_manager import ManagedPluginManager
 from spaceone.repository.manager.plugin_manager.remote_plugin_manager import RemotePluginManager
 from spaceone.repository.manager.repository_manager import RepositoryManager
 
 _LOGGER = logging.getLogger(__name__)
 
 MAX_IMAGE_NAME_LENGTH = 48
+REGISTRY_MAP = {
+        "DOCKER_HUB": "DockerHubConnector",
+        "AWS_PUBLIC_ECR": "AWSPublicECRConnector",
+        "HARBOR": "HarborConnector"
+        }
 
+def _load_yaml_data(file_path):
+	try:
+		# Load YAML data from the file
+		with open(file_path, 'r') as file:
+			yaml_data = yaml.safe_load(file)
+
+		# Access and process the loaded YAML data
+		# Example: Printing the loaded data
+		return yaml_data
+
+	except FileNotFoundError:
+		_LOGGER.error(f"File '{file_path}' not found.")
+		return False
+
+	except yaml.YAMLError as e:
+		_LOGGER.error(f"Error loading YAML file: {e}")
+		return False
 
 @authentication_handler(exclude=['get', 'get_versions'])
 @authorization_handler(exclude=['get', 'get_versions'])
@@ -64,7 +90,8 @@ class PluginService(BaseService):
         self._check_registry_config(registry_type, registry_config)
 
         plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager')
-
+        # update image_prefix, if exist (harbor case)
+        
         # Only LOCAL repository can be registered
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
         params['plugin_id'] = self._check_plugin_naming_rules(params['image'])
@@ -305,9 +332,12 @@ class PluginService(BaseService):
             all_plugin_vos = []
             plugin_total_count = 0
             for repository_vo in repository_vos:
+                print("$" * 30)
+                print(query)
                 plugin_mgr = self._get_plugin_manager_by_repo(repository_vo)
                 plugin_vos, total_count = plugin_mgr.list_plugins(query)
-
+                print("Repo name:", repository_vo.name)
+                print("Total count:", total_count)
                 all_plugin_vos += plugin_vos
                 plugin_total_count += total_count
 
@@ -342,9 +372,75 @@ class PluginService(BaseService):
         if repo_vo.repository_type == 'local':
             local_plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager', repository=repo_vo)
             return local_plugin_mgr
+        elif repo_vo.repository_type == 'managed':
+            managed_plugin_mgr: ManagedPluginManager = self.locator.get_manager('ManagedPluginManager', repository=repo_vo)
+            return managed_plugin_mgr
         else:
             remote_plugin_mgr: RemotePluginManager = self.locator.get_manager('RemotePluginManager', repository=repo_vo)
             return remote_plugin_mgr
+
+    def create_managed_plugins(self, domain_id):
+        # domain_id: root domain-id
+        # find plugin contents
+        # Get the path to the package data file
+        dir_path = "/etc/cloudforet/plugin"
+        directory = Path(dir_path)
+        # Check for YAML files in the directory
+        yaml_files = [item for item in directory.iterdir() if item.is_file() and item.suffix == '.yaml']
+
+        # loop all plugin
+        for yaml_file in yaml_files:
+            data = _load_yaml_data(yaml_file)
+            if data == False:
+                # wrong yaml data (pass)
+                continue
+            self._create_managed_plugin(data, domain_id)
+        # register
+        pass
+
+    def _create_managed_plugin(self, params, domain_id):
+        plugin_mgr: ManagedPluginManager = self.locator.get_manager('ManagedPluginManager')
+        # Only LOCAL repository can be registered
+        repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
+        params["domain_id"] = domain_id
+        params['plugin_id'] = self._check_plugin_naming_rules(params['image'])
+        # TODO: change 
+        params["registry_type"] = config.get_global("DEFAULT_REGISTRY", "DOCKER_HUB")
+        params["registry_config"] = self._get_registry_config_from_settings(params["registry_type"])
+        params['repository'] = repo_mgr.get_managed_repository()
+        params['repository_id'] = params['repository'].repository_id
+
+        # if prefix  exist
+        image_prefix = self._get_image_prefix(params["registry_config"])
+        if image_prefix:
+            image = params["image"]
+            params["image"] = f"{image_prefix}/{image}"
+            # ex. my_company/my_harbor/my_cmp/spaceone/plugin-aws-ec2-inven-collector
+
+        plugin_vo = plugin_mgr.register_plugin(params)
+
+        #versions = plugin_mgr.get_plugin_versions(plugin_vo.plugin_id, plugin_vo.domain_id)
+
+        #if len(versions) == 0:
+        #    raise ERROR_NO_IMAGE_IN_REGISTRY(registry_type=plugin_vo.registry_type, image=plugin_vo.image)
+
+        return plugin_vo
+
+    def _get_registry_config_from_settings(self, registry_type):
+        """ if there is no registry_config from parameter
+        We automatically update by settings file
+        """
+        reg_dict = config.get_global("CONNECTORS", {})
+        my_kind = REGISTRY_MAP[registry_type]
+        my_data = reg_dict.get(my_kind, {})
+        return my_data
+
+    def _get_image_prefix(self, registry_config):
+        """ example: my_company/my_harbor/_my_cmp
+        """
+        image_prefix = registry_config.get("image_prefix", None)
+        return image_prefix
+
 
     @staticmethod
     def _check_template(template):

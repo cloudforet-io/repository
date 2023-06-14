@@ -39,7 +39,10 @@ class RemoteSchemaManager(SchemaManager):
         raise NotImplementedError('Remote repository is not supported.')
 
     def _get_conn_from_repository(self):
+        print("@" * 30)
+        print(self.repository)
         conn = {'endpoint': self.repository.endpoint}
+        print(conn)
         return conn
 
     def _get_updated_schema_info(self, schema_info):

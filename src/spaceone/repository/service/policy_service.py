@@ -1,12 +1,17 @@
 import logging
 import re
+import yaml
+
+from pathlib import Path
 
 from spaceone.core.service import *
 from spaceone.core import utils
+from spaceone.core import config
 
 from spaceone.repository.error import *
 from spaceone.repository.model.capability_model import Capability
 from spaceone.repository.manager.identity_manager import IdentityManager
+from spaceone.repository.manager.policy_manager.managed_policy_manager import ManagedPolicyManager
 from spaceone.repository.manager.policy_manager.local_policy_manager import LocalPolicyManager
 from spaceone.repository.manager.policy_manager.remote_policy_manager import RemotePolicyManager
 from spaceone.repository.manager.repository_manager import RepositoryManager
@@ -15,6 +20,23 @@ _LOGGER = logging.getLogger(__name__)
 
 MAX_POLICY_ID_LENGTH = 48
 
+def _load_yaml_data(file_path):
+	try:
+		# Load YAML data from the file
+		with open(file_path, 'r') as file:
+			yaml_data = yaml.safe_load(file)
+
+		# Access and process the loaded YAML data
+		# Example: Printing the loaded data
+		return yaml_data
+
+	except FileNotFoundError:
+		_LOGGER.error(f"File '{file_path}' not found.")
+		return False
+
+	except yaml.YAMLError as e:
+		_LOGGER.error(f"Error loading YAML file: {e}")
+		return False
 
 @authentication_handler(exclude=['get'])
 @authorization_handler(exclude=['get'])
@@ -194,10 +216,47 @@ class PolicyService(BaseService):
         query = params.get('query', {})
         return policy_mgr.stat_policies(query)
 
+    def create_managed_policies(self, domain_id):
+        # find policy contents
+        # Get the path to the package data file
+        dir_path = "/etc/cloudforet/policy"
+        directory = Path(dir_path)
+        # Check for YAML files in the directory
+        yaml_files = [item for item in directory.iterdir() if item.is_file() and item.suffix == '.yaml']
+
+        # loop all plugin
+        for yaml_file in yaml_files:
+            data = _load_yaml_data(yaml_file)
+            if data == False:
+                # wrong yaml data (pass)
+                continue
+            try:
+                self._create_managed_policy(data, domain_id)
+            except Exception as e:
+                _LOGGER.error(e)
+        # register
+        pass
+
+    def _create_managed_policy(self, params, domain_id):
+
+        params['domain_id'] = domain_id
+        self._check_policy_id(params['policy_id'])
+        policy_mgr: ManagedPolicyManager = self.locator.get_manager('ManagedPolicyManager')
+
+        # Only LOCAL repository can be created
+        repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
+        params['repository'] = repo_mgr.get_managed_repository()
+        params['repository_id'] = params['repository'].repository_id
+
+        return policy_mgr.create_policy(params)
+
     def _get_policy_manager_by_repo(self, repo_vo):
         if repo_vo.repository_type == 'local':
             local_policy_mgr: LocalPolicyManager = self.locator.get_manager('LocalPolicyManager', repository=repo_vo)
             return local_policy_mgr
+        elif repo_vo.repository_type == 'managed':
+            managed_policy_mgr: ManagedPolicyManager = self.locator.get_manager('ManagedPolicyManager', repository=repo_vo)
+            return managed_policy_mgr
         else:
             remote_policy_mgr: RemotePolicyManager = self.locator.get_manager('RemotePolicyManager', repository=repo_vo)
             return remote_policy_mgr

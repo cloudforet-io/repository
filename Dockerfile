@@ -14,6 +14,8 @@ RUN pip install --upgrade -r pip_requirements.txt
 COPY src ${SRC_DIR}
 WORKDIR ${SRC_DIR}
 
+COPY data /etc/cloudforet/
+
 RUN python3 setup.py install && rm -rf /tmp/*
 
 RUN pip install --upgrade spaceone-api

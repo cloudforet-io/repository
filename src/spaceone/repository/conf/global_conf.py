@@ -28,6 +28,7 @@ CONNECTORS = {
     'HarborConnector': {
         'base_url': '',
         'token': '',
+        'image_prefix': '',
         'verify': True
     },
     'RemoteRepositoryConnector': {},
@@ -43,8 +44,12 @@ CONNECTORS = {
 REGISTRY_URL_MAP = {
     'DOCKER_HUB': 'registry.hub.docker.com',
     'AWS_PUBLIC_ECR': 'public.ecr.aws',
-    'HARBOR': ''
+    'HARBOR': ''    # default ""
 }
+
+# Use managed repository (Read Only), if you can not use plugin marketplace
+ENABLE_MANAGED_REPOSITORY = False
+DEFAULT_REGISTRY = "DOCKER_HUB" # DOCKER_HUB | AWS_PUBLIC_ECR | HARBOR
 
 ROOT_TOKEN = ""
 ROOT_TOKEN_INFO = {}

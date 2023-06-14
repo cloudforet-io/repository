@@ -5,4 +5,5 @@ python-consul
 schematics
 boto3
 requests
+redis
 mongomock

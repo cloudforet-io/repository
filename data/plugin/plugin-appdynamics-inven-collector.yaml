@@ -1,0 +1,8 @@
+name: Cisco AppDynamics
+service_type: inventory.Collector
+image: pyengine/plugin-appdynamics-inven-collector
+capability: {}
+tags:
+    icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/appdynamics-icon.svg
+template: {}
+provider: appdynamics

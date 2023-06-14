@@ -67,4 +67,13 @@ class RepositoryManager(BaseManager):
         else:
             return None
 
+    def get_managed_repository(self):
+        repo_vos = self.filter_repositories(repository_type='managed')
+        repo_count = repo_vos.count()
+        _LOGGER.debug(f'[get_managed_repository] managed_repo_count: {repo_count}')
+        if repo_count > 0:
+            return repo_vos[0]
+        else:
+            return None
+
 

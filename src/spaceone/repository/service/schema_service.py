@@ -1,17 +1,39 @@
 import logging
 import jsonschema
+import yaml
+
+from pathlib import Path
 
 from spaceone.core.service import *
 from spaceone.core import utils
+from spaceone.core import config
 
 from spaceone.repository.error import *
 from spaceone.repository.manager.identity_manager import IdentityManager
+from spaceone.repository.manager.schema_manager.managed_schema_manager import ManagedSchemaManager
 from spaceone.repository.manager.schema_manager.local_schema_manager import LocalSchemaManager
 from spaceone.repository.manager.schema_manager.remote_schema_manager import RemoteSchemaManager
 from spaceone.repository.manager.repository_manager import RepositoryManager
 
 _LOGGER = logging.getLogger(__name__)
 
+def _load_yaml_data(file_path):
+	try:
+		# Load YAML data from the file
+		with open(file_path, 'r') as file:
+			yaml_data = yaml.safe_load(file)
+
+		# Access and process the loaded YAML data
+		# Example: Printing the loaded data
+		return yaml_data
+
+	except FileNotFoundError:
+		_LOGGER.error(f"File '{file_path}' not found.")
+		return False
+
+	except yaml.YAMLError as e:
+		_LOGGER.error(f"Error loading YAML file: {e}")
+		return False
 
 @authentication_handler(exclude=['get'])
 @authorization_handler(exclude=['get'])
@@ -194,13 +216,51 @@ class SchemaService(BaseService):
         query = params.get('query', {})
         return schema_mgr.stat_schemas(query)
 
+
+    def create_managed_schemas(self, domain_id):
+        # find schema contents
+        # Get the path to the package data file
+        dir_path = "/etc/cloudforet/schema"
+        directory = Path(dir_path)
+        # Check for YAML files in the directory
+        yaml_files = [item for item in directory.iterdir() if item.is_file() and item.suffix == '.yaml']
+
+        # loop all plugin
+        for yaml_file in yaml_files:
+            data = _load_yaml_data(yaml_file)
+            if data == False:
+                # wrong yaml data (pass)
+                continue
+            try:
+                self._create_managed_schema(data, domain_id)
+            except Exception as e:
+                _LOGGER.error(e)
+        # register
+        pass
+
+    def _create_managed_schema(self, params, domain_id):
+        schema_mgr: ManagedSchemaManager = self.locator.get_manager('ManagedSchemaManager')
+
+        # Pre-condition Check
+        params["domain_id"] = domain_id
+        self._check_schema(params['schema'])
+        self._check_service_type(params.get('service_type'))
+
+        # Only LOCAL repository can be registered
+        repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
+        params['repository'] = repo_mgr.get_managed_repository()
+        params['repository_id'] = params['repository'].repository_id
+
+        return schema_mgr.register_schema(params)
+
     def _get_schema_manager_by_repo(self, repo_vo):
         if repo_vo.repository_type == 'local':
-            local_schema_mgr: LocalSchemaManager = self.locator.get_manager('LocalSchemaManager', repository=repo_vo)
-            return local_schema_mgr
+            schema_mgr: LocalSchemaManager = self.locator.get_manager('LocalSchemaManager', repository=repo_vo)
+        elif repo_vo.repository_type == 'managed':
+            schema_mgr: ManagedSchemaManager = self.locator.get_manager('ManagedSchemaManager', repository=repo_vo)
         else:
-            remote_schema_mgr: RemoteSchemaManager = self.locator.get_manager('RemoteSchemaManager', repository=repo_vo)
-            return remote_schema_mgr
+            schema_mgr: RemoteSchemaManager = self.locator.get_manager('RemoteSchemaManager', repository=repo_vo)
+        return schema_mgr
 
     @staticmethod
     def _check_schema(schema):

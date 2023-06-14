@@ -1,12 +1,14 @@
-import logging
 import copy
+import logging
 
 from spaceone.core import config
 from spaceone.core.error import *
 from spaceone.repository.model import Plugin
 from spaceone.repository.manager.plugin_manager import PluginManager
 
-__all__ = ['LocalPluginManager']
+from spaceone.repository.manager.identity_manager import IdentityManager
+
+__all__ = ['ManagedPluginManager']
 
 _LOGGER = logging.getLogger(__name__)
 _REGISTRY_CONNECTOR_MAP = {
@@ -16,10 +18,12 @@ _REGISTRY_CONNECTOR_MAP = {
 }
 
 
-class LocalPluginManager(PluginManager):
+class ManagedPluginManager(PluginManager):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.plugin_model: Plugin = self.locator.get_model("Plugin")
+        identity_mgr = self.locator.get_manager('IdentityManager')
+        self.domain_id = identity_mgr.get_root_domain_id()
 
     def register_plugin(self, params):
         def _rollback(plugin_vo):
@@ -55,17 +59,16 @@ class LocalPluginManager(PluginManager):
         plugin_vo.delete()
 
     def get_plugin(self, plugin_id, domain_id, only=None):
-        if domain_id:
-            plugin_vo = self.plugin_model.get(plugin_id=plugin_id, domain_id=domain_id, only=only)
-        else:
-            plugin_vo = self.plugin_model.get(plugin_id=plugin_id, only=only)
+        plugin_vo = self.plugin_model.get(plugin_id=plugin_id, domain_id=self.domain_id, only=only)
 
         return plugin_vo
 
     def list_plugins(self, query):
-        return self.plugin_model.query(**query)
+        new_query = self._change_domain_id(query)
+        return self.plugin_model.query(**new_query)
 
     def stat_plugins(self, query):
+        # TODO: may be not working
         return self.plugin_model.stat(**query)
 
     def get_plugin_versions(self, plugin_id, domain_id):
@@ -78,7 +81,8 @@ class LocalPluginManager(PluginManager):
         Returns:
             A list of docker tag
         """
-        plugin_vo: Plugin = self.get_plugin(plugin_id, domain_id)
+        # We use self.domain_id(root domain) instead of domain_id (user domain)
+        plugin_vo: Plugin = self.get_plugin(plugin_id, self.domain_id)
 
         registry_url = config.get_global('REGISTRY_URL_MAP', {}).get(plugin_vo.registry_type)
 
@@ -91,3 +95,26 @@ class LocalPluginManager(PluginManager):
         else:
             return tags
 
+    def _change_domain_id(self, query):
+        new_query = copy.deepcopy(query)
+        q_list = new_query.get('filter', [])
+        new_list = []
+        appended = False
+        for item in q_list:
+            if 'k' in item:
+                if item['k'] == 'domain_id':
+                    new_list.append({'k': 'domain_id', 'v': self.domain_id, 'o': 'eq'})
+                    appended = True
+                else:
+                    new_list.append(item)
+            if 'key' in item:
+                if item['key'] == 'domain_id':
+                    new_list.append({'k': 'domain_id', 'v': self.domain_id, 'o': 'eq'})
+                    appended = True
+                else:
+                    new_list.append(item)
+ 
+        if appended == False:
+            new_list.append({'k': 'domain_id', 'v': self.domain_id, 'o': 'eq'})
+        new_query['filter'] = new_list
+        return new_query

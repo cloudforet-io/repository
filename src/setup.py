@@ -34,7 +34,8 @@ setup(
         'python-consul',
         'schematics',
         'boto3',
-        'requests'
+        'requests',
+        'redis'
     ],
     zip_safe=False,
 )

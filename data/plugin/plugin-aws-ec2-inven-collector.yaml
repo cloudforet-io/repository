@@ -1,0 +1,18 @@
+---
+capability:
+  supported_schema:
+  - aws_access_key
+  - aws_assume_role
+  - aws_assume_role_with_external_id
+image: spaceone/plugin-aws-ec2-inven-collector
+labels:
+- EC2
+- Instance
+name: AWS EC2 Collector
+provider: aws
+service_type: inventory.Collector
+tags:
+  description: AWS EC2 Compute Collector
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/aws-ec2.svg
+  spaceone:plugin_name: aws-ec2
+template: {}
