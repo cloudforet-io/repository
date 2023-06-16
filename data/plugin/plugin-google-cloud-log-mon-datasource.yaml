@@ -1,0 +1,19 @@
+---
+capability:
+  monitoring_type: LOG
+  supported_schema:
+  - google_oauth2_credentials
+  use_resource_secret: true
+image: spaceone/plugin-google-cloud-log-mon-datasource
+labels:
+- Monitoring
+- Google
+- Logging
+name: google-cloud-logging
+provider: google_cloud
+service_type: monitoring.DataSource
+tags:
+  description: Google Cloud Logging Monitoring Plugin
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/cloud-services/google_cloud/cloud_logging.svg
+  spaceone:plugin_name: google-cloud-logging
+template: {}

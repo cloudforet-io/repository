@@ -1,0 +1,9 @@
+---
+capability: {}
+image: spaceone/plugin-prometheus-mon-webhook
+labels: []
+name: Prometheus
+service_type: monitoring.Webhook
+tags:
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/prometheus.svg
+template: {}

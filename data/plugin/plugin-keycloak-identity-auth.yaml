@@ -1,0 +1,24 @@
+---
+capability: {}
+image: spaceone/plugin-keycloak-identity-auth
+labels:
+- Authentication
+- Keycloak
+name: Keycloak Identity Auth Plugin
+service_type: identity.Domain
+tags:
+  description: Keycloak OAuth Authentication
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/keycloak.svg
+  spaceone:plugin_name: plugin-keycloak-identity-auth
+template:
+  options:
+  - example: https://<sso domain>/auth/realms/<your domain>/.well-known/openid-configuration
+    is_required: true
+    key: openid-configuration
+    name: OpenID configuration URL
+    type: str
+  - example: keycloak_oidc
+    is_required: true
+    key: auth_type
+    name: Authentication Type
+    type: str

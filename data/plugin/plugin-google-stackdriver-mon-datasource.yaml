@@ -1,0 +1,19 @@
+---
+capability:
+  monitoring_type: METRIC
+  supported_schema:
+  - google_oauth2_credentials
+  use_resource_secret: true
+image: spaceone/plugin-google-stackdriver-mon-datasource
+labels:
+- Monitoring
+- Google
+- Stackdriver
+name: google-cloud-stackdriver
+provider: google_cloud
+service_type: monitoring.DataSource
+tags:
+  description: Google Cloud Stackdriver Monitoring Plugin
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/google-cloud-stackdriver.svg
+  spaceone:plugin_name: google-cloud-stackdriver
+template: {}

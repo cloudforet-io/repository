@@ -1,0 +1,8 @@
+---
+capability: {}
+image: spaceone/plugin-http-file-cost-datasource
+labels: []
+name: HTTP file Cost Analysis Data Source
+service_type: cost_analysis.DataSource
+tags: {}
+template: {}

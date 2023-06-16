@@ -1,0 +1,21 @@
+---
+capability:
+  monitoring_type: METRIC
+  supported_schema:
+  - aws_access_key
+  - aws_assume_role
+  - aws_assume_role_with_external_id
+  use_resource_secret: true
+image: spaceone/plugin-aws-cloudwatch-mon-datasource
+labels:
+- Monitoring
+- AWS
+- CloudWatch
+name: aws-cloud-watch
+provider: aws
+service_type: monitoring.DataSource
+tags:
+  description: AWS CloudWatch Monitoring Plugin
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/aws-cloudwatch.svg
+  spaceone:plugin_name: aws-cloud-watch
+template: {}
