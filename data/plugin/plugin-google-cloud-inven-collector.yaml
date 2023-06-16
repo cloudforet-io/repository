@@ -1,0 +1,22 @@
+---
+capability:
+  supported_schema:
+  - google_oauth2_credentials
+image: spaceone/plugin-google-cloud-inven-collector
+labels:
+- Compute Engine
+- Network Services
+- Cloud SQL
+- Cloud Storage
+- BigQuery
+- Cloud Pub/Sub
+- Cloud Functions
+name: google-cloud-collector
+plugin_id: plugin-google-cloud-inven-collector
+provider: google_cloud
+service_type: inventory.Collector
+tags:
+  description: Google Cloud collector
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/google_cloud.svg
+  spaceone:plugin_name: google-cloud-asset
+template: {}
