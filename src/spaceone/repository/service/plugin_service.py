@@ -332,12 +332,8 @@ class PluginService(BaseService):
             all_plugin_vos = []
             plugin_total_count = 0
             for repository_vo in repository_vos:
-                print("$" * 30)
-                print(query)
                 plugin_mgr = self._get_plugin_manager_by_repo(repository_vo)
                 plugin_vos, total_count = plugin_mgr.list_plugins(query)
-                print("Repo name:", repository_vo.name)
-                print("Total count:", total_count)
                 all_plugin_vos += plugin_vos
                 plugin_total_count += total_count
 
@@ -440,7 +436,6 @@ class PluginService(BaseService):
         """
         image_prefix = registry_config.get("image_prefix", None)
         return image_prefix
-
 
     @staticmethod
     def _check_template(template):

@@ -83,7 +83,6 @@ class ManagedPluginManager(PluginManager):
         """
         # We use self.domain_id(root domain) instead of domain_id (user domain)
         plugin_vo: Plugin = self.get_plugin(plugin_id, self.domain_id)
-
         registry_url = config.get_global('REGISTRY_URL_MAP', {}).get(plugin_vo.registry_type)
 
         try:

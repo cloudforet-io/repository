@@ -79,17 +79,13 @@ class RepositoryService(BaseService):
     # TEST
     #@cache.cacheable(key='repository:managed:init', expire=300)
     def _create_managed_repository(self):
-        print("#" * 30)
-        print("create managed repo")
         identity_mgr: IdentityManager = self.locator.get_manager('IdentityManager')
         domain_id = identity_mgr.get_root_domain_id()
-        print("root domain:", domain_id)
         repo_mgr: RepositoryManager = self.locator.get_manager("ManagedRepositoryManager")
         query = {
                 'filter': [{'k': 'repository_type', 'v': 'managed', 'o': 'eq'}]
                 }
         repo_vos, total_count = repo_mgr.list_repositories(query)
-        print("total count", total_count)
         # total_count is 0 or 1
         if total_count == 1:
             return False
@@ -111,5 +107,4 @@ class RepositoryService(BaseService):
         _LOGGER.debug("Create Managed Schema")
         schema_svc: SchemaService = self.locator.get_service("SchemaService")
         schema_svc.create_managed_schemas(domain_id)
-
        	return True
