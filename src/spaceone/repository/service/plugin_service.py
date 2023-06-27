@@ -291,7 +291,7 @@ class PluginService(BaseService):
                 plugin_total_count += total_count
 
             if query_page:
-                page_start = query_page.get('start', 0)
+                page_start = query_page.get('start', 1) - 1
                 page_limit = query_page.get('limit')
 
                 if page_limit:

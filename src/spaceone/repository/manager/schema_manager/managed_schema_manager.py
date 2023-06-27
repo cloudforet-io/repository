@@ -49,13 +49,15 @@ class ManagedSchemaManager(SchemaManager):
 
         managed_schema_df = self._filter_managed_schemas(schema_name, service_type, keyword)
         managed_schema_df = self._sort_managed_schemas(managed_schema_df, sort)
+
+        total_count = len(managed_schema_df)
         managed_schema_df = self._page_managed_schemas(managed_schema_df, page)
 
         results = []
         for managed_schema_info in managed_schema_df.to_dict('records'):
             results.append(self.change_response(managed_schema_info, repo_vo, domain_id))
 
-        return results, len(results)
+        return results, total_count
 
     @staticmethod
     def _load_managed_schemas():
@@ -90,7 +92,7 @@ class ManagedSchemaManager(SchemaManager):
     @staticmethod
     def _page_managed_schemas(managed_schema_df: pd.DataFrame, page: dict):
         if limit := page.get('limit'):
-            start = page.get('start', 0)
+            start = page.get('start', 1) - 1
             return managed_schema_df[start:start + limit]
         else:
             return managed_schema_df
