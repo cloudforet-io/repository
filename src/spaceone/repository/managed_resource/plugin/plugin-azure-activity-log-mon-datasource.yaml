@@ -1,0 +1,23 @@
+---
+plugin_id: plugin-azure-activity-log-mon-datasource
+name: Azure Activity Log DataSource
+image: plugin-azure-activity-log-mon-datasource
+capability:
+  monitoring_type: LOG
+  supported_schema:
+  - azure_client_secret
+  use_resource_secret: true
+labels:
+- Monitoring
+- Azure
+- ActivityLog
+provider: azure
+service_type: monitoring.DataSource
+tags:
+  description: Azure Activity Log DataSource
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/azure-cloud-services.svg
+  long_description: Azure Monitor activity log provides information about Azure subscription-level
+    events. This information includes information such as when a resource was modified
+    or when a virtual machine was started. Through this plugin, you can collect log
+    information from Azure Monitor activity log.
+template: {}

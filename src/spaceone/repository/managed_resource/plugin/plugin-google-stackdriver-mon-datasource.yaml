@@ -1,0 +1,21 @@
+---
+plugin_id: plugin-google-stackdriver-mon-datasource
+name: Google Cloud Monitoring Metric DataSource
+image: plugin-google-stackdriver-mon-datasource
+capability:
+  monitoring_type: METRIC
+  supported_schema:
+  - google_oauth2_credentials
+  use_resource_secret: true
+labels:
+- Monitoring
+- Google
+- Stackdriver
+provider: google_cloud
+service_type: monitoring.DataSource
+tags:
+  description: Google Cloud Monitoring Metric DataSource
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/google-cloud-stackdriver.svg
+  long_description: Google Cloud Monitoring is a service that monitors Google Cloud
+    services. This plugin get metrics from Google Cloud Monitoring.
+template: {}

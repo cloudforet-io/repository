@@ -35,7 +35,16 @@ setup(
         'schematics',
         'boto3',
         'requests',
-        'redis'
+        'redis',
+        'pandas',
+        'jsonschema',
     ],
+    package_data={
+        'spaceone': [
+            'repository/managed_resource/plugin/*.yaml',
+            'repository/managed_resource/policy/*.yaml',
+            'repository/managed_resource/schema/*.yaml',
+        ]
+    },
     zip_safe=False,
 )

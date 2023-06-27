@@ -1,0 +1,16 @@
+---
+plugin_id: plugin-api-direct-mon-webhook
+name: API Direct
+image: plugin-api-direct-mon-webhook
+capability: {}
+labels:
+- Webhook
+- SpaceONE
+service_type: monitoring.Webhook
+tags:
+  description: API Direct
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/spaceone.svg
+  long_description: If you use the corresponding plug-in in accordance with the Alert
+    standard used in API Direct webhook, you can collect alerts from Cloudforet regardless
+    of each type of monitoring system.
+template: {}

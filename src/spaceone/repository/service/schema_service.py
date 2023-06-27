@@ -1,39 +1,14 @@
 import logging
 import jsonschema
-import yaml
-
-from pathlib import Path
 
 from spaceone.core.service import *
-from spaceone.core import utils
-from spaceone.core import config
 
 from spaceone.repository.error import *
-from spaceone.repository.manager.identity_manager import IdentityManager
-from spaceone.repository.manager.schema_manager.managed_schema_manager import ManagedSchemaManager
 from spaceone.repository.manager.schema_manager.local_schema_manager import LocalSchemaManager
-from spaceone.repository.manager.schema_manager.remote_schema_manager import RemoteSchemaManager
 from spaceone.repository.manager.repository_manager import RepositoryManager
 
 _LOGGER = logging.getLogger(__name__)
 
-def _load_yaml_data(file_path):
-	try:
-		# Load YAML data from the file
-		with open(file_path, 'r') as file:
-			yaml_data = yaml.safe_load(file)
-
-		# Access and process the loaded YAML data
-		# Example: Printing the loaded data
-		return yaml_data
-
-	except FileNotFoundError:
-		_LOGGER.error(f"File '{file_path}' not found.")
-		return False
-
-	except yaml.YAMLError as e:
-		_LOGGER.error(f"Error loading YAML file: {e}")
-		return False
 
 @authentication_handler(exclude=['get'])
 @authorization_handler(exclude=['get'])
@@ -53,17 +28,16 @@ class SchemaService(BaseService):
                 'schema': 'dict',
                 'labels': 'list',
                 'tags': 'dict',
-                'project_id': 'str',
+                'project_id': 'str', // deprecated
                 'domain_id': 'str'
             }
 
         Returns:
-            schema_vo (object)
+            schema_info (dict)
         """
 
         # Pre-condition Check
         self._check_schema(params['schema'])
-        self._check_project(params.get('project_id'), params['domain_id'])
         self._check_service_type(params.get('service_type'))
 
         schema_mgr: LocalSchemaManager = self.locator.get_manager('LocalSchemaManager')
@@ -90,7 +64,7 @@ class SchemaService(BaseService):
             }
 
         Returns:
-            schema_vo (object)
+            schema_info (dict)
         """
 
         # Pre-condition Check
@@ -112,7 +86,7 @@ class SchemaService(BaseService):
             }
 
         Returns:
-            schema_vo (object)
+            None
         """
         schema_name = params['name']
         domain_id = params['domain_id']
@@ -124,7 +98,7 @@ class SchemaService(BaseService):
     @check_required(['name'])
     @change_only_key({'repository_info': 'repository'})
     def get(self, params):
-        """ Get Schema (local & remote)
+        """ Get Schema (all repositories)
 
         Args:
             params (dict): {
@@ -137,6 +111,7 @@ class SchemaService(BaseService):
         Returns:
             schema_vo (object)
         """
+
         schema_name = params['name']
         domain_id = params.get('domain_id')
         repo_id = params.get('repository_id')
@@ -148,119 +123,53 @@ class SchemaService(BaseService):
         for repo_vo in repo_vos:
             _LOGGER.debug(f'[get] find at name: {repo_vo.name} '
                           f'(repo_type: {repo_vo.repository_type})')
-            schema_mgr = self._get_schema_manager_by_repo(repo_vo)
+            schema_mgr = self._get_schema_manager_by_repo(repo_vo.repository_type)
             try:
-                schema_vo = schema_mgr.get_schema(schema_name, domain_id, only)
+                return schema_mgr.get_schema(repo_vo, schema_name, domain_id, only)
             except Exception as e:
-                schema_vo = None
-
-            if schema_vo:
-                return schema_vo
+                _LOGGER.debug(f'[get] Can not find schema({schema_name}) at {repo_vo.name}')
 
         raise ERROR_NO_SCHEMA(name=schema_name)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['repository_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
-    @append_query_filter(['repository_id', 'name', 'service_type', 'project_id', 'domain_id'])
-    @append_keyword_filter(['name', 'labels'])
+    @append_query_filter(['repository_id', 'name', 'service_type'])
     def list(self, params):
-        """ List schemas (local or repo)
+        """ List schemas (specific repository)
 
         Args:
             params (dict): {
                 'repository_id': 'str',
                 'name': 'str',
                 'service_type': 'str',
-                'project_id': 'str',
+                'project_id': 'str', // deprecated
                 'domain_id': 'str',
                 'query': 'dict (spaceone.api.core.v1.Query)'
             }
 
         Returns:
-            schemas_vo (object)
-            total_count
+            results (list): 'list of schema_info'
+            total_count (int)
         """
+
+        query = params.get('query', {})
 
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
         repository_id = params['repository_id']
         repo_vo = repo_mgr.get_repository(repository_id)
 
-        schema_mgr = self._get_schema_manager_by_repo(repo_vo)
-        query = params.get('query', {})
+        schema_mgr = self._get_schema_manager_by_repo(repo_vo.repository_type)
 
-        return schema_mgr.list_schemas(query)
+        return schema_mgr.list_schemas(repo_vo, query, params)
 
-    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['query', 'repository_id'])
-    @append_query_filter(['repository_id', 'domain_id'])
-    @append_keyword_filter(['name', 'labels'])
-    def stat(self, params):
-        """
-        Args:
-            params (dict): {
-                'domain_id': 'str',
-                'query': 'dict (spaceone.api.core.v1.StatisticsQuery)'
-            }
-
-        Returns:
-            values (list) : 'list of statistics data'
-
-        """
-
-        repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
-        repository_id = params['repository_id']
-        repo_vo = repo_mgr.get_repository(repository_id)
-
-        schema_mgr = self._get_schema_manager_by_repo(repo_vo)
-        query = params.get('query', {})
-        return schema_mgr.stat_schemas(query)
-
-
-    def create_managed_schemas(self, domain_id):
-        # find schema contents
-        # Get the path to the package data file
-        dir_path = "/etc/cloudforet/schema"
-        directory = Path(dir_path)
-        # Check for YAML files in the directory
-        yaml_files = [item for item in directory.iterdir() if item.is_file() and item.suffix == '.yaml']
-
-        # loop all plugin
-        for yaml_file in yaml_files:
-            data = _load_yaml_data(yaml_file)
-            if data == False:
-                # wrong yaml data (pass)
-                continue
-            try:
-                self._create_managed_schema(data, domain_id)
-            except Exception as e:
-                _LOGGER.error(e)
-        # register
-        pass
-
-    def _create_managed_schema(self, params, domain_id):
-        schema_mgr: ManagedSchemaManager = self.locator.get_manager('ManagedSchemaManager')
-
-        # Pre-condition Check
-        params["domain_id"] = domain_id
-        self._check_schema(params['schema'])
-        self._check_service_type(params.get('service_type'))
-
-        # Only LOCAL repository can be registered
-        repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
-        params['repository'] = repo_mgr.get_managed_repository()
-        params['repository_id'] = params['repository'].repository_id
-
-        return schema_mgr.register_schema(params)
-
-    def _get_schema_manager_by_repo(self, repo_vo):
-        if repo_vo.repository_type == 'local':
-            schema_mgr: LocalSchemaManager = self.locator.get_manager('LocalSchemaManager', repository=repo_vo)
-        elif repo_vo.repository_type == 'managed':
-            schema_mgr: ManagedSchemaManager = self.locator.get_manager('ManagedSchemaManager', repository=repo_vo)
+    def _get_schema_manager_by_repo(self, repository_type):
+        if repository_type == 'local':
+            return self.locator.get_manager('LocalSchemaManager')
+        elif repository_type == 'managed':
+            return self.locator.get_manager('ManagedSchemaManager')
         else:
-            schema_mgr: RemoteSchemaManager = self.locator.get_manager('RemoteSchemaManager', repository=repo_vo)
-        return schema_mgr
+            return self.locator.get_manager('RemoteSchemaManager')
 
     @staticmethod
     def _check_schema(schema):
@@ -280,19 +189,10 @@ class SchemaService(BaseService):
         format:
             <service>.<purpose>
         example:
-            identity.domain
-            inventory.collector
+            identity.Domain
+            inventory.Collector
 
         Raises:
             ERROR_INVALID_PARAMETER
         """
-        if name:
-            pass
-            # idx = name.split('.')
-            # if len(idx) != 2:
-            #     raise ERROR_INVALID_PARAMETER(key='service_type', reason=f'{name} format is invalid.')
-
-    def _check_project(self, project_id, domain_id):
-        if project_id:
-            identity_mgr: IdentityManager = self.locator.get_manager('IdentityManager')
-            identity_mgr.get_project(project_id, domain_id)
+        pass

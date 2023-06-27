@@ -1,42 +1,17 @@
 import logging
 import re
-import yaml
-
-from pathlib import Path
 
 from spaceone.core.service import *
-from spaceone.core import utils
-from spaceone.core import config
 
 from spaceone.repository.error import *
-from spaceone.repository.model.capability_model import Capability
 from spaceone.repository.manager.identity_manager import IdentityManager
-from spaceone.repository.manager.policy_manager.managed_policy_manager import ManagedPolicyManager
 from spaceone.repository.manager.policy_manager.local_policy_manager import LocalPolicyManager
-from spaceone.repository.manager.policy_manager.remote_policy_manager import RemotePolicyManager
 from spaceone.repository.manager.repository_manager import RepositoryManager
 
 _LOGGER = logging.getLogger(__name__)
 
 MAX_POLICY_ID_LENGTH = 48
 
-def _load_yaml_data(file_path):
-	try:
-		# Load YAML data from the file
-		with open(file_path, 'r') as file:
-			yaml_data = yaml.safe_load(file)
-
-		# Access and process the loaded YAML data
-		# Example: Printing the loaded data
-		return yaml_data
-
-	except FileNotFoundError:
-		_LOGGER.error(f"File '{file_path}' not found.")
-		return False
-
-	except yaml.YAMLError as e:
-		_LOGGER.error(f"Error loading YAML file: {e}")
-		return False
 
 @authentication_handler(exclude=['get'])
 @authorization_handler(exclude=['get'])
@@ -56,16 +31,15 @@ class PolicyService(BaseService):
                 'permissions': 'list',
                 'labels': 'list',
                 'tags': 'dict',
-                'project_id': 'str',
+                'project_id': 'str', // deprecated
                 'domain_id': 'str'
             }
 
         Returns:
-            policy_vo (object)
+            policy_info (dict)
         """
 
         # Pre-condition Check
-        _LOGGER.debug(f'[create] input param: {params} ')
         self._check_policy_id(params['policy_id'])
         self._check_project(params.get('project_id'), params['domain_id'])
 
@@ -81,7 +55,7 @@ class PolicyService(BaseService):
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['policy_id', 'domain_id'])
     def update(self, params):
-        """Update Policy. (local repo only)
+        """Update Policy (local repo only)
 
         Args:
             params (dict): {
@@ -94,7 +68,7 @@ class PolicyService(BaseService):
             }
 
         Returns:
-            policy_vo (object)
+            policy_info (dict)
         """
 
         policy_mgr: LocalPolicyManager = self.locator.get_manager('LocalPolicyManager')
@@ -112,7 +86,7 @@ class PolicyService(BaseService):
             }
 
         Returns:
-            policy_vo (object)
+            None
         """
         policy_id = params['policy_id']
         domain_id = params['domain_id']
@@ -124,7 +98,7 @@ class PolicyService(BaseService):
     @check_required(['policy_id'])
     @change_only_key({'repository_info': 'repository'})
     def get(self, params):
-        """ Get Policy (local & remote)
+        """ Get Policy ((all repositories)
 
         Args:
             params (dict): {
@@ -135,7 +109,7 @@ class PolicyService(BaseService):
             }
 
         Returns:
-            policy_vo (object)
+            policy_info (dict)
         """
         policy_id = params['policy_id']
         domain_id = params.get('domain_id')
@@ -148,125 +122,61 @@ class PolicyService(BaseService):
         for repo_vo in repo_vos:
             _LOGGER.debug(f'[get] find at name: {repo_vo.name} '
                           f'(repo_type: {repo_vo.repository_type})')
-            policy_mgr = self._get_policy_manager_by_repo(repo_vo)
-            try:
-                policy_vo = policy_mgr.get_policy(policy_id, domain_id, only)
-            except Exception as e:
-                policy_vo = None
+            policy_mgr = self._get_policy_manager_by_repo(repo_vo.repository_type)
 
-            if policy_vo:
-                return policy_vo
+            try:
+                return policy_mgr.get_policy(repo_vo, policy_id, domain_id, only)
+            except Exception as e:
+                _LOGGER.debug(f'[get] Can not find policy({policy_id}) at {repo_vo.name}')
 
         raise ERROR_NO_POLICY(policy_id=policy_id)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['repository_id'])
     @change_only_key({'repository_info': 'repository'}, key_path='query.only')
-    @append_query_filter(['repository_id', 'policy_id', 'name', 'project_id', 'domain_id'])
-    @append_keyword_filter(['policy_id', 'name', 'labels'])
+    @append_query_filter(['repository_id', 'policy_id', 'name'])
     def list(self, params):
-        """ List policies (local or repo)
+        """ List policies (specific repository)
 
         Args:
             params (dict): {
                 'repository_id': 'str',
                 'policy_id': 'str',
                 'name': 'str',
-                'project_id': 'str',
+                'project_id': 'str', // deprecated
                 'domain_id': 'str',
                 'query': 'dict (spaceone.api.core.v1.Query)'
             }
 
         Returns:
-            policy_vos (object)
-            total_count
+            results (list): 'list of policy_info'
+            total_count (int)
         """
+        query = params.get('query', {})
 
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
         repository_id = params['repository_id']
         repo_vo = repo_mgr.get_repository(repository_id)
 
-        policy_mgr = self._get_policy_manager_by_repo(repo_vo)
-        query = params.get('query', {})
+        policy_mgr = self._get_policy_manager_by_repo(repo_vo.repository_type)
 
-        return policy_mgr.list_policies(query)
+        return policy_mgr.list_policies(repo_vo, query, params)
 
-    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
-    @check_required(['query', 'repository_id'])
-    @append_query_filter(['repository_id', 'domain_id'])
-    @append_keyword_filter(['policy_id', 'name', 'labels'])
-    def stat(self, params):
-        """
-        Args:
-            params (dict): {
-                'domain_id': 'str',
-                'query': 'dict (spaceone.api.core.v1.StatisticsQuery)'
-            }
-
-        Returns:
-            values (list) : 'list of statistics data'
-
-        """
-
-        repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
-        repository_id = params['repository_id']
-        repo_vo = repo_mgr.get_repository(repository_id)
-
-        policy_mgr = self._get_policy_manager_by_repo(repo_vo)
-        query = params.get('query', {})
-        return policy_mgr.stat_policies(query)
-
-    def create_managed_policies(self, domain_id):
-        # find policy contents
-        # Get the path to the package data file
-        dir_path = "/etc/cloudforet/policy"
-        directory = Path(dir_path)
-        # Check for YAML files in the directory
-        yaml_files = [item for item in directory.iterdir() if item.is_file() and item.suffix == '.yaml']
-
-        # loop all plugin
-        for yaml_file in yaml_files:
-            data = _load_yaml_data(yaml_file)
-            if data == False:
-                # wrong yaml data (pass)
-                continue
-            try:
-                self._create_managed_policy(data, domain_id)
-            except Exception as e:
-                _LOGGER.error(e)
-        # register
-        pass
-
-    def _create_managed_policy(self, params, domain_id):
-
-        params['domain_id'] = domain_id
-        self._check_policy_id(params['policy_id'])
-        policy_mgr: ManagedPolicyManager = self.locator.get_manager('ManagedPolicyManager')
-
-        # Only LOCAL repository can be created
-        repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
-        params['repository'] = repo_mgr.get_managed_repository()
-        params['repository_id'] = params['repository'].repository_id
-
-        return policy_mgr.create_policy(params)
-
-    def _get_policy_manager_by_repo(self, repo_vo):
-        if repo_vo.repository_type == 'local':
-            local_policy_mgr: LocalPolicyManager = self.locator.get_manager('LocalPolicyManager', repository=repo_vo)
-            return local_policy_mgr
-        elif repo_vo.repository_type == 'managed':
-            managed_policy_mgr: ManagedPolicyManager = self.locator.get_manager('ManagedPolicyManager', repository=repo_vo)
-            return managed_policy_mgr
+    def _get_policy_manager_by_repo(self, repository_type):
+        if repository_type == 'local':
+            return self.locator.get_manager('LocalPolicyManager')
+        elif repository_type == 'managed':
+            return self.locator.get_manager('ManagedPolicyManager')
         else:
-            remote_policy_mgr: RemotePolicyManager = self.locator.get_manager('RemotePolicyManager', repository=repo_vo)
-            return remote_policy_mgr
+            return self.locator.get_manager('RemotePolicyManager')
 
     def _check_project(self, project_id, domain_id):
         if project_id:
             identity_mgr: IdentityManager = self.locator.get_manager('IdentityManager')
             identity_mgr.get_project(project_id, domain_id)
 
-    def _check_policy_id(self, policy_id):
+    @staticmethod
+    def _check_policy_id(policy_id):
         """ Check policy id
         format of policy id: alphabet lower case, number and - (underscore is not allowed)
         """
@@ -282,4 +192,6 @@ class PolicyService(BaseService):
             if len(m.group()) > 1:
                 raise ERROR_INVALID_POLICY_ID_FORMAT(policy_id=policy_id)
             return True
+
         raise ERROR_INVALID_POLICY_ID_FORMAT(policy_id=policy_id)
+

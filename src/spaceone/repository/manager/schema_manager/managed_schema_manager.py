@@ -1,82 +1,96 @@
-import copy
 import logging
+import os
+import copy
+import pandas as pd
+import re
 
-from spaceone.core import config
-from spaceone.core.error import *
-from spaceone.repository.model import *
+from spaceone.core import utils
+from spaceone.repository.error import *
 from spaceone.repository.manager.schema_manager import SchemaManager
+from spaceone.repository.model.repository_model import Repository
 
-from spaceone.repository.manager.identity_manager import IdentityManager
 
 __all__ = ['ManagedSchemaManager']
 
 _LOGGER = logging.getLogger(__name__)
+_BASE_DIR = os.path.join(os.path.dirname(__file__), '../../managed_resource/schema/')
+_MANAGED_SCHEMAS = []
+
+for filename in os.listdir(_BASE_DIR):
+    if filename.endswith('.yaml'):
+        file_path = os.path.join(_BASE_DIR, filename)
+        schema_info = utils.load_yaml_from_file(file_path)
+        _MANAGED_SCHEMAS.append(schema_info)
 
 
 class ManagedSchemaManager(SchemaManager):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.schema_model: Schema = self.locator.get_model("Schema")
-        identity_mgr = self.locator.get_manager('IdentityManager')
-        self.domain_id = identity_mgr.get_root_domain_id()
 
-    def register_schema(self, params):
-        def _rollback(schema_vo):
-            schema_vo.delete()
+    def __init__(self):
+        super().__init__()
+        self.managed_schema_df = self._load_managed_schemas()
 
-        schema_vo = self.schema_model.create(params)
-        self.transaction.add_rollback(_rollback, schema_vo)
+    def get_schema(self, repo_vo: Repository, schema_name, domain_id, only=None):
+        managed_schema_df = self._filter_managed_schemas(schema_name)
 
-        return schema_vo
+        if len(managed_schema_df) == 0:
+            raise ERROR_NOT_FOUND(key='name', value=schema_name)
 
-    def update_schema(self, params):
-        schema_vo = self.get_schema(params['name'], params['domain_id'])
-        return self.update_schema_by_vo(params, schema_vo)
+        managed_schemas_info = managed_schema_df.to_dict('records')
 
-    def update_schema_by_vo(self, params, schema_vo):
-        def _rollback(old_data):
-            _LOGGER.info(f'[ROLLBACK] Revert Schema Data : {old_data["name"]}')
-            schema_vo.update(old_data)
+        return self.change_response(managed_schemas_info[0], repo_vo, domain_id)
 
-        self.transaction.add_rollback(_rollback, schema_vo.to_dict())
-        return schema_vo.update(params)
+    def list_schemas(self, repo_vo: Repository, query: dict, params: dict):
+        schema_name = params.get('name')
+        service_type = params.get('service_type')
+        domain_id = params.get('domain_id')
+        sort = query.get('sort', {})
+        page = query.get('page', {})
+        keyword = query.get('keyword')
 
-    def delete_schema(self, schema_name, domain_id):
-        schema_vo = self.schema_model.get(name=schema_name, domain_id=domain_id)
-        schema_vo.delete()
+        managed_schema_df = self._filter_managed_schemas(schema_name, service_type, keyword)
+        managed_schema_df = self._sort_managed_schemas(managed_schema_df, sort)
+        managed_schema_df = self._page_managed_schemas(managed_schema_df, page)
 
-    def get_schema(self, schema_name, domain_id, only=None):
-        schema_vo = self.schema_model.get(name=schema_name, domain_id=self.domain_id, only=only)
+        results = []
+        for managed_schema_info in managed_schema_df.to_dict('records'):
+            results.append(self.change_response(managed_schema_info, repo_vo, domain_id))
 
-        return schema_vo
+        return results, len(results)
 
-    def list_schemas(self, query):
-        new_query = self._change_domain_id(query)
-        return self.schema_model.query(**new_query)
+    @staticmethod
+    def _load_managed_schemas():
+        return pd.DataFrame(copy.deepcopy(_MANAGED_SCHEMAS))
 
-    def stat_schemas(self, query):
-        return self.schema_model.stat(**query)
+    def _filter_managed_schemas(self, schema_name=None, service_type=None, keyword=None):
+        managed_schema_df = copy.deepcopy(self.managed_schema_df)
 
-    def _change_domain_id(self, query):
-        new_query = copy.deepcopy(query)
-        q_list = new_query.get('filter', [])
-        new_list = []
-        appended = False
-        for item in q_list:
-            if 'k' in item:
-                if item['k'] == 'domain_id':
-                    new_list.append({'k': 'domain_id', 'v': self.domain_id, 'o': 'eq'})
-                    appended = True
-                else:
-                    new_list.append(item)
-            if 'key' in item:
-                if item['key'] == 'domain_id':
-                    new_list.append({'k': 'domain_id', 'v': self.domain_id, 'o': 'eq'})
-                    appended = True
-                else:
-                    new_list.append(item)
- 
-        if appended == False:
-            new_list.append({'k': 'domain_id', 'v': self.domain_id, 'o': 'eq'})
-        new_query['filter'] = new_list
-        return new_query
+        if schema_name:
+            managed_schema_df = managed_schema_df[managed_schema_df['name'] == schema_name]
+
+        if service_type:
+            managed_schema_df = managed_schema_df[managed_schema_df['service_type'] == service_type]
+
+        if keyword:
+            managed_schema_df = managed_schema_df[
+                managed_schema_df['name'].str.contains(keyword, flags=re.IGNORECASE)]
+
+        return managed_schema_df
+
+    @staticmethod
+    def _sort_managed_schemas(managed_schema_df: pd.DataFrame, sort: dict):
+        if sort_key := sort.get('key'):
+            desc = sort.get('desc', False)
+            try:
+                return managed_schema_df.sort_values(by=sort_key, ascending=not desc)
+            except Exception as e:
+                raise ERROR_SORT_KEY(sort_key=sort_key)
+        else:
+            return managed_schema_df
+
+    @staticmethod
+    def _page_managed_schemas(managed_schema_df: pd.DataFrame, page: dict):
+        if limit := page.get('limit'):
+            start = page.get('start', 0)
+            return managed_schema_df[start:start + limit]
+        else:
+            return managed_schema_df

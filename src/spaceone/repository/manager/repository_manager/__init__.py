@@ -54,7 +54,7 @@ class RepositoryManager(BaseManager):
             query['filter'].append({'k': 'repository_id', 'v': repository_id, 'o': 'eq'})
 
         repo_vos, total_count = self.list_repositories(query)
-        _LOGGER.debug(f'[list_repositories_by_id] Number of repositories: {total_count}')
+        _LOGGER.debug(f'[get_all_repositories] Number of repositories: {total_count}')
 
         return repo_vos
 

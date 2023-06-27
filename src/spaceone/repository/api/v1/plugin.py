@@ -55,8 +55,3 @@ class Plugin(BaseAPI, plugin_pb2_grpc.PluginServicer):
             plugins_data, total_count = plugin_svc.list(params)
             return self.locator.get_info('PluginsInfo', plugins_data, total_count, minimal=self.get_minimal(params))
 
-    def stat(self, request, context):
-        params, metadata = self.parse_request(request, context)
-
-        with self.locator.get_service('PluginService', metadata) as plugin_svc:
-            return self.locator.get_info('StatisticsInfo', plugin_svc.stat(params))

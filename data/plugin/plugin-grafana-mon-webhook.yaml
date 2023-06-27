@@ -1,9 +1,0 @@
----
-capability: {}
-image: spaceone/plugin-grafana-mon-webhook
-labels: []
-name: Grafana
-service_type: monitoring.Webhook
-tags:
-  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/grafana.svg
-template: {}

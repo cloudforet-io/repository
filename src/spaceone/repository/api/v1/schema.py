@@ -36,9 +36,3 @@ class Schema(BaseAPI, schema_pb2_grpc.SchemaServicer):
         with self.locator.get_service('SchemaService', metadata) as schema_svc:
             schemas_data, total_count = schema_svc.list(params)
             return self.locator.get_info('SchemasInfo', schemas_data, total_count, minimal=self.get_minimal(params))
-
-    def stat(self, request, context):
-        params, metadata = self.parse_request(request, context)
-
-        with self.locator.get_service('SchemaService', metadata) as schema_svc:
-            return self.locator.get_info('StatisticsInfo', schema_svc.stat(params))

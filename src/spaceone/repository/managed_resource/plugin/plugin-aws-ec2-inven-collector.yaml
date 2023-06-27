@@ -1,0 +1,21 @@
+---
+plugin_id: plugin-aws-ec2-inven-collector
+name: AWS EC2 Collector
+image: plugin-aws-ec2-inven-collector
+capability:
+  supported_schema:
+  - aws_access_key
+  - aws_assume_role
+  - aws_assume_role_with_external_id
+labels:
+- EC2
+- Instance
+provider: aws
+service_type: inventory.Collector
+tags:
+  description: AWS EC2 Collector
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/aws-ec2.svg
+  long_description: AWS EC2 is a cloud computing service provided by Amazon Web Services.
+    EC2 is one of the most important services provided by AWS and this plugin collects
+    information from the EC2 service.
+template: {}

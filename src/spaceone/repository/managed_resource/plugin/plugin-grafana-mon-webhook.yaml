@@ -1,0 +1,14 @@
+---
+plugin_id: plugin-grafana-mon-webhook
+name: Grafana
+image: plugin-grafana-mon-webhook
+capability: {}
+labels: []
+service_type: monitoring.Webhook
+tags:
+  description: Grafana
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/grafana.svg
+  long_description: Grafana is an open source dashboard and visualization platform.
+    It can be triggered based on specific metrics in the dashboard. This plugin enables
+    cloudforet to receive alerts from Grafana.
+template: {}

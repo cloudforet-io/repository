@@ -23,7 +23,6 @@ class RegistryConnector(BaseConnector):
 class DockerHubConnector(RegistryConnector):
 
     def get_tags(self, registry_url, image, config):
-        # url = f'https://{registry_url}/v2/repositories/{image}/tags?page_size={_DEFAULT_PAGE_SIZE}'
         url = f'https://{registry_url}/v2/repositories/{image}/tags'
 
         response = requests.get(url)
@@ -58,6 +57,8 @@ class HarborConnector(RegistryConnector):
             image_tags = response.json().get('tags', [])
             image_tags.sort(key=StrictVersion, reverse=True)
             return image_tags
+        else:
+            _LOGGER.error(f'[get_tags] request error: {response.json()}')
 
         raise ERROR_NO_IMAGE_IN_REGISTRY(registry_type='HARBOR', image=image)
 
@@ -108,5 +109,5 @@ class AWSPublicECRConnector(RegistryConnector):
 
 if __name__ == '__main__':
     docker_hub_conn = DockerHubConnector()
-    tags = docker_hub_conn.get_tags('registry.hub.docker.com', 'spaceone/repository')
+    tags = docker_hub_conn.get_tags('registry.hub.docker.com', 'spaceone/repository', {})
     print(tags)

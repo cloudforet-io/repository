@@ -1,60 +1,55 @@
 import functools
-from spaceone.api.repository.v1 import plugin_pb2
+from spaceone.api.repository.v1 import plugin_pb2, repository_pb2
 from spaceone.core import config
 from spaceone.core.pygrpc.message_type import *
 from spaceone.core import utils
-from spaceone.repository.model.plugin_model import Plugin
-from spaceone.repository.info.repository_info import RepositoryInfo
 
 __all__ = ['PluginInfo', 'PluginsInfo', 'VersionsInfo']
 
 
-def PluginInfo(plugin_vo, minimal=False):
+def PluginInfo(plugin_info: dict, minimal=False):
     info = {
-        'plugin_id': plugin_vo.plugin_id,
-        'name': plugin_vo.name,
-        'state': plugin_vo.state,
-        'image': plugin_vo.image,
-        'service_type': plugin_vo.service_type,
-        'registry_type': plugin_vo.registry_type,
-        'provider': plugin_vo.provider
+        'plugin_id': plugin_info.get('plugin_id'),
+        'name': plugin_info.get('name'),
+        'state': plugin_info.get('state'),
+        'image': plugin_info.get('image'),
+        'service_type': plugin_info.get('service_type'),
+        'registry_type': plugin_info.get('registry_type'),
+        'provider': plugin_info.get('provider'),
     }
     if not minimal:
         info.update({
-            'registry_config': change_struct_type(plugin_vo.registry_config),
-            'capability': change_struct_type(plugin_vo.capability),
-            'template': change_struct_type(plugin_vo.template),
-            'labels': change_list_value_type(plugin_vo.labels),
-            'project_id': plugin_vo.project_id,
-            'domain_id': plugin_vo.domain_id,
-            'created_at': utils.datetime_to_iso8601(plugin_vo.created_at) or plugin_vo.created_at,
-            'updated_at': utils.datetime_to_iso8601(plugin_vo.updated_at) or plugin_vo.updated_at
+            'registry_config': change_struct_type(plugin_info.get('registry_config')),
+            'capability': change_struct_type(plugin_info.get('capability')),
+            'template': change_struct_type(plugin_info.get('template')),
+            'tags': change_struct_type(plugin_info.get('tags')),
+            'labels': change_list_value_type(plugin_info.get('labels')),
+            'project_id': plugin_info.get('project_id'),
+            'domain_id': plugin_info.get('domain_id'),
+            'created_at': utils.datetime_to_iso8601(plugin_info.get('created_at')),
+            'updated_at': utils.datetime_to_iso8601(plugin_info.get('updated_at'))
         })
 
-        if isinstance(plugin_vo, plugin_pb2.PluginInfo):
-            info['tags'] = plugin_vo.tags
-            info['registry_url'] = plugin_vo.registry_url
+        if 'registry_url' in plugin_info:
+            info['registry_url'] = plugin_info['registry_url']
         else:
-            info['tags'] = change_struct_type(plugin_vo.tags)
-            if plugin_vo.registry_type:
-                info['registry_url'] = config.get_global('REGISTRY_URL_MAP', {}).get(plugin_vo.registry_type)
+            info['registry_url'] = config.get_global('REGISTRY_URL_MAP', {}).get(plugin_info.get('registry_type'))
 
-        # WARNING
-        # Based on local_plugin or remote_plugin
-        # vo has different repository or repository_info field
-        if getattr(plugin_vo, 'repository', None):
+        if repository_info := plugin_info.get('repository_info'):
             info.update({
-                'repository_info': RepositoryInfo(plugin_vo.repository, minimal=True)})
-        if getattr(plugin_vo, 'repository_info', None):
-            info.update({
-                'repository_info': RepositoryInfo(plugin_vo.repository_info, minimal=True)})
+                'repository_info': repository_pb2.RepositoryInfo(
+                    repository_id=repository_info.get('repository_id'),
+                    name=repository_info.get('name'),
+                    repository_type=repository_info.get('repository_type'),
+                )
+            })
 
     return plugin_pb2.PluginInfo(**info)
 
 
-def PluginsInfo(plugin_vos, total_count, **kwargs):
+def PluginsInfo(plugins_info, total_count, **kwargs):
     return plugin_pb2.PluginsInfo(results=list(
-        map(functools.partial(PluginInfo, **kwargs), plugin_vos)), total_count=total_count)
+        map(functools.partial(PluginInfo, **kwargs), plugins_info)), total_count=total_count)
 
 
 def VersionsInfo(version_list):

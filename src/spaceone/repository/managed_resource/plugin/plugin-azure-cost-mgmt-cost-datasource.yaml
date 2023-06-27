@@ -1,0 +1,17 @@
+---
+plugin_id: plugin-azure-cost-mgmt-cost-datasource
+name: Azure Cost Management Data Source
+image: plugin-azure-cost-mgmt-cost-datasource
+capability:
+  supported_schema:
+  - azure_client_secret_for_cost_management
+labels: []
+provider: azure
+service_type: cost_analysis.DataSource
+tags:
+  description: Azure Cost Management Data Source
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/azure.svg
+  long_description: Azure Cost Management is a service that provides cost data for
+    resources being used by subscriptions. This plugin can use the Cost Management
+    API to collect billing data on all subscriptions in the billing account.
+template: {}
