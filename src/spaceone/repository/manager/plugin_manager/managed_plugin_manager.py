@@ -58,13 +58,15 @@ class ManagedPluginManager(PluginManager):
 
         managed_plugin_df = self._filter_managed_plugins(plugin_id, name, service_type, keyword)
         managed_plugin_df = self._sort_managed_plugins(managed_plugin_df, sort)
+
+        total_count = len(managed_plugin_df)
         managed_plugin_df = self._page_managed_plugins(managed_plugin_df, page)
 
         results = []
         for managed_plugin_info in managed_plugin_df.to_dict('records'):
             results.append(self.change_managed_plugin_info(managed_plugin_info, repo_vo, domain_id))
 
-        return results, len(results)
+        return results, total_count
 
     def get_plugin_versions(self, repo_vo: Repository, plugin_id, domain_id):
         managed_plugin_info = self.get_plugin(repo_vo, plugin_id, domain_id)
@@ -122,7 +124,7 @@ class ManagedPluginManager(PluginManager):
     @staticmethod
     def _page_managed_plugins(managed_plugin_df: pd.DataFrame, page: dict):
         if limit := page.get('limit'):
-            start = page.get('start', 0)
+            start = page.get('start', 1) - 1
             return managed_plugin_df[start:start + limit]
         else:
             return managed_plugin_df

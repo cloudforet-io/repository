@@ -49,13 +49,15 @@ class ManagedPolicyManager(PolicyManager):
 
         managed_policy_df = self._filter_managed_policies(policy_id, name, keyword)
         managed_policy_df = self._sort_managed_policies(managed_policy_df, sort)
+
+        total_count = len(managed_policy_df)
         managed_policy_df = self._page_managed_policies(managed_policy_df, page)
 
         results = []
         for managed_policy_info in managed_policy_df.to_dict('records'):
             results.append(self.change_response(managed_policy_info, repo_vo, domain_id))
 
-        return results, len(results)
+        return results, total_count
 
     @staticmethod
     def _load_managed_policies():
@@ -90,7 +92,7 @@ class ManagedPolicyManager(PolicyManager):
     @staticmethod
     def _page_managed_policies(managed_policy_df: pd.DataFrame, page: dict):
         if limit := page.get('limit'):
-            start = page.get('start', 0)
+            start = page.get('start', 1) - 1
             return managed_policy_df[start:start + limit]
         else:
             return managed_policy_df
