@@ -1,3 +1,4 @@
+from spaceone.repository.error import *
 from spaceone.repository.manager.repository_manager import RepositoryManager
 
 
@@ -5,12 +6,9 @@ class ManagedRepositoryManager(RepositoryManager):
 
     def register_repository(self, params):
         # Assume there is only one local repository
-        return self.repo_model.create(params)
+        managed_repo_vo = self.get_managed_repository()
+        if managed_repo_vo is not None:
+            raise ERROR_MANAGED_REPOSITORY_ALREADY_EXIST()
 
-    def register_default_repository(self, repo_name):
-        # default
-        params = {
-            "name": repo_name,
-            "repository_type": "managed"
-            }
-        return self.register_repository(params)
+        params['repository_id'] = 'repo-managed'
+        return self.repo_model.create(params)

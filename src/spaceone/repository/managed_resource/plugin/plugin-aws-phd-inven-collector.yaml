@@ -1,0 +1,22 @@
+---
+plugin_id: plugin-aws-phd-inven-collector
+name: AWS Personal Health Dashboard Collector
+image: plugin-aws-phd-inven-collector
+capability:
+  supported_schema:
+  - aws_access_key
+  - aws_assume_role
+  - aws_assume_role_with_external_id
+labels:
+- Personal Health Dashboard
+- Report
+provider: aws
+service_type: inventory.Collector
+tags:
+  description: AWS Personal Health Dashboard Collector
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/cloud-services/aws/AWS-Personal-Health-Dashboard.svg
+  long_description: AWS Personal Health Dashboard (PHD) provides a personalized view
+    of the health of the AWS services that power your applications. PHD allows you
+    to learn about specific operational issues affecting your account. The plugin
+    collects health information according to the account.
+template: {}

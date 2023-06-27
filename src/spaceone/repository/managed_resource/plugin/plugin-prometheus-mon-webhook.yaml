@@ -1,0 +1,13 @@
+---
+plugin_id: plugin-prometheus-mon-webhook
+name: Prometheus
+image: plugin-prometheus-mon-webhook
+capability: {}
+labels: []
+service_type: monitoring.Webhook
+tags:
+  description: Prometheus
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/prometheus.png
+  long_description: Prometheus is an open-source systems monitoring and alerting toolkit
+    Through this plugin, cloudforet can receive alerts from Prometheus.
+template: {}

@@ -1,20 +1,12 @@
 import logging
 
-from spaceone.core import cache
-from spaceone.core import config
-from spaceone.core.error import *
 from spaceone.core.service import *
-from spaceone.repository.manager import *
-from spaceone.repository.service.plugin_service import PluginService
-from spaceone.repository.service.policy_service import PolicyService
-from spaceone.repository.service.schema_service import SchemaService
-
-from spaceone.repository.manager.identity_manager import IdentityManager
+from spaceone.repository.error import *
+from spaceone.repository.manager import RepositoryManager, LocalRepositoryManager, ManagedRepositoryManager, \
+    RemoteRepositoryManager
 
 _LOGGER = logging.getLogger(__name__)
 
-
-MANAGED_REPO_NAME = "managed-local"
 
 @authentication_handler
 @authorization_handler
@@ -25,34 +17,65 @@ class RepositoryService(BaseService):
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['name', 'repository_type'])
     def register(self, params):
-        """
+        """ Register repository
         Args:
-            params:
-                - name
-                - repository_type: local | remote | config
-                - endpoint
-                - version
-                - secret_id
+            params (dict):
+                'name': 'str',
+                'repository_type': 'local | remote | managed',
+                'endpoint': 'str',
+                'domain_id': 'str'
 
-        if repository_type == remote, do register remote repository
+        Returns:
+            repository_vo (object)
         """
+
         repo_type = params.get('repository_type')
         if repo_type == 'local':
-            repo_mgr = self.locator.get_manager('LocalRepositoryManager')
+            repo_mgr: LocalRepositoryManager = self.locator.get_manager('LocalRepositoryManager')
+        elif repo_type == 'managed':
+            repo_mgr: ManagedRepositoryManager = self.locator.get_manager('ManagedRepositoryManager')
+        elif repo_type == 'remote':
+            repo_mgr: RemoteRepositoryManager = self.locator.get_manager('RemoteRepositoryManager')
         else:
-            repo_mgr = self.locator.get_manager('RemoteRepositoryManager')
+            raise ERROR_INVALID_REPOSITORY_TYPE()
 
         return repo_mgr.register_repository(params)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['repository_id'])
     def update(self, params):
+        """ Update repository
+        Args:
+            params (dict):
+                'repository_id': 'str',
+                'name': 'str',
+                'repository_type': 'local | remote | managed',
+                'endpoint': 'str',
+                'domain_id': 'str'
+
+        Returns:
+            repository_vo (object)
+        """
+
+        if params['repository_id'] == 'repo-managed':
+            raise ERROR_NOT_UPDATE_MANAGED_REPOSITORY()
+
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
         return repo_mgr.update_repository(params)
 
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['repository_id'])
     def deregister(self, params):
+        """ Deregister repository
+        Args:
+            params (dict):
+                'repository_id': 'str',
+                'domain_id': 'str'
+
+        Returns:
+            None
+        """
+
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
 
         return repo_mgr.delete_repository(params['repository_id'])
@@ -60,6 +83,16 @@ class RepositoryService(BaseService):
     @transaction(append_meta={'authorization.scope': 'DOMAIN'})
     @check_required(['repository_id'])
     def get(self, params):
+        """ Get repository
+        Args:
+            params (dict):
+                'repository_id': 'str',
+                'domain_id': 'str'
+
+        Returns:
+            repository_vo (object)
+        """
+
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
         return repo_mgr.get_repository(params['repository_id'], params.get('only'))
 
@@ -67,44 +100,19 @@ class RepositoryService(BaseService):
     @append_query_filter(['repository_id', 'name', 'repository_type'])
     @append_keyword_filter(['repository_id', 'name'])
     def list(self, params):
-        # check default
-        managed_repo = config.get_global("ENABLE_MANAGED_REPOSITORY", False)
-        if managed_repo:
-            self._create_managed_repository()
+        """ List repositories
+        Args:
+            params (dict):
+                'repository_id': 'str',
+                'name': 'str',
+                'domain_id': 'str',
+                'query': 'dict (spaceone.api.core.v1.Query)'
+
+        Returns:
+            results (list): 'list of repository_vo'
+            total_count (int)
+        """
 
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
         query = params.get('query', {})
         return repo_mgr.list_repositories(query)
-
-    # TEST
-    #@cache.cacheable(key='repository:managed:init', expire=300)
-    def _create_managed_repository(self):
-        identity_mgr: IdentityManager = self.locator.get_manager('IdentityManager')
-        domain_id = identity_mgr.get_root_domain_id()
-        repo_mgr: RepositoryManager = self.locator.get_manager("ManagedRepositoryManager")
-        query = {
-                'filter': [{'k': 'repository_type', 'v': 'managed', 'o': 'eq'}]
-                }
-        repo_vos, total_count = repo_mgr.list_repositories(query)
-        # total_count is 0 or 1
-        if total_count == 1:
-            return False
-        # Not Found
-        # Init Managed Repository
-        repo_mgr.register_default_repository(MANAGED_REPO_NAME)
-
-        # Init Plugin
-        _LOGGER.debug("Create Managed Plugins")
-        plugin_svc: PluginService = self.locator.get_service("PluginService")
-        plugin_svc.create_managed_plugins(domain_id)
-
-        # Init Policy
-        _LOGGER.debug("Create Managed Policy")
-        policy_svc: PolicyService = self.locator.get_service("PolicyService")
-        policy_svc.create_managed_policies(domain_id)
-
-        # Init Schema
-        _LOGGER.debug("Create Managed Schema")
-        schema_svc: SchemaService = self.locator.get_service("SchemaService")
-        schema_svc.create_managed_schemas(domain_id)
-       	return True

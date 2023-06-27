@@ -1,0 +1,19 @@
+---
+plugin_id: plugin-telegram-noti-protocol
+name: Telegram Notification Protocol
+image: plugin-telegram-noti-protocol
+capability:
+  data_type: SECRET
+  supported_schema:
+  - telegram_auth_token
+labels: []
+provider: telegram
+service_type: notification.Protocol
+tags:
+  description: Telegram Notification Protocol
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/telegram.svg
+  long_description: Telegram is a cloud-based instant messaging and voice over IP
+    service that allows users to send messages, photos, videos, and files of any type
+    across different platforms. This plugin delivers an alarm message to a specific
+    channel through Telegram Bot when an event occurs through Alert Manager.
+template: {}

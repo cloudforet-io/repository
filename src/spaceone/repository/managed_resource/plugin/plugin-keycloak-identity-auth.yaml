@@ -1,0 +1,16 @@
+---
+name: Keycloak OIDC
+plugin_id: plugin-keycloak-identity-auth
+image: plugin-keycloak-identity-auth
+capability: {}
+labels:
+- Authentication
+- Keycloak
+service_type: identity.Domain
+tags:
+  description: Keycloak OIDC
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/keycloak.svg
+  long_description: Keycloak is an open source software product that provides single
+    sign-on and identity and access management for modern applications and services.
+    You can use keycloak through its plug-in.
+template: {}

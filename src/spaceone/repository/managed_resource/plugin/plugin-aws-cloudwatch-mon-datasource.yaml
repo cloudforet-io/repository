@@ -1,0 +1,25 @@
+---
+plugin_id: plugin-aws-cloudwatch-mon-datasource
+name: AWS CloudWatch Metric DataSource
+image: plugin-aws-cloudwatch-mon-datasource
+capability:
+  monitoring_type: METRIC
+  supported_schema:
+  - aws_access_key
+  - aws_assume_role
+  - aws_assume_role_with_external_id
+  use_resource_secret: true
+labels:
+- Monitoring
+- AWS
+- CloudWatch
+provider: aws
+service_type: monitoring.DataSource
+tags:
+  description: AWS CloudWatch Metric DataSource
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/aws-cloudwatch.svg
+  long_description: AWS CloudWatch Metric is a monitoring service provided by AWS.
+    AWS CloudWatch Metric can use AWS resource and application metrics for search,
+    graphing, and notification. You can collect metric information from AWS CloudWatch
+    through the corresponding plugin.
+template: {}

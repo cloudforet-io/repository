@@ -1,0 +1,13 @@
+---
+plugin_id: plugin-http-file-cost-datasource
+name: HTTP File Data Source
+image: plugin-http-file-cost-datasource
+capability: {}
+labels: []
+service_type: cost_analysis.DataSource
+tags:
+  description: HTTP File Data Source
+  long_description: This plugin can collect predefined CSV format data through http(s)
+    and use it as cost data. Easily integrate data into Cost Analysis from CSV file
+    regardless of any data as possible like API usage.
+template: {}

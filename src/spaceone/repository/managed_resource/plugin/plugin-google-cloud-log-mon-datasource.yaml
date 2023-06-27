@@ -1,0 +1,22 @@
+---
+plugin_id: plugin-google-cloud-log-mon-datasource
+name: Google Cloud Log DataSource
+image: plugin-google-cloud-log-mon-datasource
+capability:
+  monitoring_type: LOG
+  supported_schema:
+  - google_oauth2_credentials
+  use_resource_secret: true
+labels:
+- Monitoring
+- Google
+- Logging
+provider: google_cloud
+service_type: monitoring.DataSource
+tags:
+  description: Google Cloud Log DataSource
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/cloud-services/google_cloud/cloud_logging.svg
+  long_description: Google Cloud Logging is a service that allows you to store, search,
+    analyze, monitor, and alert on log data and events from Google Cloud Platform.
+    The plugin collects metrics data in real time.
+template: {}

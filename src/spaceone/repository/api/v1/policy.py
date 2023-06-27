@@ -37,8 +37,3 @@ class Policy(BaseAPI, policy_pb2_grpc.PolicyServicer):
             policies_data, total_count = policy_svc.list(params)
             return self.locator.get_info('PoliciesInfo', policies_data, total_count, minimal=self.get_minimal(params))
 
-    def stat(self, request, context):
-        params, metadata = self.parse_request(request, context)
-
-        with self.locator.get_service('PolicyService', metadata) as policy_svc:
-            return self.locator.get_info('StatisticsInfo', policy_svc.stat(params))

@@ -1,0 +1,26 @@
+---
+name: aws_assume_role
+schema:
+  order:
+  - external_id
+  - role_arn
+  properties:
+    external_id:
+      format: generate_id
+      markdown: '[How to use an external ID?](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html)'
+      minLength: 4.0
+      title: External ID
+      type: string
+    role_arn:
+      minLength: 4.0
+      title: Role ARN
+      type: string
+  required:
+  - role_arn
+  type: object
+service_type: secret.credentials
+tags:
+  description: AWS Assume Role
+labels:
+- AWS
+- Assume Role

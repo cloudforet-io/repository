@@ -1,0 +1,25 @@
+---
+name: spaceone_api_key
+schema:
+  order:
+  - api_key
+  - endpoint
+  properties:
+    api_key:
+      format: password
+      minLength: 4.0
+      title: API Key
+      type: string
+    endpoint:
+      minLength: 4.0
+      title: Identity Service Endpoint
+      type: string
+  required:
+  - api_key
+  - endpoint
+  type: object
+service_type: secret.credentials
+tags:
+  description: SpaceONE API Key
+labels:
+- SpaceONE

@@ -1,0 +1,25 @@
+---
+plugin_id: plugin-aws-trusted-advisor-inven-collector
+name: AWS Trusted Advisor Collector
+image: plugin-aws-trusted-advisor-inven-collector
+capability:
+  supported_schema:
+  - aws_access_key
+  - aws_assume_role
+  - aws_assume_role_with_external_id
+labels:
+- Trusted Advisor
+- Report
+provider: aws
+service_type: inventory.Collector
+tags:
+  description: AWS Trusted Advisor Collector
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/aws-trusted-advisor.png
+  long_description: AWS Trusted Advisor is a tool that provides real-time guidance
+    to users to provision resources according to AWS best practices. It scans your
+    AWS environment and provides advice to improve system performance, security, and
+    cost management, ultimately helping you optimize your AWS infrastructure. This
+    plugin collects best practices information and recommendations through the Trusted
+    Advisor API. The Trusted Advisor API is only supported on the AWS Business plan
+    and above.
+template: {}

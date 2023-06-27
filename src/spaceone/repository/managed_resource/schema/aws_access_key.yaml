@@ -1,0 +1,24 @@
+---
+name: aws_access_key
+schema:
+  order:
+  - aws_access_key_id
+  - aws_secret_access_key
+  properties:
+    aws_access_key_id:
+      minLength: 4.0
+      title: AWS Access Key
+      type: string
+    aws_secret_access_key:
+      minLength: 4.0
+      title: AWS Secret Key
+      type: string
+  required:
+  - aws_access_key_id
+  - aws_secret_access_key
+  type: object
+service_type: secret.credentials
+tags:
+  description: AWS Access Key
+labels:
+- AWS

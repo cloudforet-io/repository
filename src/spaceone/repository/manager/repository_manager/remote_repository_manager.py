@@ -1,9 +1,9 @@
 import logging
 
 from spaceone.core.error import *
-from spaceone.core.auth.jwt.jwt_util import JWTUtil
 
-from spaceone.repository.connector.remote_repository_connector import RemoteRepositoryConnector
+from spaceone.core.connector.space_connector import SpaceConnector
+from spaceone.repository.error import *
 from spaceone.repository.manager.repository_manager import RepositoryManager
 
 _LOGGER = logging.getLogger(__name__)
@@ -12,45 +12,25 @@ _LOGGER = logging.getLogger(__name__)
 class RemoteRepositoryManager(RepositoryManager):
 
     def register_repository(self, params):
-        """
-        Args:
-            params:
-                - name
-                - repository_type: remote
-                - endpoint
-                - version
-                - secret_id
-                - domain_id
-
-        Connect to Remote Repository via secret_id
-        Get repository_id of remote.
-        use remote's repository_id as my repository_id
-        """
-
         endpoint = params.get('endpoint')
-        secret_id = params.get('secret_id')
 
         if endpoint is None:
             raise ERROR_REQUIRED_PARAMETER(key='endpoint')
 
-        conn = {'endpoint': endpoint}
+        remote_repo_vos = self.filter_repositories(repository_type="remote", endpoint=endpoint)
+        if remote_repo_vos.count() > 0:
+            raise ERROR_REMOTE_REPOSITORY_ALREADY_EXIST(endpoint=endpoint)
 
-        # if secret_id:
-        #     token = self.transaction.get_meta('token')
-        #     if token is None:
-        #         raise ERROR_AUTHENTICATE_FAILURE(message='Empty token provided.')
-        #
-        #     domain_id = self._get_domain_id_from_token(token)
-        #     remote_token = self._get_secret(secret_id, domain_id)
-        #     conn['token'] = remote_token['token']
+        remote_repo_conn: SpaceConnector = self.locator.get_connector('SpaceConnector', endpoint=endpoint)
+        response = remote_repo_conn.dispatch('Repository.list', {'repository_type': 'local'})
+        total_count = response.get('total_count', 0)
 
-        connector: RemoteRepositoryConnector = self.locator.get_connector('RemoteRepositoryConnector', conn=conn)
-        repo_info = connector.get_remote_repository()
+        if total_count == 0:
+            raise ERRROR_NOT_SET_UP_REMOTE_REPOSITORY()
+
+        remote_repo_info = response['results'][0]
+
         # Overwrite repository_id to Remote one
-        params['repository_id'] = repo_info.repository_id
+        params['repository_id'] = remote_repo_info['repository_id']
 
         return self.repo_model.create(params)
-
-    def _get_domain_id_from_token(self, token):
-        decoded_token = JWTUtil.unverified_decode(token)
-        return decoded_token['did']

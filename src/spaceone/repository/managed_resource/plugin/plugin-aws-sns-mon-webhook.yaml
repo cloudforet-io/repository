@@ -1,0 +1,15 @@
+---
+plugin_id: plugin-aws-sns-monitoring-webhook
+name: AWS SNS
+image: plugin-aws-sns-mon-webhook
+capability: {}
+labels: []
+provider: aws
+service_type: monitoring.Webhook
+tags:
+  description: AWS SNS
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/cloud-services/aws/Amazon-SNS.svg
+  long_description: AWS SNS stands for Amazon Simple Notification Service. It is a
+    fully managed distributed publish-subscribe system that operates on a Fan-out
+    model. Through this plug-in, cloudforet can receive alerts from SNS.
+template: {}

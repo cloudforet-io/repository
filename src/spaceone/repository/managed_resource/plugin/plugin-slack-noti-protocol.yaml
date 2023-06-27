@@ -1,0 +1,17 @@
+---
+provider: slack
+plugin_id: plugin-slack-noti-protocol
+image: plugin-slack-noti-protocol
+capability:
+  supported_schema: []
+labels: []
+name: Slack Notification Protocol
+service_type: notification.Protocol
+tags:
+  description: Slack Notification Protocol
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/slack.svg
+  long_description: Slack is a communication platform designed for teams, providing
+    real-time messaging, archiving, and search capabilities. This plugin delivers
+    alarm as a message to specific slack  channel in workspace when an event occurs
+    through Alert manager.
+template: {}

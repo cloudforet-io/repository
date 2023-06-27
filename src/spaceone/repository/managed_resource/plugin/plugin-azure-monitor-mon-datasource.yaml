@@ -1,0 +1,22 @@
+---
+plugin_id: plugin-azure-monitor-mon-datasource
+name: Azure Monitoring Metric DataSource
+image: plugin-azure-monitor-mon-datasource
+capability:
+  monitoring_type: METRIC
+  supported_schema:
+  - azure_client_secret
+  use_resource_secret: true
+labels:
+- Monitoring
+- Azure
+- azure-monitor
+provider: azure
+service_type: monitoring.DataSource
+tags:
+  description: Azure Monitoring Metric DataSource
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/azure-monitor.svg
+  long_description: Azure Monitoring Metric is a feature of Azure Monitor that collects
+    numerical data from monitored resources into a time series database. You can collect
+    metric information from Azure Monitoring through this plugin.
+template: {}

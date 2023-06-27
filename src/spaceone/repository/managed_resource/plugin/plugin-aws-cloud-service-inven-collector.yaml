@@ -1,0 +1,50 @@
+---
+plugin_id: plugin-aws-cloud-service-inven-collector
+name: AWS Cloud Service Collector
+image: plugin-aws-cloud-service-inven-collector
+capability:
+  supported_schema:
+  - aws_access_key
+  - aws_assume_role
+  - aws_assume_role_with_external_id
+labels:
+- EC2
+- Lambda
+- Lightsail
+- ECS
+- EKS
+- ECR
+- RDS
+- DocumentDB
+- DynamoDB
+- ElastiCache
+- RedShift
+- VPC
+- ELB
+- Route53
+- API Gateway
+- CloudFront
+- Direct Connect
+- S3
+- EFS
+- IAM
+- KSM
+- Certificate Manager
+- Secrets Manager
+- RedShift
+- MSK
+- Kinesis
+- SNS
+- SQS
+- CloudTrail
+provider: aws
+service_type: inventory.Collector
+tags:
+  description: AWS Cloud Service Collector
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/aws-cloudservice.svg
+  long_description: AWS is a comprehensive cloud services platform offered by Amazon
+    that provides computing power, storage, content delivery, and other functionalities
+    to help businesses scale and grow. AWS provides hundreds of services. This plugin
+    can collect information about over 50 resources in use, which are considered critical
+    services.
+template: {}

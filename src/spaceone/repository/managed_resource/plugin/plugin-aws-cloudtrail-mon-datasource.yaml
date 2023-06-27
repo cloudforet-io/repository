@@ -1,0 +1,25 @@
+---
+plugin_id: plugin-aws-cloudtrail-mon-datasource
+name: AWS CloudTail Log DataSource
+image: plugin-aws-cloudtrail-mon-datasource
+capability:
+  monitoring_type: LOG
+  supported_schema:
+  - aws_access_key
+  - aws_assume_role
+  - aws_assume_role_with_external_id
+  use_resource_secret: true
+labels:
+- Monitoring
+- AWS
+- CloudTrail
+provider: aws
+service_type: monitoring.DataSource
+tags:
+  description: AWS CloudTail Log DataSource
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/aws-cloudtrail.svg
+  long_description: AWS CloudTrail Logs provide important information for tracking
+    and analyzing activity in your AWS account. With this information, you can increase
+    the security of your AWS account and respond quickly when issues arise. You can
+    collect log information from AWS CloudTrail through this plugin.
+template: {}

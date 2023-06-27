@@ -1,0 +1,16 @@
+---
+plugin_id: plugin-google-monitoring-mon-webhook
+name: Google Cloud Monitoring
+image: plugin-google-monitoring-mon-webhook
+capability: {}
+labels: []
+provider: google_cloud
+service_type: monitoring.Webhook
+tags:
+  description: Google Cloud Monitoring
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/cloud_monitoring.svg
+  long_description: Google Cloud Monitoring is a monitoring service provided by Google
+    Cloud Platform. This service allows you to monitor applications and infrastructure
+    running on Google Cloud Platform by collecting performance data from various Google
+    Cloud services. With this plugin, you can receive alerts from Cloud Monitoring.
+template: {}
