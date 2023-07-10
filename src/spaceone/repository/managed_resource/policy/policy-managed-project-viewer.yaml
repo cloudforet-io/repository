@@ -30,7 +30,10 @@ permissions:
 - identity.RoleBinding.list
 - identity.RoleBinding.stat
 - identity.User.update
+- identity.User.verify_email
+- identity.User.confirm_email
 - identity.User.find
+- identity.User.sync
 - identity.User.get
 - identity.User.list
 - identity.User.stat

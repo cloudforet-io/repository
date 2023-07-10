@@ -6,10 +6,12 @@ schema:
   - aws_secret_access_key
   properties:
     aws_access_key_id:
+      format: password
       minLength: 4.0
       title: AWS Access Key
       type: string
     aws_secret_access_key:
+      format: password
       minLength: 4.0
       title: AWS Secret Key
       type: string
