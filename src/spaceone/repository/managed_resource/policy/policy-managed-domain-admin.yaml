@@ -81,8 +81,6 @@ permissions:
 - statistics.Schedule.*
 - statistics.History.list
 - statistics.History.stat
-- billing.DataSource.*
-- billing.Billing.*
 - config.UserConfig.*
 - config.DomainConfig.*
 - notification.Protocol.*

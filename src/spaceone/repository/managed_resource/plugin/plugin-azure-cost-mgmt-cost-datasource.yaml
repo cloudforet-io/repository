@@ -4,7 +4,7 @@ name: Azure Cost Management Data Source
 image: plugin-azure-cost-mgmt-cost-datasource
 capability:
   supported_schema:
-  - azure_client_secret_for_cost_management
+  - azure_client_secret
 labels: []
 provider: azure
 service_type: cost_analysis.DataSource

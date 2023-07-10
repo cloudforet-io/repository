@@ -1,3 +1,4 @@
+import copy
 import logging
 import jsonschema
 import re
@@ -283,10 +284,10 @@ class PluginService(BaseService):
                 query_page = query['page']
                 del query['page']
 
-            repo_vos = repo_mgr.filter_repositories()
+            repo_vos = repo_mgr.get_all_repositories()
             for repo_vo in repo_vos:
                 plugin_mgr = self._get_plugin_manager_by_repo(repo_vo.repository_type)
-                plugins_info, total_count = plugin_mgr.list_plugins(repo_vo, query, params)
+                plugins_info, total_count = plugin_mgr.list_plugins(repo_vo, copy.deepcopy(query), params)
                 all_plugins_info += plugins_info
                 plugin_total_count += total_count
 
