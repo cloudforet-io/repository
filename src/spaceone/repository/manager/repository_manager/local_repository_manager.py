@@ -13,4 +13,6 @@ class LocalRepositoryManager(RepositoryManager):
             raise ERROR_LOCAL_REPOSITORY_ALREADY_EXIST()
 
         params['repository_id'] = utils.generate_id('repo')
+        params['order'] = 3
+
         return self.repo_model.create(params)
