@@ -11,4 +11,5 @@ class ManagedRepositoryManager(RepositoryManager):
             raise ERROR_MANAGED_REPOSITORY_ALREADY_EXIST()
 
         params['repository_id'] = 'repo-managed'
+        params['order'] = 1
         return self.repo_model.create(params)
