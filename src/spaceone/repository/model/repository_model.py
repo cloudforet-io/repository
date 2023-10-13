@@ -12,6 +12,7 @@ class Repository(MongoModel):
     name = StringField(max_length=255)
     repository_type = StringField(max_length=255, choices=['local', 'remote', 'managed'])
     state = StringField(max_length=20, default='ENABLED')
+    order = IntField(required=True)
     endpoint = StringField(max_length=255)
     version = StringField(max_length=16)
     secret_id = StringField(max_length=255)
@@ -27,7 +28,7 @@ class Repository(MongoModel):
             'name',
             'repository_type'
         ],
-        'ordering': ['name'],
+        'ordering': ['order', 'name'],
         'indexes': [
             'repository_id',
             'name',

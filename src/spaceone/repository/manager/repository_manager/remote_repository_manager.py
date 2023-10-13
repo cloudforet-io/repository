@@ -32,5 +32,6 @@ class RemoteRepositoryManager(RepositoryManager):
 
         # Overwrite repository_id to Remote one
         params['repository_id'] = remote_repo_info['repository_id']
+        params['order'] = 2
 
         return self.repo_model.create(params)

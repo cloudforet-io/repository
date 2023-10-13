@@ -45,7 +45,7 @@ class RepositoryManager(BaseManager):
     def get_all_repositories(self, repository_id=None):
         query = {
             'sort': {
-                'key': 'repository_type'
+                'key': 'order'
             },
             'filter': []
         }
