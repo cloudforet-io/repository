@@ -16,7 +16,7 @@ _LOGGER = logging.getLogger(__name__)
 MAX_IMAGE_NAME_LENGTH = 48
 REGISTRY_MAP = {
     "DOCKER_HUB": "DockerHubConnector",
-    "AWS_PUBLIC_ECR": "AWSPublicECRConnector",
+    "AWS_PRIVATE_ECR": "AWSPrivateECRConnector",
     "HARBOR": "HarborConnector"
 }
 
@@ -362,7 +362,7 @@ class PluginService(BaseService):
 
     @staticmethod
     def _check_registry_config(registry_type, registry_config):
-        if registry_type == 'AWS_PUBLIC_ECR':
+        if registry_type == 'AWS_PRIVATE_ECR':
             if 'account_id' not in registry_config:
                 raise ERROR_REQUIRED_PARAMETER(key='registry_config.account_id')
 

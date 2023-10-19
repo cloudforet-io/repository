@@ -19,7 +19,7 @@ CACHES = {
 }
 
 CONNECTORS = {
-    'AWSPublicECRConnector': {
+    'AWSPrivateECRConnector': {
         'aws_access_key_id': '',
         'aws_secret_access_key': '',
         'region_name': ''
@@ -43,13 +43,13 @@ CONNECTORS = {
 
 REGISTRY_URL_MAP = {
     'DOCKER_HUB': 'registry.hub.docker.com',
-    'AWS_PUBLIC_ECR': 'public.ecr.aws',
+    'AWS_PRIVATE_ECR': 'private.ecr.aws',
     'HARBOR': ''    # default ""
 }
 
 # Use managed repository (Read Only), if you can not use plugin marketplace
 ENABLE_MANAGED_REPOSITORY = False
-DEFAULT_REGISTRY = "DOCKER_HUB" # DOCKER_HUB | AWS_PUBLIC_ECR | HARBOR
+DEFAULT_REGISTRY = "DOCKER_HUB" # DOCKER_HUB | AWS_PRIVATE_ECR | HARBOR
 
 ROOT_TOKEN = ""
 ROOT_TOKEN_INFO = {}
