@@ -15,7 +15,7 @@ __all__ = ['ManagedPluginManager']
 _LOGGER = logging.getLogger(__name__)
 _REGISTRY_CONNECTOR_MAP = {
     'DOCKER_HUB': 'DockerHubConnector',
-    'AWS_PUBLIC_ECR': 'AWSPublicECRConnector',
+    'AWS_PRIVATE_ECR': 'AWSPrivateECRConnector',
     'HARBOR': 'HarborConnector'
 }
 _BASE_DIR = os.path.join(os.path.dirname(__file__), '../../managed_resource/plugin/')
