@@ -35,6 +35,6 @@ tags:
     through Microsoft's global network of datacenters. It provides a wide range of
     integrated cloud services including analytics, computing, database, mobile, networking,
     storage, and web, allowing users to move faster, achieve more. This plugin can
-    collect information about over 30 resources in use, which are considered important
+    collect information about over 20 resources in use, which are considered important
     services.
 template: {}
