@@ -3,7 +3,10 @@ plugin_id: plugin-google-monitoring-mon-webhook
 name: Google Cloud Monitoring
 image: plugin-google-monitoring-mon-webhook
 capability: {}
-labels: []
+labels:
+  - Cloud Monitoring
+  - Google
+  - Webhook
 provider: google_cloud
 service_type: monitoring.Webhook
 tags:

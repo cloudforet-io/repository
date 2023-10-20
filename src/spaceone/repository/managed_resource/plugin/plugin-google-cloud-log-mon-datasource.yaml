@@ -17,6 +17,6 @@ tags:
   description: Google Cloud Log DataSource
   icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/cloud-services/google_cloud/cloud_logging.svg
   long_description: Google Cloud Logging is a service that allows you to store, search,
-    analyze, monitor, and alert on log data and events from Google Cloud Platform.
+    analyze, monitor, and alert on log data and events from Google Cloud.
     The plugin collects metrics data in real time.
 template: {}
