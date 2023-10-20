@@ -1,0 +1,19 @@
+---
+name: google_cloud_project_id
+schema:
+  properties:
+    project_id:
+      examples:
+      - project-id
+      minLength: 4.0
+      title: Project ID
+      type: string
+  required:
+  - project_id
+  type: object
+service_type: secret.credentials
+tags:
+  description: Google Cloud Project ID
+labels:
+- Google Cloud
+- GCP
