@@ -51,12 +51,13 @@ class ManagedPluginManager(PluginManager):
         plugin_id = params.get('plugin_id')
         name = params.get('name')
         service_type = params.get('service_type')
+        provider = params.get('provider')
         domain_id = params.get('domain_id')
         sort = query.get('sort', {})
         page = query.get('page', {})
         keyword = query.get('keyword')
 
-        managed_plugin_df = self._filter_managed_plugins(plugin_id, name, service_type, keyword)
+        managed_plugin_df = self._filter_managed_plugins(plugin_id, name, service_type, provider, keyword)
         managed_plugin_df = self._sort_managed_plugins(managed_plugin_df, sort)
 
         total_count = len(managed_plugin_df)
@@ -92,7 +93,7 @@ class ManagedPluginManager(PluginManager):
         managed_plugin_df = pd.DataFrame(copy.deepcopy(_MANAGED_PLUGINS))
         return managed_plugin_df.fillna('')
 
-    def _filter_managed_plugins(self, plugin_id=None, name=None, service_type=None, keyword=None):
+    def _filter_managed_plugins(self, plugin_id=None, name=None, service_type=None, provider=None, keyword=None):
         managed_plugin_df = copy.deepcopy(self.managed_plugin_df)
 
         if plugin_id:
@@ -103,6 +104,9 @@ class ManagedPluginManager(PluginManager):
 
         if service_type:
             managed_plugin_df = managed_plugin_df[managed_plugin_df['service_type'] == service_type]
+
+        if provider:
+            managed_plugin_df = managed_plugin_df[managed_plugin_df['provider'] == provider]
 
         if keyword:
             managed_plugin_df = managed_plugin_df[
