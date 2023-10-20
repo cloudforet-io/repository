@@ -62,9 +62,6 @@ permissions:
 - inventory.Region.get
 - inventory.Region.list
 - inventory.Region.stat
-- inventory.Server.get
-- inventory.Server.list
-- inventory.Server.stat
 - inventory.CloudService.get
 - inventory.CloudService.list
 - inventory.CloudService.stat
@@ -80,8 +77,6 @@ permissions:
 - inventory.ResourceGroup.list
 - inventory.ResourceGroup.stat
 - inventory.Collector.get
-- inventory.Collector.list_schedules
-- inventory.Collector.get_schedule
 - inventory.Collector.list
 - inventory.Collector.stat
 - inventory.CollectorRule.get
@@ -89,6 +84,7 @@ permissions:
 - inventory.CollectorRule.stat
 - inventory.Job.list
 - inventory.Job.stat
+- inventory.Job.analyze
 - inventory.JobTask.list
 - inventory.JobTask.stat
 - inventory.ChangeHistory.list
@@ -144,10 +140,6 @@ permissions:
 - statistics.Schedule.stat
 - statistics.History.list
 - statistics.History.stat
-- billing.DataSource.get
-- billing.DataSource.list
-- billing.DataSource.stat
-- billing.Billing.get_data
 - config.UserConfig.*
 - config.DomainConfig.get
 - config.DomainConfig.list
@@ -171,15 +163,9 @@ permissions:
 - cost_analysis.DataSource.get
 - cost_analysis.DataSource.list
 - cost_analysis.DataSource.stat
-- cost_analysis.Schedule.get
-- cost_analysis.Schedule.list
-- cost_analysis.Schedule.stat
-- cost_analysis.ExchangeRate.get
-- cost_analysis.ExchangeRate.list
 - cost_analysis.Cost.get
 - cost_analysis.Cost.list
 - cost_analysis.Cost.analyze
-- cost_analysis.Cost.analyze_v2
 - cost_analysis.Cost.stat
 - cost_analysis.DataSourceRule.get
 - cost_analysis.DataSourceRule.list
@@ -190,8 +176,6 @@ permissions:
 - cost_analysis.BudgetUsage.list
 - cost_analysis.BudgetUsage.stat
 - cost_analysis.BudgetUsage.analyze
-- cost_analysis.Dashboard.get
-- cost_analysis.Dashboard.list
 - cost_analysis.CostQuerySet.*
 - cost_analysis.Job.get
 - cost_analysis.Job.list
@@ -199,11 +183,6 @@ permissions:
 - cost_analysis.JobTask.get
 - cost_analysis.JobTask.list
 - cost_analysis.JobTask.stat
-- cost_analysis.PublicDashboard.get
-- cost_analysis.PublicDashboard.list
-- cost_analysis.PublicDashboard.stat
-- cost_analysis.UserDashboard.*
-- cost_analysis.CustomWidget.*
 - board.Board.get
 - board.Board.list
 - board.Board.stat
