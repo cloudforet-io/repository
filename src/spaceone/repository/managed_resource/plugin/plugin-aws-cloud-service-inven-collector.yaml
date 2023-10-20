@@ -27,16 +27,20 @@ labels:
 - Direct Connect
 - S3
 - EFS
+- EIP
+- EBS
 - IAM
-- KSM
-- Certificate Manager
+- KMS
+- ACM
 - Secrets Manager
-- RedShift
 - MSK
-- Kinesis
+- Kinesis DataStream
+- Kinesis Firehose
 - SNS
 - SQS
 - CloudTrail
+- AutoScaling Group
+
 provider: aws
 service_type: inventory.Collector
 tags:
@@ -45,6 +49,6 @@ tags:
   long_description: AWS is a comprehensive cloud services platform offered by Amazon
     that provides computing power, storage, content delivery, and other functionalities
     to help businesses scale and grow. AWS provides hundreds of services. This plugin
-    can collect information about over 50 resources in use, which are considered critical
+    can collect information from around 32 popular resources in use, and will expand later on to collect over 50 resources.
     services.
 template: {}
