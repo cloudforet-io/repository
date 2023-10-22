@@ -13,7 +13,7 @@ from spaceone.repository.manager.repository_manager import RepositoryManager
 
 _LOGGER = logging.getLogger(__name__)
 
-MAX_IMAGE_NAME_LENGTH = 48
+MAX_IMAGE_NAME_LENGTH = 80
 REGISTRY_MAP = {
     "DOCKER_HUB": "DockerHubConnector",
     "AWS_PRIVATE_ECR": "AWSPrivateECRConnector",
