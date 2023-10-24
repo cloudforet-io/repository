@@ -32,6 +32,10 @@ def PluginInfo(plugin_info: dict, minimal=False):
 
         if 'registry_url' in plugin_info:
             info['registry_url'] = plugin_info['registry_url']
+        elif plugin_info.get('registry_type') == 'AWS_PRIVATE_ECR':
+            connectors_config = config.get_global('CONNECTORS')
+            region_name = connectors_config['AWSPrivateECRConnector'].get('region_name', 'ap-northeast-2')
+            info['registry_url'] = f'{plugin_info["registry_config"]["account_id"]}.dkr.ecr.{region_name}.amazonaws.com'
         else:
             info['registry_url'] = config.get_global('REGISTRY_URL_MAP', {}).get(plugin_info.get('registry_type'))
 

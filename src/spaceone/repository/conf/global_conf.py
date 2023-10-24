@@ -43,7 +43,7 @@ CONNECTORS = {
 
 REGISTRY_URL_MAP = {
     'DOCKER_HUB': 'registry.hub.docker.com',
-    'AWS_PRIVATE_ECR': 'private.ecr.aws',
+    'AWS_PRIVATE_ECR': '',
     'HARBOR': ''    # default ""
 }
 
