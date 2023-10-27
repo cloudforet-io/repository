@@ -13,7 +13,7 @@ from spaceone.core.service import BaseService
 from spaceone.core.locator import Locator
 from spaceone.core.pygrpc import BaseAPI
 from spaceone.api.repository.v1 import schema_pb2
-from spaceone.repository.api.v1.schema import Schema
+from spaceone.repository.interface.grpc.schema import Schema
 from test.factory.schema_factory import SchemaFactory
 
 

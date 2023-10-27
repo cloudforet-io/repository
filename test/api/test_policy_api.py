@@ -13,7 +13,7 @@ from spaceone.core.service import BaseService
 from spaceone.core.locator import Locator
 from spaceone.core.pygrpc import BaseAPI
 from spaceone.api.repository.v1 import policy_pb2
-from spaceone.repository.api.v1.policy import Policy
+from spaceone.repository.interface.grpc.policy import Policy
 from test.factory.policy_factory import PolicyFactory
 
 
