@@ -18,8 +18,10 @@ def PluginInfo(plugin_info: dict, minimal=False):
         'provider': plugin_info.get('provider'),
     }
     if not minimal:
+        registry_info = config.get_global('REGISTRY_INFO', {}).get(plugin_info.get('registry_type'))
+
         info.update({
-            'registry_config': change_struct_type(plugin_info.get('registry_config')),
+            'registry_config': change_struct_type(registry_info),
             'capability': change_struct_type(plugin_info.get('capability')),
             'template': change_struct_type(plugin_info.get('template')),
             'tags': change_struct_type(plugin_info.get('tags')),
@@ -32,12 +34,8 @@ def PluginInfo(plugin_info: dict, minimal=False):
 
         if 'registry_url' in plugin_info:
             info['registry_url'] = plugin_info['registry_url']
-        elif plugin_info.get('registry_type') == 'AWS_PRIVATE_ECR':
-            connectors_config = config.get_global('CONNECTORS')
-            region_name = connectors_config['AWSPrivateECRConnector'].get('region_name', 'ap-northeast-2')
-            info['registry_url'] = f'{plugin_info["registry_config"]["account_id"]}.dkr.ecr.{region_name}.amazonaws.com'
         else:
-            info['registry_url'] = config.get_global('REGISTRY_URL_MAP', {}).get(plugin_info.get('registry_type'))
+            info['registry_url'] = registry_info.get('url')
 
         if repository_info := plugin_info.get('repository_info'):
             info.update({

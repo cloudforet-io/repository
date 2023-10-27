@@ -90,12 +90,12 @@ class LocalPluginManager(PluginManager):
     def get_plugin_versions(self, repo_vo: Repository, plugin_id, domain_id):
         plugin_vo = self.plugin_model.get(plugin_id=plugin_id, domain_id=domain_id)
 
-        registry_url = config.get_global('REGISTRY_URL_MAP', {}).get(plugin_vo.registry_type)
+        registry_url = config.get_global('REGISTRY_INFO', {}).get(plugin_vo.registry_type).get('url')
         registry_connector = _REGISTRY_CONNECTOR_MAP[plugin_vo.registry_type]
 
         try:
             connector = self.locator.get_connector(registry_connector)
-            tags = connector.get_tags(registry_url, plugin_vo.image, plugin_vo.registry_config)
+            tags = connector.get_tags(registry_url, plugin_vo.image)
         except Exception as e:
             _LOGGER.error(f'[get_plugin_versions] get_tags error: {e}', exc_info=True)
             raise e

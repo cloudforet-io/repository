@@ -16,13 +16,13 @@ _DEFAULT_PAGE_SIZE = 10
 class RegistryConnector(BaseConnector):
 
     @abc.abstractmethod
-    def get_tags(self, registry_url, image, config):
+    def get_tags(self, registry_url, image):
         pass
 
 
 class DockerHubConnector(RegistryConnector):
 
-    def get_tags(self, registry_url, image, config):
+    def get_tags(self, registry_url, image):
         url = f'https://{registry_url}/v2/repositories/{image}/tags'
 
         response = requests.get(url)
@@ -41,7 +41,7 @@ class DockerHubConnector(RegistryConnector):
 
 class HarborConnector(RegistryConnector):
 
-    def get_tags(self, registry_url, image, config):
+    def get_tags(self, registry_url, image):
         base_url = self.config.get('base_url')
         verify = self.config.get('verify', True)
 
@@ -80,12 +80,10 @@ class AWSPrivateECRConnector(RegistryConnector):
                                    aws_secret_access_key=aws_secret_access_key,
                                    region_name=self._DEFAULT_REGION_NAME)
 
-    def get_tags(self, registry_url, image, config):
-
-        account_id = config.get('account_id')
+    def get_tags(self, registry_url, image):
 
         try:
-            response = self.client.describe_images(repositoryName=image, registryId=account_id)
+            response = self.client.describe_images(repositoryName=image, registryId=self.config.get('account_id'))
 
             image_tags = []
             images_info = response.get('imageDetails', [])

@@ -22,7 +22,8 @@ CONNECTORS = {
     'AWSPrivateECRConnector': {
         'aws_access_key_id': '',
         'aws_secret_access_key': '',
-        'region_name': ''
+        'region_name': '',
+        'account_id': ''
     },
     'DockerHubConnector': {},
     'HarborConnector': {
@@ -41,10 +42,18 @@ CONNECTORS = {
     }
 }
 
-REGISTRY_URL_MAP = {
-    'DOCKER_HUB': 'registry.hub.docker.com',
-    'AWS_PRIVATE_ECR': 'account_id.dkr.ecr.region_name.amazonaws.com',
-    'HARBOR': ''  # default ""
+REGISTRY_INFO = {
+    'DOCKER_HUB': {
+        'url': 'registry.hub.docker.com'
+    },
+    'AWS_PRIVATE_ECR': {
+        'url': '',
+        'image_pull_secrets': []
+    },
+    'HARBOR': {
+        'url': '',
+        'image_pull_secrets': []
+    }
 }
 
 # Use managed repository (Read Only), if you can not use plugin marketplace
