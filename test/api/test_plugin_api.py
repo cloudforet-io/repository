@@ -13,7 +13,7 @@ from spaceone.core.service import BaseService
 from spaceone.core.locator import Locator
 from spaceone.core.pygrpc import BaseAPI
 from spaceone.api.repository.v1 import plugin_pb2
-from spaceone.repository.api.v1.plugin import Plugin
+from spaceone.repository.interface.grpc.plugin import Plugin
 from test.factory.plugin_factory import PluginFactory
 
 
