@@ -30,14 +30,9 @@ setup(
     install_requires=[
         'spaceone-core',
         'spaceone-api',
-        'mongoengine',
-        'python-consul',
         'schematics',
         'boto3',
-        'requests',
-        'redis',
         'pandas',
-        'jsonschema',
     ],
     package_data={
         'spaceone': [
