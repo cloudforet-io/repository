@@ -53,7 +53,6 @@ class PluginService(BaseService):
         """
 
         registry_type = params.get('registry_type', 'DOCKER_HUB')
-        registry_config = params.get('registry_config', {})
         image = params['image']
         plugin_id = self._get_image_name(image)
 
@@ -63,10 +62,9 @@ class PluginService(BaseService):
         self._check_service_type(params.get('service_type'))
         self._check_image(image)
         self._check_registry_type(registry_type)
-        self._check_registry_config(registry_type, registry_config)
 
         plugin_mgr: LocalPluginManager = self.locator.get_manager('LocalPluginManager')
-        
+
         # Only LOCAL repository can be registered
         repo_mgr: RepositoryManager = self.locator.get_manager('RepositoryManager')
         params['plugin_id'] = plugin_id
@@ -296,7 +294,7 @@ class PluginService(BaseService):
                 page_limit = query_page.get('limit')
 
                 if page_limit:
-                    all_plugins_info = all_plugins_info[page_start:page_start+page_limit]
+                    all_plugins_info = all_plugins_info[page_start:page_start + page_limit]
 
             return all_plugins_info, plugin_total_count
 
@@ -355,16 +353,11 @@ class PluginService(BaseService):
 
     @staticmethod
     def _check_registry_type(registry_type):
-        registry_url = config.get_global('REGISTRY_URL_MAP', {}).get(registry_type)
+        print(registry_type)
+        registry_url = config.get_global('REGISTRY_INFO', {}).get(registry_type).get('url', '')
 
         if registry_url.strip() == '':
             raise ERROR_REGISTRY_SETTINGS(registry_type=registry_type)
-
-    @staticmethod
-    def _check_registry_config(registry_type, registry_config):
-        if registry_type == 'AWS_PRIVATE_ECR':
-            if 'account_id' not in registry_config:
-                raise ERROR_REQUIRED_PARAMETER(key='registry_config.account_id')
 
     def _check_image(self, image):
         """ Check image name

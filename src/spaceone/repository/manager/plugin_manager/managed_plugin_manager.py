@@ -72,15 +72,14 @@ class ManagedPluginManager(PluginManager):
     def get_plugin_versions(self, repo_vo: Repository, plugin_id, domain_id):
         managed_plugin_info = self.get_plugin(repo_vo, plugin_id, domain_id)
         registry_type = managed_plugin_info['registry_type']
-        registry_config = managed_plugin_info['registry_config']
         image = managed_plugin_info['image']
 
-        registry_url = config.get_global('REGISTRY_URL_MAP', {}).get(registry_type)
+        registry_url = config.get_global('REGISTRY_INFO', {}).get(registry_type).get('url')
         registry_connector = _REGISTRY_CONNECTOR_MAP[registry_type]
 
         try:
             connector = self.locator.get_connector(registry_connector)
-            tags = connector.get_tags(registry_url, image, registry_config)
+            tags = connector.get_tags(registry_url, image)
         except Exception as e:
             _LOGGER.error(f'[get_plugin_versions] get_tags error: {e}', exc_info=True)
             raise e
