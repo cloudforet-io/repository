@@ -42,11 +42,11 @@ REGISTRY_INFO = {
     },
     'AWS_PRIVATE_ECR': {
         'url': '',
-        'image_pull_secrets': []
+        'image_pull_secrets': ''
     },
     'HARBOR': {
         'url': '',
-        'image_pull_secrets': []
+        'image_pull_secrets': ''
     }
 }
 
