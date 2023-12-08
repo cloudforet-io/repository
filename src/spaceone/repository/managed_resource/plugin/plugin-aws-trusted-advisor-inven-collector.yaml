@@ -1,5 +1,5 @@
 ---
-plugin_id: plugin-aws-trusted-advisor-inven-collector
+plugin_id: plugin-aws-ta-inven-collector
 name: AWS Trusted Advisor Collector
 image: plugin-aws-trusted-advisor-inven-collector
 capability:
