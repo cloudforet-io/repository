@@ -23,10 +23,10 @@ REGISTRY_MAP = {
 }
 
 
-# @authentication_handler
-# @authorization_handler
-# @mutation_handler
-# @event_handler
+@authentication_handler
+@authorization_handler
+@mutation_handler
+@event_handler
 class PluginService(BaseService):
     @transaction(permission="repository:Plugin.write", role_types=["DOMAIN_ADMIN"])
     @check_required(["name", "resource_type", "image", "domain_id"])

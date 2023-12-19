@@ -8,10 +8,10 @@ from spaceone.repository.manager import (
 _LOGGER = logging.getLogger(__name__)
 
 
-# @authentication_handler
-# @authorization_handler
-# @mutation_handler
-# @event_handler
+@authentication_handler
+@authorization_handler
+@mutation_handler
+@event_handler
 class RepositoryService(BaseService):
     resource = "Repository"
 
