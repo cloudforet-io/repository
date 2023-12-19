@@ -26,17 +26,22 @@ class RemotePluginManager(PluginManager):
             SpaceConnector, endpoint=endpoint
         )
 
-        response = remote_repo_conn.dispatch(
-            "Plugin.list", {"query": query, "repository_id": repo_info["repository_id"]}
-        )
+        try:
+            response = remote_repo_conn.dispatch(
+                "Plugin.list",
+                {"query": query, "repository_id": repo_info["repository_id"]},
+            )
 
-        plugins_info = response.get("results", [])
-        total_count = response.get("total_count", 0)
-        results = []
-        for plugin_info in plugins_info:
-            results.append(self.change_response(plugin_info, repo_info, domain_id))
+            plugins_info = response.get("results", [])
+            total_count = response.get("total_count", 0)
+            results = []
+            for plugin_info in plugins_info:
+                results.append(self.change_response(plugin_info, repo_info, domain_id))
 
-        return results, total_count
+            return results, total_count
+        except Exception as e:
+            _LOGGER.error(f"[list_plugins] {e}")
+            return [], 0
 
     def get_plugin_versions(self, repo_info: dict, plugin_id: str, domain_id: str):
         endpoint = repo_info["endpoint"]

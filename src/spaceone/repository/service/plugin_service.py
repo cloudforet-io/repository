@@ -311,7 +311,6 @@ class PluginService(BaseService):
 
             repos_info: list = repo_mgr.get_all_repositories()
             for repo_info in repos_info:
-                print(repo_info)
                 plugin_mgr = self._get_plugin_manager_by_repo(
                     repo_info["repository_type"]
                 )
