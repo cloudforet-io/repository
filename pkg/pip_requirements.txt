@@ -1,4 +1,3 @@
 spaceone-api
 schematics
-boto3
 pandas

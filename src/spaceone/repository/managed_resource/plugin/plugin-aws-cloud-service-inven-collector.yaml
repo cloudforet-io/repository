@@ -4,45 +4,45 @@ name: AWS Cloud Service Collector
 image: plugin-aws-cloud-service-inven-collector
 capability:
   supported_schema:
-  - aws_access_key
-  - aws_assume_role
-  - aws_assume_role_with_external_id
+    - aws_access_key
+    - aws_assume_role
+    - aws_assume_role_with_external_id
 labels:
-- EC2
-- Lambda
-- Lightsail
-- ECS
-- EKS
-- ECR
-- RDS
-- DocumentDB
-- DynamoDB
-- ElastiCache
-- RedShift
-- VPC
-- ELB
-- Route53
-- API Gateway
-- CloudFront
-- Direct Connect
-- S3
-- EFS
-- EIP
-- EBS
-- IAM
-- KMS
-- ACM
-- Secrets Manager
-- MSK
-- Kinesis DataStream
-- Kinesis Firehose
-- SNS
-- SQS
-- CloudTrail
-- AutoScaling Group
+  - EC2
+  - Lambda
+  - Lightsail
+  - ECS
+  - EKS
+  - ECR
+  - RDS
+  - DocumentDB
+  - DynamoDB
+  - ElastiCache
+  - RedShift
+  - VPC
+  - ELB
+  - Route53
+  - API Gateway
+  - CloudFront
+  - Direct Connect
+  - S3
+  - EFS
+  - EIP
+  - EBS
+  - IAM
+  - KMS
+  - ACM
+  - Secrets Manager
+  - MSK
+  - Kinesis DataStream
+  - Kinesis Firehose
+  - SNS
+  - SQS
+  - CloudTrail
+  - AutoScaling Group
 
 provider: aws
-service_type: inventory.Collector
+resource_type: inventory.Collector
 tags:
   description: AWS Cloud Service Collector
   icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/aws-cloudservice.svg
@@ -51,4 +51,3 @@ tags:
     to help businesses scale and grow. AWS provides hundreds of services. This plugin
     can collect information from around 32 popular resources in use, and will expand later on to collect over 50 resources.
     services.
-template: {}

@@ -2,10 +2,10 @@
 plugin_id: plugin-aws-cost-explorer-cost-datasource
 name: AWS Cost Explorer Data Source
 image: plugin-aws-cost-explorer-cost-datasource
-capability: {}
-labels: []
+capability: { }
+labels: [ ]
 provider: aws
-service_type: cost_analysis.DataSource
+resource_type: cost_analysis.DataSource
 tags:
   description: AWS Cost Explorer Data Source
   icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/aws.svg
@@ -13,4 +13,3 @@ tags:
     resources used in your AWS account. The plugin can collect cost billing data from
     all accounts linked to AWS Organization. Because the Cost Explorer API provided
     by AWS is used, additional fees may be incurred for API calls.
-template: {}

@@ -31,14 +31,3 @@ GLOBAL:
       file:
         type: file
         filename: /var/log/spaceone/repository.log
-  HANDLERS:
-    authentication:
-    - backend: spaceone.core.handler.authentication_handler.AuthenticationGRPCHandler
-      uri: grpc://identity:50051/v1/Domain/get_public_key
-    - backend: spaceone.core.handler.authentication_api_key_handler.AuthenticationAPIKeyHandler
-      uri: grpc://identity:50051/v1/APIKey/get
-    authorization:
-    - backend: spaceone.core.handler.authorization_handler.AuthorizationGRPCHandler
-      uri: grpc://identity:50051/v1/Authorization/verify
-    mutation:
-    - backend: spaceone.core.handler.mutation_handler.SpaceONEMutationHandler
