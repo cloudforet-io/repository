@@ -4,22 +4,22 @@ name: Google Cloud Collector
 image: plugin-google-cloud-inven-collector
 capability:
   supported_schema:
-  - google_oauth2_credentials
+    - google_oauth2_credentials
 labels:
-- Compute Engine
-- Networking
-- Cloud SQL
-- Cloud Storage
-- BigQuery
-- Cloud Pub/Sub
-- Cloud Functions
-- Recommender
+  - Compute Engine
+  - Networking
+  - Cloud SQL
+  - Cloud Storage
+  - BigQuery
+  - Cloud Pub/Sub
+  - Cloud Functions
+  - Recommender
 provider: google_cloud
-service_type: inventory.Collector
+resource_type: inventory.Collector
 tags:
   description: Google Cloud Collector
   icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/google_cloud.svg
   long_description: Google Cloud is a cloud computing platform provided
     by Google. Google Cloud provides a variety of services that allow users to build
     and manage their infrastructure. That plugin collects various services from Google Cloud.
-template: {}
+template: { }

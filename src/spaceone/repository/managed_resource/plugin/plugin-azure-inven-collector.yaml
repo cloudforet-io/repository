@@ -4,29 +4,29 @@ name: Azure Collector
 image: plugin-azure-inven-collector
 capability:
   supported_schema:
-  - azure_client_secret
+    - azure_client_secret
 labels:
-- Application Gateways
-- Container Instances
-- CosmosDB
-- Disks
-- KeyVaults
-- Load Balancers
-- MySQL Servers
-- NAT Gateways
-- Network Security Groups
-- PostgreSQL Servers
-- Public IP Addresses
-- Snapshots
-- SQL Servers
-- SQL Databases
-- Storage Accounts
-- Virtual Machines
-- Virtual Networks
-- VM ScaleSets
-- Web PubSub Service
+  - Application Gateways
+  - Container Instances
+  - CosmosDB
+  - Disks
+  - KeyVaults
+  - Load Balancers
+  - MySQL Servers
+  - NAT Gateways
+  - Network Security Groups
+  - PostgreSQL Servers
+  - Public IP Addresses
+  - Snapshots
+  - SQL Servers
+  - SQL Databases
+  - Storage Accounts
+  - Virtual Machines
+  - Virtual Networks
+  - VM ScaleSets
+  - Web PubSub Service
 provider: azure
-service_type: inventory.Collector
+resource_type: inventory.Collector
 tags:
   description: Azure Collector
   icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/azure-cloud-services.svg
@@ -37,4 +37,4 @@ tags:
     storage, and web, allowing users to move faster, achieve more. This plugin can
     collect information about over 20 resources in use, which are considered important
     services.
-template: {}
+template: { }

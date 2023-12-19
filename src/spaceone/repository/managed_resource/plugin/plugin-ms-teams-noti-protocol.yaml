@@ -3,10 +3,10 @@ plugin_id: plugin-ms-teams-noti-protocol
 name: MS Teams Notification Protocol
 image: plugin-ms-teams-noti-protocol
 capability:
-  supported_schema: []
-labels: []
+  supported_schema: [ ]
+labels: [ ]
 provider: microsoft
-service_type: notification.Protocol
+resource_type: notification.Protocol
 tags:
   description: MS Teams Notification Protocol
   icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/ms_teams.svg
@@ -14,4 +14,4 @@ tags:
     that combines persistent chat, video meetings, file storage, and application integration.
     This plugin delivers alarm as a message to Teams channel when an event occurs
     through Alert manager.
-template: {}
+template: { }

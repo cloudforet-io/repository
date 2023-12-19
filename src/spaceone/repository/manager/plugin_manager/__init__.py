@@ -2,14 +2,12 @@ import logging
 from abc import abstractmethod
 
 from spaceone.core.manager import BaseManager
-from spaceone.repository.model.repository_model import Repository
 
-__all__ = ['PluginManager']
+__all__ = ["PluginManager"]
 _LOGGER = logging.getLogger(__name__)
 
 
 class PluginManager(BaseManager):
-
     def register_plugin(self, params):
         pass
 
@@ -26,30 +24,32 @@ class PluginManager(BaseManager):
         pass
 
     @abstractmethod
-    def get_plugin(self, repo_vo: Repository, plugin_id, domain_id, only=None):
+    def get_plugin(self, repo_info: dict, plugin_id, domain_id):
         pass
 
     @abstractmethod
-    def list_plugins(self, repo_vo: Repository, query: dict, params: dict):
+    def list_plugins(self, repo_info: dict, query: dict, params: dict):
         pass
 
     def stat_plugins(self, query):
         pass
 
     @abstractmethod
-    def get_plugin_versions(self, repo_vo: Repository, plugin_id, domain_id):
+    def get_plugin_versions(self, repo_info: dict, plugin_id, domain_id):
         pass
 
     @staticmethod
-    def change_response(info, repo_vo: Repository = None, domain_id: str = None):
-        if repo_vo:
-            info['repository_info'] = {
-                'repository_id': repo_vo.repository_id,
-                'name': repo_vo.name,
-                'repository_type': repo_vo.repository_type,
+    def change_response(
+        info: dict, repo_info: dict = None, domain_id: str = None
+    ) -> dict:
+        if repo_info:
+            info["repository_info"] = {
+                "repository_id": repo_info["repository_id"],
+                "name": repo_info["name"],
+                "repository_type": repo_info["repository_type"],
             }
 
         if domain_id:
-            info['domain_id'] = domain_id
+            info["domain_id"] = domain_id
 
         return info

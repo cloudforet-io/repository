@@ -1,14 +1,14 @@
 from spaceone.repository.manager.identity_manager import *
 from spaceone.repository.manager.repository_manager import *
-from spaceone.repository.manager.repository_manager.managed_repository_manager import ManagedRepositoryManager
-from spaceone.repository.manager.repository_manager.local_repository_manager import LocalRepositoryManager
-from spaceone.repository.manager.repository_manager.remote_repository_manager import RemoteRepositoryManager
-from spaceone.repository.manager.plugin_manager.managed_plugin_manager import ManagedPluginManager
-from spaceone.repository.manager.plugin_manager.local_plugin_manager import LocalPluginManager
-from spaceone.repository.manager.plugin_manager.remote_plugin_manager import RemotePluginManager
-from spaceone.repository.manager.schema_manager.managed_schema_manager import ManagedSchemaManager
-from spaceone.repository.manager.schema_manager.local_schema_manager import LocalSchemaManager
-from spaceone.repository.manager.schema_manager.remote_schema_manager import RemoteSchemaManager
-from spaceone.repository.manager.policy_manager.managed_policy_manager import ManagedPolicyManager
-from spaceone.repository.manager.policy_manager.local_policy_manager import LocalPolicyManager
-from spaceone.repository.manager.policy_manager.remote_policy_manager import RemotePolicyManager
+from spaceone.repository.manager.repository_manager.local_repository_manager import (
+    LocalRepositoryManager,
+)
+from spaceone.repository.manager.plugin_manager.managed_plugin_manager import (
+    ManagedPluginManager,
+)
+from spaceone.repository.manager.plugin_manager.local_plugin_manager import (
+    LocalPluginManager,
+)
+from spaceone.repository.manager.plugin_manager.remote_plugin_manager import (
+    RemotePluginManager,
+)
