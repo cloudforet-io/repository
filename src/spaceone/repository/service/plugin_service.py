@@ -23,10 +23,10 @@ REGISTRY_MAP = {
 }
 
 
-# @authentication_handler
-# @authorization_handler
-# @mutation_handler
-# @event_handler
+@authentication_handler
+@authorization_handler
+@mutation_handler
+@event_handler
 class PluginService(BaseService):
     @transaction(permission="repository:Plugin.write", role_types=["DOMAIN_ADMIN"])
     @check_required(["name", "resource_type", "image", "domain_id"])
@@ -311,7 +311,6 @@ class PluginService(BaseService):
 
             repos_info: list = repo_mgr.get_all_repositories()
             for repo_info in repos_info:
-                print(repo_info)
                 plugin_mgr = self._get_plugin_manager_by_repo(
                     repo_info["repository_type"]
                 )
