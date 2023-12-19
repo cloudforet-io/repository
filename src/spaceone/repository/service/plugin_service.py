@@ -21,8 +21,8 @@ REGISTRY_MAP = {
 }
 
 
-@authentication_handler(exclude=['get', 'get_versions'])
-@authorization_handler(exclude=['get', 'get_versions'])
+@authentication_handler
+@authorization_handler
 @mutation_handler
 @event_handler
 class PluginService(BaseService):

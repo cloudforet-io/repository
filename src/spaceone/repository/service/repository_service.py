@@ -14,7 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 @event_handler
 class RepositoryService(BaseService):
 
-    @transaction(append_meta={'authorization.scope': 'DOMAIN'})
+    @transaction(permission="repository:Repository.write", require_domain=True)
     @check_required(['name', 'repository_type'])
     def register(self, params):
         """ Register repository

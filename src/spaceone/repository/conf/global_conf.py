@@ -36,6 +36,20 @@ CONNECTORS = {
     }
 }
 
+HANDLERS = {
+    # "authentication": [{
+    #     "backend": "spaceone.core.handler.authentication_handler.AuthenticationGRPCHandler",
+    # }],
+    # "authorization": [{
+    #     "backend": "spaceone.core.handler.authorization_handler.AuthorizationGRPCHandler",
+    #     "uri": "grpc://localhost:50051/v1/Authorization/verify"
+    # }],
+    # "mutation": [{
+    #     "backend": "spaceone.core.handler.mutation_handler.SpaceONEMutationHandler"
+    # }],
+    # "event": []
+}
+
 REGISTRY_INFO = {
     'DOCKER_HUB': {
         'url': 'registry.hub.docker.com'
