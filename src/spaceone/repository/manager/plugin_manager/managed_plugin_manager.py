@@ -53,7 +53,7 @@ class ManagedPluginManager(PluginManager):
     def list_plugins(self, repo_info: dict, query: dict, params: dict):
         plugin_id = params.get("plugin_id")
         name = params.get("name")
-        service_type = params.get("service_type")
+        resource_type = params.get("resource_type")
         provider = params.get("provider")
         domain_id = params.get("domain_id")
         sort = query.get("sort", {})
@@ -61,7 +61,7 @@ class ManagedPluginManager(PluginManager):
         keyword = query.get("keyword")
 
         managed_plugin_df = self._filter_managed_plugins(
-            plugin_id, name, service_type, provider, keyword
+            plugin_id, name, resource_type, provider, keyword
         )
         managed_plugin_df = self._sort_managed_plugins(managed_plugin_df, sort)
 

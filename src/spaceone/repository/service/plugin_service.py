@@ -90,7 +90,7 @@ class PluginService(BaseService):
         """
 
         # self._check_capability(params.get('capability'))
-        self._check_service_type(params.get("resource_type"))
+        self._check_resource_type(params.get("resource_type"))
 
         plugin_mgr: LocalPluginManager = self.locator.get_manager("LocalPluginManager")
         return plugin_mgr.update_plugin(params)
@@ -277,7 +277,7 @@ class PluginService(BaseService):
                 'plugin_id': 'str',
                 'name': 'str',
                 'state': 'str',
-                'service_type': 'str',
+                'resource_type': 'str',
                 'registry_type': 'str',
                 'provider': 'str',
                 'project_id': 'str', // deprecated
