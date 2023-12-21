@@ -28,6 +28,8 @@ REGISTRY_MAP = {
 @mutation_handler
 @event_handler
 class PluginService(BaseService):
+    resource = "Plugin"
+
     @transaction(permission="repository:Plugin.write", role_types=["DOMAIN_ADMIN"])
     @check_required(["name", "resource_type", "image", "domain_id"])
     def register(self, params):
@@ -88,7 +90,7 @@ class PluginService(BaseService):
         """
 
         # self._check_capability(params.get('capability'))
-        self._check_service_type(params.get("service_type"))
+        self._check_service_type(params.get("resource_type"))
 
         plugin_mgr: LocalPluginManager = self.locator.get_manager("LocalPluginManager")
         return plugin_mgr.update_plugin(params)
@@ -297,7 +299,6 @@ class PluginService(BaseService):
         repo_mgr: RepositoryManager = self.locator.get_manager("RepositoryManager")
         if repository_id := params.get("repository_id"):
             repo_info = repo_mgr.get_repository(repository_id)
-
             plugin_mgr = self._get_plugin_manager_by_repo(repo_info["repository_type"])
 
             return plugin_mgr.list_plugins(repo_info, query, params)

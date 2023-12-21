@@ -19,7 +19,8 @@ class RepositoryManager(BaseManager):
         pass
 
     def get_repository(self, repository_id: str):
-        return self.list_repositories(repository_id=repository_id)[0]
+        repo_info, _ = self.list_repositories(repository_id=repository_id)
+        return repo_info[0]
 
     @staticmethod
     def list_repositories(
@@ -52,7 +53,7 @@ class RepositoryManager(BaseManager):
     def get_local_repository(self) -> dict:
         repos_info, local_repo_count = self.list_repositories(repository_type="LOCAL")
         _LOGGER.debug(f"[get_local_repository] local_repo_count: {local_repo_count}")
-        if local_repo_count > 0:
+        if local_repo_count > 1:
             raise ERROR_ONLY_ONE_LOCAL_REPOSITORY_CAN_BE_REGISTERED(
                 local_repository_count=local_repo_count
             )

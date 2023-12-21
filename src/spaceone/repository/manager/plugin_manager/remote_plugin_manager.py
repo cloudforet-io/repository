@@ -20,13 +20,13 @@ class RemotePluginManager(PluginManager):
         return self.change_response(plugin_info, repo_info, domain_id)
 
     def list_plugins(self, repo_info: dict, query: dict, params: dict):
-        domain_id = params.get("domain_id")
-        endpoint = repo_info["endpoint"]
-        remote_repo_conn: SpaceConnector = self.locator.get_connector(
-            SpaceConnector, endpoint=endpoint
-        )
-
         try:
+            domain_id = params.get("domain_id")
+            endpoint = repo_info["endpoint"]
+            remote_repo_conn: SpaceConnector = self.locator.get_connector(
+                SpaceConnector, endpoint=endpoint
+            )
+
             response = remote_repo_conn.dispatch(
                 "Plugin.list",
                 {"query": query, "repository_id": repo_info["repository_id"]},
