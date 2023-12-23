@@ -31,3 +31,7 @@ class ERROR_REMOTE_REPOSITORY_ALREADY_EXIST(ERROR_INVALID_ARGUMENT):
 
 class ERRROR_NOT_SET_UP_REMOTE_REPOSITORY(ERROR_INVALID_ARGUMENT):
     _message = "Remote repository is not set up."
+
+
+class ERROR_SORT_KEY(ERROR_INVALID_ARGUMENT):
+    _message = "Sort key is invalid. (sort_key = {sort_key})"

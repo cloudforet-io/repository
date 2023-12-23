@@ -56,7 +56,7 @@ class ManagedPluginManager(PluginManager):
         resource_type = params.get("resource_type")
         provider = params.get("provider")
         domain_id = params.get("domain_id")
-        sort = query.get("sort", {})
+        sort = query.get("sort", [])
         page = query.get("page", {})
         keyword = query.get("keyword")
 
@@ -103,14 +103,14 @@ class ManagedPluginManager(PluginManager):
         return managed_plugin_df.fillna("")
 
     def _filter_managed_plugins(
-        self, plugin_id=None, name=None, resource_type=None, provider=None, keyword=None
+            self, plugin_id=None, name=None, resource_type=None, provider=None, keyword=None
     ):
         managed_plugin_df = copy.deepcopy(self.managed_plugin_df)
 
         if plugin_id:
             managed_plugin_df = managed_plugin_df[
                 managed_plugin_df["plugin_id"] == plugin_id
-            ]
+                ]
 
         if name:
             managed_plugin_df = managed_plugin_df[managed_plugin_df["name"] == name]
@@ -118,12 +118,12 @@ class ManagedPluginManager(PluginManager):
         if resource_type:
             managed_plugin_df = managed_plugin_df[
                 managed_plugin_df["resource_type"] == resource_type
-            ]
+                ]
 
         if provider:
             managed_plugin_df = managed_plugin_df[
                 managed_plugin_df["provider"] == provider
-            ]
+                ]
 
         if keyword:
             managed_plugin_df = managed_plugin_df[
@@ -133,21 +133,24 @@ class ManagedPluginManager(PluginManager):
         return managed_plugin_df
 
     @staticmethod
-    def _sort_managed_plugins(managed_plugin_df: pd.DataFrame, sort: dict):
-        if sort_key := sort.get("key"):
-            desc = sort.get("desc", False)
-            try:
-                return managed_plugin_df.sort_values(by=sort_key, ascending=not desc)
-            except Exception as e:
-                raise ERROR_SORT_KEY(sort_key=sort_key)
-        else:
-            return managed_plugin_df
+    def _sort_managed_plugins(managed_plugin_df: pd.DataFrame, sort: list):
+        for sort_dict in sort:
+            if sort_key := sort_dict("key"):
+                desc = sort_dict("desc", False)
+                try:
+                    return managed_plugin_df.sort_values(
+                        by=sort_key, ascending=not desc
+                    )
+                except Exception as e:
+                    raise ERROR_SORT_KEY(sort_key=sort_key)
+            else:
+                return managed_plugin_df
 
     @staticmethod
     def _page_managed_plugins(managed_plugin_df: pd.DataFrame, page: dict):
         if limit := page.get("limit"):
             start = page.get("start", 1) - 1
-            return managed_plugin_df[start : start + limit]
+            return managed_plugin_df[start: start + limit]
         else:
             return managed_plugin_df
 
