@@ -18,25 +18,26 @@ import os
 from setuptools import setup, find_packages
 
 setup(
-    name='spaceone-repository',
-    version=os.environ.get('PACKAGE_VERSION'),
-    description='SpaceONE repository service',
-    long_description='',
-    url='https://www.spaceone.dev/',
-    author='MEGAZONE SpaceONE Team',
-    author_email='admin@spaceone.dev',
-    license='Apache License 2.0',
+    name="spaceone-repository",
+    version=os.environ.get("PACKAGE_VERSION"),
+    description="SpaceONE repository service",
+    long_description="",
+    url="https://www.spaceone.dev/",
+    author="MEGAZONE SpaceONE Team",
+    author_email="admin@spaceone.dev",
+    license="Apache License 2.0",
     packages=find_packages(),
     install_requires=[
-        'spaceone-api',
-        'schematics',
-        'pandas',
+        "spaceone-core",
+        "spaceone-api",
+        "schematics",
+        "pandas",
     ],
     package_data={
-        'spaceone': [
-            'repository/managed_resource/plugin/*.yaml',
-            'repository/managed_resource/policy/*.yaml',
-            'repository/managed_resource/schema/*.yaml',
+        "spaceone": [
+            "repository/managed_resource/plugin/*.yaml",
+            "repository/managed_resource/policy/*.yaml",
+            "repository/managed_resource/schema/*.yaml",
         ]
     },
     zip_safe=False,
