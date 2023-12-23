@@ -18,8 +18,10 @@ class RepositoryManager(BaseManager):
     def register_repository(self, params):
         pass
 
-    def get_repository(self, repository_id: str):
+    def get_repository(self, repository_id: str) -> dict:
         repo_info, _ = self.list_repositories(repository_id=repository_id)
+        if len(repo_info) == 0:
+            raise ERROR_NOT_FOUND_REPOSITORY(repository_id=repository_id)
         return repo_info[0]
 
     @staticmethod

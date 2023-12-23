@@ -64,7 +64,6 @@ class ManagedPluginManager(PluginManager):
             plugin_id, name, resource_type, provider, keyword
         )
         managed_plugin_df = self._sort_managed_plugins(managed_plugin_df, sort)
-
         total_count = len(managed_plugin_df)
         managed_plugin_df = self._page_managed_plugins(managed_plugin_df, page)
 
@@ -143,8 +142,8 @@ class ManagedPluginManager(PluginManager):
                     )
                 except Exception as e:
                     raise ERROR_SORT_KEY(sort_key=sort_key)
-            else:
-                return managed_plugin_df
+        else:
+            return managed_plugin_df
 
     @staticmethod
     def _page_managed_plugins(managed_plugin_df: pd.DataFrame, page: dict):
