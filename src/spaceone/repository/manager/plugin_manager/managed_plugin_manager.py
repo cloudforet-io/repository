@@ -133,9 +133,9 @@ class ManagedPluginManager(PluginManager):
 
     @staticmethod
     def _sort_managed_plugins(managed_plugin_df: pd.DataFrame, sort: list):
-        for sort_dict in sort:
-            if sort_key := sort_dict("key"):
-                desc = sort_dict("desc", False)
+        for sort_condition in sort:
+            if sort_key := sort_condition.get("key"):
+                desc = sort_condition.get("desc", False)
                 try:
                     return managed_plugin_df.sort_values(
                         by=sort_key, ascending=not desc
