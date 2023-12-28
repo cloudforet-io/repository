@@ -39,3 +39,7 @@ class ERROR_SORT_KEY(ERROR_INVALID_ARGUMENT):
 
 class ERROR_NOT_FOUND_REPOSITORY(ERROR_INVALID_ARGUMENT):
     _message = "Repository does not exist. (repository_id = {repository_id})"
+
+
+class ERROR_REMOTE_REPOSITORY_AUTH_FAILURE(ERROR_INVALID_ARGUMENT):
+    _message = "Remote repository authentication failure."

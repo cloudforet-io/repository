@@ -1,5 +1,9 @@
 import logging
+
+from spaceone.core import config
 from spaceone.core.connector.space_connector import SpaceConnector
+
+from spaceone.repository.error import *
 from spaceone.repository.manager.plugin_manager import PluginManager
 
 __all__ = ["RemotePluginManager"]
@@ -21,15 +25,28 @@ class RemotePluginManager(PluginManager):
 
     def list_plugins(self, repo_info: dict, query: dict, params: dict):
         try:
-            domain_id = params.get("domain_id")
+            system_token = config.get_global("TOKEN")
+            if not system_token:
+                raise ERROR_REMOTE_REPOSITORY_AUTH_FAILURE(key="system_token")
+
             endpoint = repo_info["endpoint"]
+            name = repo_info["name"]
+
+            identity_mgr = self.locator.get_manager("IdentityManager")
+            domain_id = identity_mgr.get_domain_id(name)
+
+            _LOGGER.debug(
+                f"[list_plugins] Remote Repository domain_id and endpoint: {domain_id} ,{endpoint}"
+            )
+
             remote_repo_conn: SpaceConnector = self.locator.get_connector(
-                SpaceConnector, endpoint=endpoint
+                SpaceConnector, endpoint=endpoint, token=system_token
             )
 
             response = remote_repo_conn.dispatch(
                 "Plugin.list",
                 {"query": query, "repository_id": repo_info["repository_id"]},
+                x_domain_id=domain_id,
             )
 
             plugins_info = response.get("results", [])

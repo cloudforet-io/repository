@@ -61,6 +61,9 @@ MANAGED_REGISTRY_TYPE = "DOCKER_HUB"
 MANAGED_REGISTRY_CONFIG = {}
 MANAGED_PLUGIN_IMAGE_PREFIX = "spaceone"
 
+# System Token
+TOKEN = ""
+
 REPOSITORIES = [
     {
         "repository_id": "repo-managed",
@@ -68,10 +71,10 @@ REPOSITORIES = [
         "repository_type": "MANAGED",
     },
     {
-        "repository_id": "repo-marketplace",
-        "name": "Marketplace",
+        "repository_id": "repo-local",
+        "name": "marketplace",
         "repository_type": "REMOTE",
-        "endpoint": "grpc://localhost:50051",
+        "endpoint": "grpc://repository:50051",
     },
     {
         "repository_id": "repo-local",
