@@ -70,12 +70,12 @@ REPOSITORIES = [
         "name": "Managed Repository",
         "repository_type": "MANAGED",
     },
-    {
-        "repository_id": "repo-local",
-        "name": "marketplace",
-        "repository_type": "REMOTE",
-        "endpoint": "grpc://repository:50051",
-    },
+    # {
+    #     "repository_id": "repo-marketplace",
+    #     "name": "marketplace",
+    #     "repository_type": "REMOTE",
+    #     "endpoint": "grpc://repository:50051",
+    # },
     {
         "repository_id": "repo-local",
         "name": "Private",

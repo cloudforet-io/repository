@@ -28,7 +28,7 @@ class LocalPluginManager(PluginManager):
         plugin_vo: Plugin = self.plugin_model.create(params)
         self.transaction.add_rollback(_rollback, plugin_vo)
 
-        repo_info, _ = RepositoryManager.list_repositories(plugin_vo.repository_id)[0]
+        repo_info = RepositoryManager.get_repositories(plugin_vo.repository_id)[0]
 
         versions = self.get_plugin_versions(
             repo_info, plugin_vo.plugin_id, plugin_vo.domain_id

@@ -187,7 +187,7 @@ class PluginService(BaseService):
         repo_id = params.get("repository_id")
 
         repo_mgr: RepositoryManager = self.locator.get_manager("RepositoryManager")
-        repos_info = repo_mgr.get_all_repositories(repo_id)
+        repos_info = repo_mgr.get_repositories(repo_id)
 
         for repo_info in repos_info:
             _LOGGER.debug(
@@ -235,7 +235,7 @@ class PluginService(BaseService):
         repo_id = params.get("repository_id")
 
         repo_mgr: RepositoryManager = self.locator.get_manager("RepositoryManager")
-        repos_info = repo_mgr.get_all_repositories(repository_id=repo_id)
+        repos_info = repo_mgr.get_repositories(repo_id)
 
         for repo_info in repos_info:
             _LOGGER.debug(
@@ -310,7 +310,7 @@ class PluginService(BaseService):
                 query_page = query["page"]
                 del query["page"]
 
-            repos_info: list = repo_mgr.get_all_repositories()
+            repos_info: list = repo_mgr.get_repositories()
             for repo_info in repos_info:
                 plugin_mgr = self._get_plugin_manager_by_repo(
                     repo_info["repository_type"]
