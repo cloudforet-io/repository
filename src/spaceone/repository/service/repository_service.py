@@ -39,4 +39,4 @@ class RepositoryService(BaseService):
         repository_type: str = params.get("repository_type")
         repo_mgr: RepositoryManager = self.locator.get_manager("RepositoryManager")
 
-        return repo_mgr.list_repositories(repository_id, repository_type)
+        return repo_mgr.get_repositories(repository_id, repository_type)
