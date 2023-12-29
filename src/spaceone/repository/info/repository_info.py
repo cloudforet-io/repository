@@ -10,6 +10,7 @@ def RepositoryInfo(repository_info: dict, minimal=False):
         "name": repository_info["name"],
         "repository_type": repository_info["repository_type"],
     }
+
     if not minimal:
         info.update(
             {
@@ -20,8 +21,7 @@ def RepositoryInfo(repository_info: dict, minimal=False):
     return repository_pb2.RepositoryInfo(**info)
 
 
-def RepositoriesInfo(repos_info, total_count, **kwargs):
+def RepositoriesInfo(repos_info, **kwargs):
     return repository_pb2.RepositoriesInfo(
         results=list(map(functools.partial(RepositoryInfo, **kwargs), repos_info)),
-        total_count=total_count,
     )
