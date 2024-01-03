@@ -231,12 +231,10 @@ class PluginService(BaseService):
         """
 
         plugin_id = params["plugin_id"]
-        domain_id = params.get("domain_id")
         repo_id = params.get("repository_id")
 
         repo_mgr: RepositoryManager = self.locator.get_manager("RepositoryManager")
         repos_info = repo_mgr.get_repositories(repo_id)
-
         for repo_info in repos_info:
             _LOGGER.debug(
                 f"[get] find at name: {repo_info['name']} "
@@ -244,7 +242,7 @@ class PluginService(BaseService):
             )
             plugin_mgr = self._get_plugin_manager_by_repo(repo_info["repository_type"])
             try:
-                return plugin_mgr.get_plugin(repo_info, plugin_id, domain_id)
+                return plugin_mgr.get_plugin(repo_info, plugin_id)
             except Exception as e:
                 _LOGGER.debug(
                     f"[get] Can not find plugin({plugin_id}) at {repo_info['name']}"

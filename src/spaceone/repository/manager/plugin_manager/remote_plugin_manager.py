@@ -12,7 +12,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class RemotePluginManager(PluginManager):
-    def get_plugin(self, repo_info: dict, plugin_id: str, domain_id: str):
+    def get_plugin(self, repo_info: dict, plugin_id: str, domain_id: str = None):
         endpoint = repo_info["endpoint"]
         market_place_token = repo_info["token"]
 
@@ -24,7 +24,7 @@ class RemotePluginManager(PluginManager):
             "Plugin.get", {"plugin_id": plugin_id, "repository_id": "repo-local"}
         )
 
-        return self.change_response(plugin_info, repo_info, domain_id)
+        return self.change_response(plugin_info, repo_info)
 
     def list_plugins(self, repo_info: dict, query: dict, params: dict):
         try:
@@ -56,8 +56,10 @@ class RemotePluginManager(PluginManager):
 
     def get_plugin_versions(self, repo_info: dict, plugin_id: str, domain_id: str):
         endpoint = repo_info["endpoint"]
+        market_place_token = repo_info["token"]
+
         remote_repo_conn: SpaceConnector = self.locator.get_connector(
-            "SpaceConnector", endpoint=endpoint
+            "SpaceConnector", endpoint=endpoint, token=market_place_token
         )
         response = remote_repo_conn.dispatch(
             "Plugin.get_versions",

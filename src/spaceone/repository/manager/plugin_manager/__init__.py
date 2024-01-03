@@ -49,7 +49,7 @@ class PluginManager(BaseManager):
                 "repository_type": repo_info["repository_type"],
             }
 
-        if domain_id:
+        if domain_id := repo_info.get("domain_id"):
             info["domain_id"] = domain_id
 
         return info
