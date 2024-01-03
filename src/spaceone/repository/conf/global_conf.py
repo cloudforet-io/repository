@@ -67,14 +67,15 @@ TOKEN = ""
 REPOSITORIES = [
     {
         "repository_id": "repo-managed",
-        "name": "Managed Repository",
+        "name": "Cloudforet Official",
         "repository_type": "MANAGED",
     },
     # {
-    #     "repository_id": "repo-marketplace",
-    #     "name": "marketplace",
+    #     "repository_id": "repo-remote",
+    #     "name": "Marketplace",
     #     "repository_type": "REMOTE",
-    #     "endpoint": "grpc://repository:50051",
+    #     "endpoint": "grpc://localhost:50051",
+    #     "token": "",
     # },
     {
         "repository_id": "repo-local",

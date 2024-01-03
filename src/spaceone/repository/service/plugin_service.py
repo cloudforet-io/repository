@@ -206,7 +206,7 @@ class PluginService(BaseService):
 
     @transaction(
         permission="repository:Plugin.read",
-        role_types=["DOMAIN_ADMIN", "WORKSPACE_OWNER", "WORKSPACE_MEMBER"],
+        role_types=["DOMAIN_ADMIN", "WORKSPACE_OWNER", "WORKSPACE_MEMBER", "USER"],
     )
     @check_required(["plugin_id"])
     @change_only_key({"repository_info": "repository"})
@@ -254,19 +254,11 @@ class PluginService(BaseService):
 
     @transaction(
         permission="repository:Plugin.read",
-        role_types=["DOMAIN_ADMIN", "WORKSPACE_OWNER", "WORKSPACE_MEMBER"],
+        role_types=["DOMAIN_ADMIN", "WORKSPACE_OWNER", "WORKSPACE_MEMBER", "USER"],
     )
     @change_only_key({"repository_info": "repository"}, key_path="query.only")
     @append_query_filter(
-        [
-            "plugin_id",
-            "name",
-            "state",
-            "resource_type",
-            "provider",
-            "registry_type",
-            "repository_id",
-        ]
+        ["plugin_id", "name", "state", "resource_type", "provider", "registry_type"]
     )
     def list(self, params):
         """List plugins (all repositories)
