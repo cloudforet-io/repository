@@ -89,9 +89,6 @@ class PluginService(BaseService):
             plugin_info (dict)
         """
 
-        # self._check_capability(params.get('capability'))
-        self._check_resource_type(params.get("resource_type"))
-
         plugin_mgr: LocalPluginManager = self.locator.get_manager("LocalPluginManager")
         return plugin_mgr.update_plugin(params)
 
@@ -329,47 +326,6 @@ class PluginService(BaseService):
             return self.locator.get_manager("ManagedPluginManager")
         else:
             return self.locator.get_manager("RemotePluginManager")
-
-    @staticmethod
-    def _check_template(template):
-        """
-        Check json schema
-        """
-        if template:
-            for key, value in template.items():
-                if isinstance(value, dict) and "schema" in value:
-                    try:
-                        jsonschema.Draft7Validator.check_schema(value["schema"])
-                    except Exception as e:
-                        raise ERROR_INVALID_TEMPLATE_SCHEMA(key=f"template.{key}")
-
-    @staticmethod
-    def _check_capability(capability):
-        if capability:
-            try:
-                capability_vo = Capability(capability)
-                capability_vo.validate()
-            except Exception as e:
-                raise ERROR_INVALID_PARAMETER(key="capability", reason=e)
-
-    @staticmethod
-    def _check_service_type(name):
-        """
-        service_type has format rule
-        format:
-            <service>.<purpose>
-        example:
-            identity.Domain
-            inventory.Collector
-
-        Raises:
-            ERROR_INVALID_PARAMETER
-        """
-        if name:
-            pass
-            # idx = name.split('.')
-            # if len(idx) != 2:
-            #     raise ERROR_INVALID_PARAMETER(key='service_type', reason=f'{name} format is invalid.')
 
     @staticmethod
     def _get_image_name(image):
