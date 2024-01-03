@@ -14,11 +14,14 @@ _LOGGER = logging.getLogger(__name__)
 class RemotePluginManager(PluginManager):
     def get_plugin(self, repo_info: dict, plugin_id: str, domain_id: str):
         endpoint = repo_info["endpoint"]
+        market_place_token = repo_info["token"]
+
         remote_repo_conn: SpaceConnector = self.locator.get_connector(
-            "SpaceConnector", endpoint=endpoint
+            "SpaceConnector", endpoint=endpoint, token=market_place_token
         )
+
         plugin_info: dict = remote_repo_conn.dispatch(
-            "Plugin.get", {"plugin_id": plugin_id}
+            "Plugin.get", {"plugin_id": plugin_id, "repository_id": "repo-local"}
         )
 
         return self.change_response(plugin_info, repo_info, domain_id)
