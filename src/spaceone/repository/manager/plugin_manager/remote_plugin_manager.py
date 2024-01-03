@@ -60,7 +60,8 @@ class RemotePluginManager(PluginManager):
             "SpaceConnector", endpoint=endpoint
         )
         response = remote_repo_conn.dispatch(
-            "Plugin.get_versions", {"plugin_id": plugin_id}
+            "Plugin.get_versions",
+            {"plugin_id": plugin_id, "repository_id": "repo-local"},
         )
 
         versions = response.get("results", [])
