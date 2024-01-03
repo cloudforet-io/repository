@@ -25,34 +25,25 @@ class RemotePluginManager(PluginManager):
 
     def list_plugins(self, repo_info: dict, query: dict, params: dict):
         try:
-            system_token = config.get_global("TOKEN")
-            if not system_token:
-                raise ERROR_REMOTE_REPOSITORY_AUTH_FAILURE(key="system_token")
-
             endpoint = repo_info["endpoint"]
-            name = repo_info["name"]
+            market_place_token = repo_info["token"]
 
-            identity_mgr = self.locator.get_manager("IdentityManager")
-            domain_id = identity_mgr.get_domain_id(name)
-
-            _LOGGER.debug(
-                f"[list_plugins] Remote Repository domain_id and endpoint: {domain_id} ,{endpoint}"
-            )
+            _LOGGER.debug(f"[list_plugins] Remote Repository endpoint: {endpoint}")
 
             remote_repo_conn: SpaceConnector = self.locator.get_connector(
-                SpaceConnector, endpoint=endpoint, token=system_token
+                SpaceConnector, endpoint=endpoint, token=market_place_token
             )
 
             response = remote_repo_conn.dispatch(
-                "Plugin.list",
-                {"query": query, "repository_id": repo_info["repository_id"]},
-                x_domain_id=domain_id,
+                "Plugin.list", {"query": query, "repository_id": "repo-local"}
             )
 
             plugins_info = response.get("results", [])
             total_count = response.get("total_count", 0)
             results = []
+
             for plugin_info in plugins_info:
+                domain_id = plugin_info.get("domain_id")
                 results.append(self.change_response(plugin_info, repo_info, domain_id))
 
             return results, total_count
