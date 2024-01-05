@@ -46,8 +46,7 @@ class RemotePluginManager(PluginManager):
             results = []
 
             for plugin_info in plugins_info:
-                domain_id = plugin_info.get("domain_id")
-                results.append(self.change_response(plugin_info, repo_info, domain_id))
+                results.append(self.change_response(plugin_info, repo_info))
 
             return results, total_count
         except Exception as e:

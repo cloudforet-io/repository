@@ -12,4 +12,3 @@ tags:
   long_description: Grafana is an open source dashboard and visualization platform.
     It can be triggered based on specific metrics in the dashboard. This plugin enables
     cloudforet to receive alerts from Grafana.
-template: { }

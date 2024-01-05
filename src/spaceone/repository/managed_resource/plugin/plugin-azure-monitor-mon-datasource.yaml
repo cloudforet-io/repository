@@ -19,4 +19,3 @@ tags:
   long_description: Azure Monitoring Metric is a feature of Azure Monitor that collects
     numerical data from monitored resources into a time series database. You can collect
     metric information from Azure Monitoring through this plugin.
-template: { }

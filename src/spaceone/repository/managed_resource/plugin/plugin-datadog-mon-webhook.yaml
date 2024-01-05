@@ -1,0 +1,14 @@
+---
+plugin_id: plugin-datadog-mon-webhook
+name: Datadog
+image: plugin-datadog-mon-webhook
+capability: { }
+labels: [ ]
+provider: datadog
+resource_type: monitoring.Webhook
+tags:
+  description: Datadog
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/datadog.png
+  long_description: Datadog is the observability and security solution for cloud applications.
+    It can integrates and automates infrastructure monitoring, APM and etc.
+    This plugin enables cloudforet to receive alerts from datadog.

@@ -16,4 +16,3 @@ tags:
     Cloud Platform. This service allows you to monitor applications and infrastructure
     running on Google Cloud Platform by collecting performance data from various Google
     Cloud services. With this plugin, you can receive alerts from Cloud Monitoring.
-template: { }

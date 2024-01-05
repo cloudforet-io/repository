@@ -1,0 +1,13 @@
+---
+plugin_id: plugin-azure-monitor-mon-webhook
+name: Azure Monitor
+image: plugin-azure-monitor-mon-webhook
+capability: { }
+labels: [ ]
+provider: azure
+resource_type: monitoring.Webhook
+tags:
+  description: Azure Monitor
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/azure-monitor.svg
+  long_description: Azure Monitor is a comprehensive monitoring solution for collecting, analyzing, and responding to monitoring data from your cloud and on-premises environments.
+    This plugin enables cloudforet to receive alerts from azure monitor.

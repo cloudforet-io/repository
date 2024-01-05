@@ -40,7 +40,7 @@ class PluginManager(BaseManager):
 
     @staticmethod
     def change_response(
-        info: dict, repo_info: dict = None, domain_id: str = None
+            info: dict, repo_info: dict = None
     ) -> dict:
         if repo_info:
             info["repository_info"] = {
@@ -48,6 +48,5 @@ class PluginManager(BaseManager):
                 "name": repo_info["name"],
                 "repository_type": repo_info["repository_type"],
             }
-            info["domain_id"] = repo_info.get("domain_id")
 
         return info

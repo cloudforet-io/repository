@@ -103,5 +103,5 @@ class AWSPrivateECRConnector(RegistryConnector):
 if __name__ == "__main__":
     docker_hub_conn = DockerHubConnector()
     tags = docker_hub_conn.get_tags(
-        "registry.hub.docker.com", "spaceone/repository", {}
+        "registry.hub.docker.com", "cloudforet/repository", {}
     )
