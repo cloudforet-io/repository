@@ -24,7 +24,6 @@ class Plugin(MongoModel):
     labels = ListField(StringField(max_length=255))
     tags = DictField()
     repository = DictField(default=None, null=True)
-    repository_id = StringField(max_length=40)
     domain_id = StringField(max_length=255)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
@@ -52,7 +51,6 @@ class Plugin(MongoModel):
             "registry_type",
             "resource_type",
             "provider",
-            "repository_id",
             "domain_id",
         ],
     }
