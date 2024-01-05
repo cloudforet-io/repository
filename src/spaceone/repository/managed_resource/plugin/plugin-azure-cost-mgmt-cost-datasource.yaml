@@ -14,4 +14,3 @@ tags:
   long_description: Azure Cost Management is a service that provides cost data for
     resources being used by subscriptions. This plugin can use the Cost Management
     API to collect billing data on all subscriptions in the billing account.
-template: { }

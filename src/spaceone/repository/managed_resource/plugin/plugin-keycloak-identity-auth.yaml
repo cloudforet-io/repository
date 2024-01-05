@@ -14,4 +14,3 @@ tags:
   long_description: Keycloak is an open source software product that provides single
     sign-on and identity and access management for modern applications and services.
     You can use keycloak through its plug-in.
-template: { }

@@ -19,4 +19,3 @@ tags:
   long_description: Google Cloud Logging is a service that allows you to store, search,
     analyze, monitor, and alert on log data and events from Google Cloud.
     The plugin collects metrics data in real time.
-template: { }

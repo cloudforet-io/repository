@@ -14,4 +14,3 @@ tags:
     that combines persistent chat, video meetings, file storage, and application integration.
     This plugin delivers alarm as a message to Teams channel when an event occurs
     through Alert manager.
-template: { }

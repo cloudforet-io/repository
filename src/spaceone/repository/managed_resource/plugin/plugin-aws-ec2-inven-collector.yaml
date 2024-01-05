@@ -18,4 +18,3 @@ tags:
   long_description: AWS EC2 is a cloud computing service provided by Amazon Web Services.
     EC2 is one of the most important services provided by AWS and this plugin collects
     information from the EC2 service.
-template: { }

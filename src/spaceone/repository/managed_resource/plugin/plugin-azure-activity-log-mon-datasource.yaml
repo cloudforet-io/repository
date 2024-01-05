@@ -20,4 +20,3 @@ tags:
     events. This information includes information such as when a resource was modified
     or when a virtual machine was started. Through this plugin, you can collect log
     information from Azure Monitor activity log.
-template: { }

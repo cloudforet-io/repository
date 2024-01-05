@@ -14,4 +14,3 @@ tags:
   icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/email.svg
   long_description: This plugin is a service responsible for sending an alarm event
     to the registered email address when an event occurs through Alert manager.
-template: { }

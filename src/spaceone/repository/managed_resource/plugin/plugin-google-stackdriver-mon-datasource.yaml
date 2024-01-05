@@ -18,4 +18,3 @@ tags:
   icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/google-cloud-stackdriver.svg
   long_description: Google Cloud Monitoring is a service that monitors Google Cloud
     services. This plugin get metrics from Google Cloud Monitoring.
-template: { }

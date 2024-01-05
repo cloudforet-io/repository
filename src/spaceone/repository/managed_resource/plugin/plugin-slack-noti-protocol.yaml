@@ -14,4 +14,3 @@ tags:
     real-time messaging, archiving, and search capabilities. This plugin delivers
     alarm as a message to specific slack  channel in workspace when an event occurs
     through Alert manager.
-template: { }
