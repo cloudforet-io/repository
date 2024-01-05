@@ -1,0 +1,13 @@
+---
+name: Google OAuth2
+plugin_id: plugin-googleoauth2-identity-auth
+image: plugin-googleoauth2-identity-auth
+capability: { }
+labels: [ ]
+resource_type: identity.Domain
+provider: google_oauth2
+tags:
+  description: Google OAuth2
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/google-icon.svg
+  long_description: The plugin that supports Google OAuth2 authentication when users
+    sign in.
