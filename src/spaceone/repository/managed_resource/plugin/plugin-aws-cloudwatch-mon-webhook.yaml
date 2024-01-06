@@ -1,0 +1,14 @@
+---
+plugin_id: plugin-aws-cloudwatch-mon-webhook
+name: AWS CloudWatch
+image: plugin-aws-cloudwatch-mon-webhook
+capability: { }
+labels: [ ]
+provider: aws
+resource_type: monitoring.Webhook
+tags:
+  description: AWS CloudWatch
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/awscloudwatch.png
+  long_description: AWS CloudWatch is monitoring feature in Amazon Web Service.
+    It can collect and track various metrics in AWS resources and applications.
+    This plugin enables cloudforet to receive alerts from CloudWatch.

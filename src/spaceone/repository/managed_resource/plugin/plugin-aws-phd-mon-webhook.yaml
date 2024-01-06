@@ -1,0 +1,13 @@
+---
+plugin_id: plugin-aws-phd-mon-webhook
+name: AWS PHD
+image: plugin-aws-phd-mon-webhook
+capability: { }
+labels: [ ]
+provider: aws
+resource_type: monitoring.Webhook
+tags:
+  description: AWS PHD
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/aws-phd.png
+  long_description: AWS Personal Health Dashboard is the authoritative data source for events and changes affecting your AWS cloud resources.
+    This plugin enables cloudforet to receive alerts from Personal Health Dashboard.
