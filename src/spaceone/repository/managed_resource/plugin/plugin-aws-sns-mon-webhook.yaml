@@ -1,5 +1,5 @@
 ---
-plugin_id: plugin-aws-sns-monitoring-webhook
+plugin_id: plugin-aws-sns-mon-webhook
 name: AWS SNS
 image: plugin-aws-sns-mon-webhook
 capability: { }
