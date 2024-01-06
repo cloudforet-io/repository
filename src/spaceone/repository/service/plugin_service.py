@@ -90,7 +90,7 @@ class PluginService(BaseService):
         """
 
         # self._check_capability(params.get('capability'))
-        self._check_resource_type(params.get("resource_type"))
+        # self._check_resource_type(params.get("resource_type"))
 
         plugin_mgr: LocalPluginManager = self.locator.get_manager("LocalPluginManager")
         return plugin_mgr.update_plugin(params)
@@ -318,8 +318,8 @@ class PluginService(BaseService):
 
                 if page_limit:
                     all_plugins_info = all_plugins_info[
-                                       page_start: page_start + page_limit
-                                       ]
+                        page_start : page_start + page_limit
+                    ]
 
             return all_plugins_info, plugin_total_count
 

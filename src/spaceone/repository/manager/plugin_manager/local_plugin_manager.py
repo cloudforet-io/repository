@@ -20,6 +20,7 @@ class LocalPluginManager(PluginManager):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.plugin_model: Plugin = self.locator.get_model("Plugin")
+        self.repo_info = RepositoryManager.get_repositories(repository_type="LOCAL")[0]
 
     def register_plugin(self, params: dict):
         def _rollback(vo: Plugin):
@@ -66,7 +67,7 @@ class LocalPluginManager(PluginManager):
         self.transaction.add_rollback(_rollback, plugin_vo.to_dict())
         plugin_vo = plugin_vo.update(params)
         plugin_info = plugin_vo.to_dict()
-        return self.change_response(plugin_info, plugin_vo.repository)
+        return self.change_response(plugin_info, self.repo_info)
 
     def delete_plugin(self, plugin_id, domain_id):
         plugin_vo = self.plugin_model.get(plugin_id=plugin_id, domain_id=domain_id)
@@ -76,7 +77,7 @@ class LocalPluginManager(PluginManager):
         plugin_vo = self.plugin_model.get(plugin_id=plugin_id, domain_id=domain_id)
 
         plugin_info = plugin_vo.to_dict()
-        return self.change_response(plugin_info, plugin_vo.repository)
+        return self.change_response(plugin_info, self.repo_info)
 
     def list_plugins(self, repos_info: dict, query: dict, params: dict):
         domain_id = params.get("domain_id")
@@ -85,12 +86,14 @@ class LocalPluginManager(PluginManager):
         query_filter_or = query.get("filter_or", [])
         query["filter"] = self._append_domain_filter(query_filter, domain_id)
         query["filter_or"] = self._append_keyword_filter(query_filter_or, keyword)
+        if "repository" in query.get("only", []):
+            query["only"].remove("repository")
 
         plugin_vos, total_count = self.plugin_model.query(**query)
         results = []
         for plugin_vo in plugin_vos:
             plugin_info = plugin_vo.to_dict()
-            results.append(self.change_response(plugin_info, plugin_vo.repository))
+            results.append(self.change_response(plugin_info, repos_info))
 
         return results, total_count
 
