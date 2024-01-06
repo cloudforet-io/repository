@@ -7,6 +7,7 @@ import re
 from spaceone.core import utils, config
 from spaceone.repository.error import *
 from spaceone.repository.manager.plugin_manager import PluginManager
+from spaceone.repository.manager.repository_manager import RepositoryManager
 
 __all__ = ["ManagedPluginManager"]
 

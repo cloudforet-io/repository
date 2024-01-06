@@ -315,8 +315,8 @@ class PluginService(BaseService):
 
                 if page_limit:
                     all_plugins_info = all_plugins_info[
-                                       page_start: page_start + page_limit
-                                       ]
+                        page_start : page_start + page_limit
+                    ]
 
             return all_plugins_info, plugin_total_count
 
