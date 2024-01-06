@@ -29,10 +29,8 @@ class LocalPluginManager(PluginManager):
         plugin_vo: Plugin = self.plugin_model.create(params)
         self.transaction.add_rollback(_rollback, plugin_vo)
 
-        repo_info = RepositoryManager.get_repositories(repository_type="LOCAL")[0]
-
         versions = self.get_plugin_versions(
-            repo_info, plugin_vo.plugin_id, plugin_vo.domain_id
+            self.repo_info, plugin_vo.plugin_id, plugin_vo.domain_id
         )
 
         if len(versions) == 0:
@@ -41,7 +39,7 @@ class LocalPluginManager(PluginManager):
             )
 
         plugin_info = plugin_vo.to_dict()
-        return self.change_response(plugin_info, repo_info)
+        return self.change_response(plugin_info, self.repo_info)
 
     def update_plugin(self, params):
         plugin_vo = self.plugin_model.get(
