@@ -82,6 +82,7 @@ class AWSPrivateECRConnector(RegistryConnector):
             response = self.client.describe_images(
                 repositoryName=image, registryId=self.config.get("account_id")
             )
+            _LOGGER.debug(f"[get_tags] boto3 describe_image_tags response: {response}")
 
             image_tags = []
             images_info = response.get("imageDetails", [])
