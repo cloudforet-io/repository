@@ -82,7 +82,6 @@ class AWSPrivateECRConnector(RegistryConnector):
             response = self.client.describe_images(
                 repositoryName=image, registryId=self.config.get("account_id")
             )
-            _LOGGER.debug(f"[get_tags] boto3 describe_image_tags response: {response}")
 
             image_tags = []
             images_info = response.get("imageDetails", [])
@@ -90,7 +89,8 @@ class AWSPrivateECRConnector(RegistryConnector):
                 images_info, key=lambda k: k["imagePushedAt"], reverse=True
             )
             for image_info in sorted_images_info:
-                image_tags.extend(image_info["imageTags"])
+                if "imageTags" in image_info:
+                    image_tags.extend(image_info["imageTags"])
 
             return image_tags
 
