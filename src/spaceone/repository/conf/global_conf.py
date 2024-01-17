@@ -28,6 +28,10 @@ CONNECTORS = {
         "backend": "spaceone.core.connector.space_connector.SpaceConnector",
         "endpoints": {"identity": "grpc://identity:50051"},
     },
+    "GithubContainerRegistryConnector": {
+        "github_token": "",
+        "owner_type": "",  # USER | ORGANIZATION
+    },
 }
 
 HANDLERS = {
@@ -48,6 +52,7 @@ REGISTRY_INFO = {
     "DOCKER_HUB": {"url": "registry.hub.docker.com"},
     "AWS_PRIVATE_ECR": {"url": "", "image_pull_secrets": ""},
     "HARBOR": {"url": "", "image_pull_secrets": ""},
+    "GITHUB": {"url": "ghcr.io"},
 }
 
 # Use managed repository (Read Only), if you can not use plugin marketplace

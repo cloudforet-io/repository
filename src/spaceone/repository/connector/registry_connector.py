@@ -7,7 +7,12 @@ from distutils.version import StrictVersion
 from spaceone.core.connector import BaseConnector
 from spaceone.repository.error import *
 
-__all__ = ["DockerHubConnector", "AWSPrivateECRConnector", "HarborConnector"]
+__all__ = [
+    "DockerHubConnector",
+    "AWSPrivateECRConnector",
+    "HarborConnector",
+    "GithubContainerRegistryConnector",
+]
 
 _LOGGER = logging.getLogger(__name__)
 _DEFAULT_PAGE_SIZE = 10
@@ -98,6 +103,37 @@ class AWSPrivateECRConnector(RegistryConnector):
             raise ERROR_NO_IMAGE_IN_REGISTRY(
                 registry_type="AWS_PRIVATE_ECR", image=image
             )
+
+
+class GithubContainerRegistryConnector(RegistryConnector):
+    def get_tags(self, registry_url, image, owner_type="USER"):
+        name, package_name = image.split("/", 1)
+        registry_url = "api.github.com"
+        github_token = self.config.get("github_token")
+
+        headers = {
+            "accept": "application/vnd.github+json",
+            "authorization": f"token {github_token}",
+            "X-Github-Api-Version": "2022-11-28",
+        }
+        if owner_type == "USER":
+            url = f"https://{registry_url}/user/packages/container/{package_name}/versions"
+        else:
+            url = f"https://api.github.com/orgs/{name}/packages/container/{package_name}/versions"
+
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 200:
+            image_tags = []
+            results = response.json()
+            for result in results:
+                _tags = result.get("metadata", {}).get("container", {}).get("tags", [])
+                image_tags.extend(_tags)
+
+            return image_tags
+
+        else:
+            raise ERROR_NO_IMAGE_IN_REGISTRY(registry_type="GITHUB", image=image)
 
 
 if __name__ == "__main__":
