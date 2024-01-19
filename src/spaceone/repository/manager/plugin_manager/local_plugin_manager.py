@@ -33,7 +33,6 @@ class LocalPluginManager(PluginManager):
         versions = self.get_plugin_versions(
             self.repo_info, plugin_vo.plugin_id, plugin_vo.domain_id
         )
-        print(versions)
 
         if len(versions) == 0:
             raise ERROR_NO_IMAGE_IN_REGISTRY(
