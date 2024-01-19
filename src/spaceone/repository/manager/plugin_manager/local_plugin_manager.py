@@ -13,6 +13,7 @@ _REGISTRY_CONNECTOR_MAP = {
     "DOCKER_HUB": "DockerHubConnector",
     "AWS_PRIVATE_ECR": "AWSPrivateECRConnector",
     "HARBOR": "HarborConnector",
+    "GITHUB": "GithubContainerRegistryConnector",
 }
 
 
