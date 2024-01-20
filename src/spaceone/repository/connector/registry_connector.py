@@ -107,10 +107,11 @@ class AWSPrivateECRConnector(RegistryConnector):
 
 
 class GithubContainerRegistryConnector(RegistryConnector):
-    def get_tags(self, registry_url, image, owner_type="USER"):
+    def get_tags(self, registry_url, image):
+        owner_type = self.config.get("owner_type")
+        github_token = self.config.get("github_token")
         name, package_name = image.split("/", 1)
         registry_url = "api.github.com"
-        github_token = self.config.get("github_token")
 
         headers = {
             "accept": "application/vnd.github+json",
