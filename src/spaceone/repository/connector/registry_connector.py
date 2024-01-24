@@ -64,13 +64,13 @@ class HarborConnector(RegistryConnector):
 
 
 class AWSPrivateECRConnector(RegistryConnector):
-    _DEFAULT_REGION_NAME = "ap-northeast-2"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         aws_access_key_id = self.config.get("aws_access_key_id")
         aws_secret_access_key = self.config.get("aws_secret_access_key")
+        region_name = self.config.get("region_name")
 
         if not all([aws_access_key_id, aws_secret_access_key]):
             raise ERROR_CONNECTOR_CONFIGURATION(connector="AWSPrivateECRConnector")
@@ -79,7 +79,7 @@ class AWSPrivateECRConnector(RegistryConnector):
             "ecr",
             aws_access_key_id=aws_access_key_id,
             aws_secret_access_key=aws_secret_access_key,
-            region_name=self._DEFAULT_REGION_NAME,
+            region_name=region_name,
         )
 
     def get_tags(self, registry_url, image):
