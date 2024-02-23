@@ -37,6 +37,7 @@ class PluginService(BaseService):
 
         Args:
             params (dict): {
+                'plugin_id': 'str',
                 'name': 'str',              # required
                 'resource_type': 'str',     # required
                 'image': 'str',             # required
@@ -54,7 +55,10 @@ class PluginService(BaseService):
 
         registry_type = params.get("registry_type", "DOCKER_HUB")
         image = params["image"]
-        plugin_id = self._get_image_name(image)
+        plugin_id = params.get("plugin_id")
+
+        if plugin_id is None:
+            plugin_id = self._get_image_name(image)
 
         # self._check_capability(params.get('capability'))
         self._check_image(image)
