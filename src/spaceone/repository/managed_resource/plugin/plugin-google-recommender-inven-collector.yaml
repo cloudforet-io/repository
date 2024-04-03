@@ -1,7 +1,7 @@
 ---
 plugin_id: plugin-google-recommender-collector
 name: Google Cloud Recommender Collector
-image: cloudforet/plugin-google-recommender-inven-collector
+image: plugin-google-recommender-inven-collector
 capability:
   supported_schema:
     - google_oauth2_credentials
