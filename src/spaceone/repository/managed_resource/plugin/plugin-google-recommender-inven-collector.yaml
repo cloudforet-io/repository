@@ -1,0 +1,16 @@
+---
+plugin_id: plugin-google-recommender-collector
+name: Google Cloud Recommender Collector
+image: cloudforet/plugin-google-recommender-inven-collector
+capability:
+  supported_schema:
+    - google_oauth2_credentials
+labels:
+  - Recommender
+  - Recommendation
+provider: google_cloud
+resource_type: inventory.Collector
+tags:
+  description: Google Cloud Collector
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/google_cloud.svg
+  long_description: Google Cloud is a cloud computing platform provided by Google. This is a Collector that collects resources from the Recommender service provided by Google Cloud. It can be easily used to manage cloud resources.
