@@ -1,0 +1,15 @@
+---
+name: Google Cloud Account Collector
+plugin_id: plugin-google-cloud-account-collector
+provider: google_cloud
+capability: { }
+image: plugin-google-cloud-identity-account-collector
+labels:
+  - Organization
+  - Folders
+  - Projects
+resource_type: identity.Provider
+tags:
+  description: Google Cloud Account Collector
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/google_cloud.svg
+  long_description: Google Cloud Account Collector
