@@ -1,0 +1,15 @@
+---
+plugin_id: plugin-azure-identity-account-collector
+name: Azure Account Collector
+image: plugin-azure-identity-account-collector
+capability: { }
+labels:
+  - Tenant
+  - Management Group
+  - Subscription
+provider: azure
+resource_type: identity.Provider
+tags:
+  description: Azure Account Collector
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/cloud-services/azure/azure-active-directory.svg
+  long_description: Azure Account Collector collects Azure Tenant, Management Group, and Subscription hierarchies.

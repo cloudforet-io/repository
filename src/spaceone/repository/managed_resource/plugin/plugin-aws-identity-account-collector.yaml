@@ -1,0 +1,16 @@
+---
+plugin_id: plugin-aws-identity-account-collector
+name: AWS Account Collector
+image: plugin-aws-identity-account-collector
+capability: { }
+labels:
+  - Control Tower
+  - Management Account
+  - Member Account
+  - Organizational Unit
+provider: aws
+resource_type: identity.Provider
+tags:
+  description: AWS Account Collector
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/aws_control_tower.png
+  long_description: AWS Collector collects AWS Organizational Units, Member Accounts, and Control Tower hierarchies.
