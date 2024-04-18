@@ -1,0 +1,17 @@
+---
+plugin_id: plugin-k8s-opencost-cost-datasource
+name: Kubernetes OpenCost Data Source
+image: plugin-k8s-opencost-cost-datasource
+capability:
+  supported_schema:
+    - kubernetes-service-account
+labels: [ ]
+provider: kubernetes
+resource_type: cost_analysis.DataSource
+tags:
+  description: Kubernetes Cost Management Data Source
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/cloud-services/kubernetes/kubernetes.svg
+  long_description: The Kubernetes Cost Management service provides cost information for
+    all resources used in your Kubernetes cluster. The plugin can collect cost billing
+    data from all clusters of your Kubernetes billing account.
+template: { }
