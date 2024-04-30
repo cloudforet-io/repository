@@ -1,7 +1,7 @@
 ---
 plugin_id: plugin-aws-ec2-inven-collector
 name: AWS EC2 Collector
-image: plugin-aws-ec2-inven-collector
+image: plugin-aws-inven-collector
 capability:
   supported_schema:
     - aws_access_key
