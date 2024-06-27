@@ -25,16 +25,25 @@ class RepositoryManager(BaseManager):
         return repos_info[0]
 
     @staticmethod
-    def get_repositories(repository_id: str = None, repository_type: str = None) -> list:
+    def get_repositories(
+        repository_id: str = None, repository_type: str = None
+    ) -> list:
         repositories: list = config.get_global("REPOSITORIES", [])
 
         if repository_id:
-            repositories = filter(lambda x: x["repository_id"] == repository_id, repositories)
+            repositories = filter(
+                lambda x: x["repository_id"] == repository_id, repositories
+            )
 
         if repository_type:
-            repositories = filter(lambda x: x["repository_type"] == repository_type, repositories)
+            repositories = filter(
+                lambda x: x["repository_type"] == repository_type, repositories
+            )
 
-        return list(repositories)
+        repositories = list(repositories)
+        repositories.reverse()
+
+        return repositories
 
     def get_local_repository(self) -> dict:
         repos_info = self.get_repositories(repository_type="LOCAL")
