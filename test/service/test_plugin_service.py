@@ -434,42 +434,6 @@ class TestPluginService(unittest.TestCase):
         self.assertIsInstance(plugins_vos[0], Plugin)
         self.assertEqual(total_count, 1)
 
-    def test_stat_plugin(self, *args):
-        plugin_vos = PluginFactory.build_batch(10, repository=self.repository_vo,
-                                               domain_id=self.domain_id)
-        list(map(lambda vo: vo.save(), plugin_vos))
-
-        params = {
-            'domain_id': self.domain_id,
-            'repository_id': self.repository_vo.repository_id,
-            'query': {
-                'aggregate': [{
-                    'group': {
-                        'keys': [{
-                            'key': 'plugin_id',
-                            'name': 'Id'
-                        }],
-                        'fields': [{
-                            'operator': 'count',
-                            'name': 'Count'
-                        }]
-                    }
-                }, {
-                    'sort': {
-                        'key': 'Count',
-                        'desc': True
-                    }
-                }]
-            }
-        }
-
-        self.transaction.method = 'stat'
-        plugin_svc = PluginService(transaction=self.transaction)
-        values = plugin_svc.stat(params)
-        StatisticsInfo(values)
-
-        print_data(values, 'test_stat_plugin')
-
 
 if __name__ == "__main__":
     unittest.main(testRunner=RichTestRunner)

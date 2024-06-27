@@ -5,10 +5,6 @@ class ERROR_NO_PLUGIN(ERROR_INVALID_ARGUMENT):
     _message = 'Plugin does not exists. (plugin_id = {plugin_id})'
 
 
-class ERROR_INVALID_IMAGE_FORMAT(ERROR_INVALID_ARGUMENT):
-    _message = 'Image format is <repository name>/<image name> in {name}'
-
-
 class ERROR_INVALID_IMAGE_NAME_FORMAT(ERROR_INVALID_ARGUMENT):
     _message = 'Image name format is [a-zA-Z0-9\-]+ in {name}'
 
