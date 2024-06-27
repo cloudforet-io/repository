@@ -40,10 +40,7 @@ class RepositoryManager(BaseManager):
                 lambda x: x["repository_type"] == repository_type, repositories
             )
 
-        repositories = list(repositories)
-        repositories.reverse()
-
-        return repositories
+        return list(repositories)
 
     def get_local_repository(self) -> dict:
         repos_info = self.get_repositories(repository_type="LOCAL")
