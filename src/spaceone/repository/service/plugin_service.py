@@ -1,13 +1,11 @@
 import copy
 import logging
-import jsonschema
 import re
 
 from spaceone.core.service import *
 from spaceone.core import config
 
 from spaceone.repository.error import *
-from spaceone.repository.model.capability_model import Capability
 from spaceone.repository.manager.plugin_manager.local_plugin_manager import (
     LocalPluginManager,
 )
@@ -72,7 +70,7 @@ class PluginService(BaseService):
         params["repository"] = repo_mgr.get_local_repository()
         params["repository_id"] = params["repository"].get("repository_id")
 
-        return plugin_mgr.register_plugin(params)
+        return plugin_mgr.create_plugin(params)
 
     @transaction(permission="repository:Plugin.write", role_types=["DOMAIN_ADMIN"])
     @check_required(["plugin_id", "domain_id"])
@@ -216,15 +214,9 @@ class PluginService(BaseService):
 
         Args:
             params (dict): {
-                'query': 'dict (spaceone.api.core.v1.Query)',
-                'plugin_id': 'str',
-                'name': 'str',
-                'state': 'str',
-                'resource_type': 'str',
-                'provider': 'str',
-                'registry_type': 'str',
+                'plugin_id': 'str',         # Required
                 'repository_id': 'str',
-                'domain_id': 'str',        # injected from auth (optional)
+                'domain_id': 'str',         # injected from auth (optional)
             }
 
         Returns:

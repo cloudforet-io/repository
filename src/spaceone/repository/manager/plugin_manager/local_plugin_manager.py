@@ -23,7 +23,7 @@ class LocalPluginManager(PluginManager):
         self.plugin_model: Plugin = self.locator.get_model("Plugin")
         self.repo_info = RepositoryManager.get_repositories(repository_type="LOCAL")[0]
 
-    def register_plugin(self, params: dict):
+    def create_plugin(self, params: dict):
         def _rollback(vo: Plugin):
             vo.delete()
 
@@ -95,9 +95,6 @@ class LocalPluginManager(PluginManager):
             results.append(self.change_response(plugin_info, repos_info))
 
         return results, total_count
-
-    def stat_plugins(self, query):
-        return self.plugin_model.stat(**query)
 
     def get_plugin_versions(self, repo_info: dict, plugin_id: str, domain_id: str):
         plugin_vo = self.plugin_model.get(plugin_id=plugin_id, domain_id=domain_id)

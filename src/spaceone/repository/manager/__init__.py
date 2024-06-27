@@ -12,3 +12,13 @@ from spaceone.repository.manager.plugin_manager.local_plugin_manager import (
 from spaceone.repository.manager.plugin_manager.remote_plugin_manager import (
     RemotePluginManager,
 )
+
+from spaceone.repository.manager.dashboard_template_manager.local_dashboard_template_manager import (
+    LocalDashboardTemplateManager,
+)
+from spaceone.repository.manager.dashboard_template_manager.remote_dashboard_template_manager import (
+    RemoteDashboardTemplateManager,
+)
+from spaceone.repository.manager.dashboard_template_manager.managed_dashboard_template_manager import (
+    ManagedDashboardTemplateManager,
+)

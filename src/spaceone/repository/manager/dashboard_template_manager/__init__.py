@@ -3,36 +3,32 @@ from abc import abstractmethod
 
 from spaceone.core.manager import BaseManager
 
-__all__ = ["PluginManager"]
+__all__ = ["DashboardTemplateManager"]
 _LOGGER = logging.getLogger(__name__)
 
 
-class PluginManager(BaseManager):
-    def create_plugin(self, params):
+class DashboardTemplateManager(BaseManager):
+    def create_template(self, params):
         pass
 
-    def update_plugin(self, params):
+    def update_template(self, params):
         pass
 
-    def enable_plugin(self, plugin_id, domain_id):
+    def enable_template(self, template_id, domain_id):
         pass
 
-    def disable_plugin(self, plugin_id, domain_id):
+    def disable_template(self, template_id, domain_id):
         pass
 
-    def delete_plugin(self, plugin_id, domain_id):
-        pass
-
-    @abstractmethod
-    def get_plugin(self, repo_info: dict, plugin_id, domain_id):
+    def delete_template(self, template_id, domain_id):
         pass
 
     @abstractmethod
-    def list_plugins(self, repo_info: dict, query: dict, params: dict):
+    def get_template(self, repo_info: dict, template_id, domain_id):
         pass
 
     @abstractmethod
-    def get_plugin_versions(self, repo_info: dict, plugin_id, domain_id):
+    def list_templates(self, repo_info: dict, query: dict, params: dict):
         pass
 
     @staticmethod
