@@ -29,11 +29,11 @@ provider: azure
 resource_type: inventory.Collector
 tags:
   description: Azure Collector
-  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/azure-cloud-services.svg
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/azure-cloud-services.png
   long_description: Microsoft Azure is a comprehensive suite of cloud services that
     developers and IT professionals use to build, deploy, and manage applications
     through Microsoft's global network of datacenters. It provides a wide range of
     integrated cloud services including analytics, computing, database, mobile, networking,
     storage, and web, allowing users to move faster, achieve more. This plugin can
     collect information about over 20 resources in use, which are considered important
-    services.
+    services. This plugin will be migrated to v2 in the future.

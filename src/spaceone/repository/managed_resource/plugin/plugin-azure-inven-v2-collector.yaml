@@ -1,0 +1,16 @@
+---
+plugin_id: plugin-azure-inven-v2-collector
+name: Azure Collector v2
+image: plugin-azure-inven-v2-collector
+capability:
+  supported_schema:
+    - azure_client_secret
+labels:
+  - Advisor
+  - Service Health
+provider: azure
+resource_type: inventory.Collector
+tags:
+  description: Azure Collector v2
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/azure.svg
+  long_description: We are preparing for the migration from v1 to v2, and new services will be added to the v2 collector.
