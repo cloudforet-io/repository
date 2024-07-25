@@ -27,6 +27,7 @@ def PluginInfo(plugin_info: dict, minimal=False):
                 "registry_config": change_struct_type(registry_info),
                 "capability": change_struct_type(plugin_info.get("capability")),
                 "tags": change_struct_type(plugin_info.get("tags")),
+                "docs": change_struct_type(plugin_info.get("docs", {})),
                 "labels": change_list_value_type(plugin_info.get("labels")),
                 "domain_id": plugin_info.get("domain_id"),
                 "created_at": utils.datetime_to_iso8601(plugin_info.get("created_at")),
