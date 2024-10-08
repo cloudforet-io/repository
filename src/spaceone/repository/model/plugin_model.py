@@ -23,7 +23,7 @@ class Plugin(MongoModel):
     capability = DictField()
     labels = ListField(StringField(max_length=255))
     tags = DictField()
-    docs = DictField()
+    docs = DictField(null=True, default=None)
     domain_id = StringField(max_length=255)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
