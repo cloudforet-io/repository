@@ -15,7 +15,7 @@ class RemotePluginManager(PluginManager):
         market_place_token = repo_info["token"]
 
         remote_repo_conn: SpaceConnector = self.locator.get_connector(
-            "SpaceConnector", endpoint=endpoint, token=market_place_token
+            SpaceConnector, endpoint=endpoint, token=market_place_token
         )
 
         plugin_info: dict = remote_repo_conn.dispatch(
@@ -56,7 +56,7 @@ class RemotePluginManager(PluginManager):
         market_place_token = repo_info["token"]
 
         remote_repo_conn: SpaceConnector = self.locator.get_connector(
-            "SpaceConnector", endpoint=endpoint, token=market_place_token
+            SpaceConnector, endpoint=endpoint, token=market_place_token
         )
         response = remote_repo_conn.dispatch(
             "Plugin.get_versions",
