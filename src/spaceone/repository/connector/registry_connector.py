@@ -84,12 +84,15 @@ class AWSPrivateECRConnector(RegistryConnector):
 
     def get_tags(self, registry_url, image):
         try:
-            response = self.client.describe_images(
+            paginator = self.client.get_paginator("describe_images")
+            response_iterator = paginator.paginate(
                 repositoryName=image, registryId=self.config.get("account_id")
             )
+            images_info = []
+            for data in response_iterator:
+                images_info.extend(data.get("imageDetails", []))
 
             image_tags = []
-            images_info = response.get("imageDetails", [])
             sorted_images_info = sorted(
                 images_info, key=lambda k: k["imagePushedAt"], reverse=True
             )
