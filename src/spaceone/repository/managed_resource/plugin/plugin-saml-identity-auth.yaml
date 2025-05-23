@@ -8,7 +8,7 @@ labels:
   - Okta
   - OneLogin
   - Azure AD
-resource_type: identity.ExteranlAuth
+resource_type: identity.ExternalAuth
 provider: saml
 tags:
   description: Saml Identity Authentication
