@@ -1,0 +1,19 @@
+---
+plugin_id: plugin-saml-identity-auth
+name: Saml
+image: plugin-saml-identity-auth
+capability: {}
+labels:
+  - Megazone PoPs
+  - Okta
+  - OneLogin
+  - Azure AD
+resource_type: identity.ExternalAuth
+provider: saml
+tags:
+  description: Saml Identity Authentication
+  icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/spaceone.svg
+  long_description: Saml Identity Authentication is a service that provides authentication
+    for external identity providers using the SAML 2.0 protocol. This plugin
+    enables cloudforet to authenticate users through external identity providers
+    such as MegazonePops, Okta, OneLogin, and Azure AD.
