@@ -1,3 +1,5 @@
 spaceone-api
 schematics
 pandas
+google-cloud-artifact-registry
+google-auth

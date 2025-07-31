@@ -24,28 +24,35 @@ CONNECTORS = {
         "image_prefix": "",
         "verify": True,
     },
-    "SpaceConnector": {
-        "backend": "spaceone.core.connector.space_connector.SpaceConnector",
-        "endpoints": {"identity": "grpc://identity:50051"},
-    },
     "GithubContainerRegistryConnector": {
         "github_token": "",
         "owner_type": "",  # USER | ORGANIZATION
     },
+    "GCPPrivateGCRConnector": {
+        "location": "",  # GCP 리전 설정
+        "project_id": "",  # GCP 프로젝트 ID (선택사항, 기본값 사용 시 비워둠)
+        "repository_id":"",
+        "service_account_key": ""
+    },
+    "SpaceConnector": {
+        "backend": "spaceone.core.connector.space_connector.SpaceConnector",
+        "endpoints": {"identity": "grpc+ssl://localhost:50051"},
+    }
 }
 
+# 2. 인증 핸들러 설정 (필수)
 HANDLERS = {
-    # "authentication": [{
-    #     "backend": "spaceone.core.handler.authentication_handler.AuthenticationGRPCHandler",
-    # }],
-    # "authorization": [{
-    #     "backend": "spaceone.core.handler.authorization_handler.AuthorizationGRPCHandler",
-    #     "uri": "grpc://localhost:50051/v1/Authorization/verify"
-    # }],
-    # "mutation": [{
-    #     "backend": "spaceone.core.handler.mutation_handler.SpaceONEMutationHandler"
-    # }],
-    # "event": []
+    "authentication": [{
+        "backend": "spaceone.core.handler.authentication_handler.AuthenticationGRPCHandler",
+    }],
+    "authorization": [{
+        "backend": "spaceone.core.handler.authorization_handler.AuthorizationGRPCHandler",
+        "uri": ""
+    }],
+    "mutation": [{
+        "backend": "spaceone.core.handler.mutation_handler.SpaceONEMutationHandler"
+    }],
+    "event": []
 }
 
 REGISTRY_INFO = {
@@ -53,11 +60,12 @@ REGISTRY_INFO = {
     "AWS_PRIVATE_ECR": {"url": "", "image_pull_secrets": ""},
     "HARBOR": {"url": "", "image_pull_secrets": ""},
     "GITHUB": {"url": "ghcr.io"},
+    "GCP_PRIVATE_GCR": {"url": ""},
 }
 
 # Use managed repository (Read Only), if you can not use plugin marketplace
 ENABLE_MANAGED_REPOSITORY = False
-DEFAULT_REGISTRY = "DOCKER_HUB"  # DOCKER_HUB | AWS_PRIVATE_ECR | HARBOR
+DEFAULT_REGISTRY = "DOCKER_HUB"  # DOCKER_HUB | AWS_PRIVATE_ECR | HARBOR | GCP_PRIVATE_GCR
 
 ROOT_TOKEN = ""
 ROOT_TOKEN_INFO = {}
