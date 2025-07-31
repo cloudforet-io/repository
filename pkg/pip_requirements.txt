@@ -3,3 +3,4 @@ schematics
 pandas
 google-cloud-artifact-registry
 google-auth
+googleapis-common-protos
