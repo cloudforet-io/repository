@@ -16,6 +16,7 @@ _REGISTRY_CONNECTOR_MAP = {
     "DOCKER_HUB": "DockerHubConnector",
     "AWS_PRIVATE_ECR": "AWSPrivateECRConnector",
     "HARBOR": "HarborConnector",
+    "GCP_PRIVATE_GCR": "GCPPrivateGCRConnector"
 }
 _BASE_DIR = os.path.join(os.path.dirname(__file__), "../../managed_resource/plugin/")
 _MANAGED_PLUGINS = []

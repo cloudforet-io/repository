@@ -14,6 +14,7 @@ _REGISTRY_CONNECTOR_MAP = {
     "AWS_PRIVATE_ECR": "AWSPrivateECRConnector",
     "HARBOR": "HarborConnector",
     "GITHUB": "GithubContainerRegistryConnector",
+    "GCP_PRIVATE_GCR": "GCPPrivateGCRConnector"
 }
 
 
