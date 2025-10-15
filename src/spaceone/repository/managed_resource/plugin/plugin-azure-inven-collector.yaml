@@ -25,6 +25,8 @@ labels:
   - Virtual Networks
   - VM ScaleSets
   - Web PubSub Service
+  - Advisor
+  - Service Health
 provider: azure
 resource_type: inventory.Collector
 tags:
