@@ -158,8 +158,8 @@ class GCPPrivateGCRConnector(RegistryConnector):
         
         # 서비스 계정 키 JSON 사용
         try:
-            self.repository_id = self.config.get("repository_id", "space-cloudops")
-            self.location = self.config.get("location", "asia-northeast3")
+            self.repository_id = self.config.get("repository_id")
+            self.location = self.config.get("location")
             
             service_account_key = self.config.get("service_account_key")
             decoded_key = base64.b64decode(service_account_key).decode('utf-8')
