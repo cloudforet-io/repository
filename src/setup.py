@@ -32,6 +32,7 @@ setup(
         "spaceone-api",
         "schematics",
         "pandas",
+        "packaging",
     ],
     package_data={
         "spaceone": [

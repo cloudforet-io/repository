@@ -4,3 +4,4 @@ pandas
 google-cloud-artifact-registry
 google-auth
 googleapis-common-protos
+packaging>=21.3

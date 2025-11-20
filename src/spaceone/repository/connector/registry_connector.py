@@ -2,7 +2,7 @@ import abc
 import requests
 import logging
 import boto3
-from distutils.version import StrictVersion
+from packaging.version import parse
 import base64
 import json
 from google.oauth2 import service_account
@@ -60,7 +60,7 @@ class HarborConnector(RegistryConnector):
 
         if response.status_code == 200:
             image_tags = response.json().get("tags", [])
-            image_tags.sort(key=StrictVersion, reverse=True)
+            image_tags.sort(key=parse, reverse=True)
             return image_tags
         else:
             _LOGGER.error(f"[get_tags] request error: {response.json()}")
@@ -204,7 +204,7 @@ class GCPPrivateGCRConnector(RegistryConnector):
         
         
             try:
-                image_tags.sort(key=StrictVersion, reverse=True)
+                image_tags.sort(key=parse, reverse=True)
             except Exception as e:
                 _LOGGER.warning(f"[get_tags] Version sorting failed: {e}, using original order")
                 pass
