@@ -159,9 +159,11 @@ class ManagedPluginManager(PluginManager):
         plugin_info["state"] = "ENABLED"
         plugin_info["registry_type"] = self.managed_registry_type
         plugin_info["registry_config"] = self.managed_registry_config
-        plugin_info[
-            "image"
-        ] = f"{self.managed_plugin_image_prefix}/{plugin_info['image']}"
+
+        if not self.managed_plugin_image_prefix:
+            plugin_info["image"] = f"{plugin_info['image']}"
+        else:
+            plugin_info["image"] = f"{self.managed_plugin_image_prefix}/{plugin_info['image']}"
 
         if repo_info:
             plugin_info["repository_info"] = {
